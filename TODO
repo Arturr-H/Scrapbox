@@ -4,7 +4,10 @@ Frotnend:
 
 Backend:
 
- - Start room ∆ _/
+ - Start room ∆
  - not able to join room if aldready started ∆
  - only leader may start ∆
- - player listing
+ - player listing ∆
+ - actual start room ∆
+ - minimum player start count ∆
+ - A counter ∆

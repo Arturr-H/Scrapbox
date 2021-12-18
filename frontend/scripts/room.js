@@ -6,6 +6,15 @@ const room_id = window.location.pathname.split('/')[2];
 //HTML elements
 const start_button = document.getElementById("start-button");
 const player_list = document.getElementById("player-list");
+const error_out = document.getElementById("error-message-output");
+const player_count = document.getElementById("player-count");
+
+//mini functions
+const display_players = (players) => players.map(player => `<li>${player}</li>`).join("");
+const display_player_count = (players) => player_count.innerHTML = `<h4>${players.length}/16</h4>`;
+
+
+// > > JOIN HANDLER  &  PLAYER COUNTER > >
 
 //Send that the player has joined the game
 socket.emit("player-join", {
@@ -16,25 +25,39 @@ socket.emit("player-join", {
 //When other players join
 socket.on(`player-join:${room_id}`, (data) => {
     //Add the player to the list
-    player_list.innerHTML += `<li>${data}</li>`;
+    player_list.innerHTML = display_players(data);
+    display_player_count(data);
+
+    console.log("shitting")
 });
 
-//Get the room data from the server https://artur.red/api/get-room-data
-//using the headers "room_id"
-const get_room_data = async () => {
-    console.log(room_id);
-    await fetch("https://artur.red/api/get-room-data", {
-        method: "GET",
-        headers: {
-            room_id: "balls"
-        }
-    })
-    // .then(res => res.json())
-    // .then(data => {
-    //     console.log(data);
-    // });
-}
-get_room_data();
+//For checking how many players are in the room
+// (because websockets don't save sent data)
+(async () => {
+    try{
+        const room_data = await fetch(`https://artur.red/api/get-room-data`, {
+            method: "GET",
+            headers: {
+                room: room_id
+            }
+        });
+
+        //Get the room data as json
+        const room_data_json = await room_data.json();
+        const players = room_data_json.game.players;
+
+        player_list.innerHTML = display_players(players);
+        display_player_count(players);
+
+    }catch{
+        console.log("error");
+    }
+})();
+
+// > > JOIN HANDLER  &  PLAYER COUNTER > >
+
+
+// > > START HANDLER > >
 
 start_button.addEventListener("click", () => {
     console.log("starting....")
@@ -47,4 +70,10 @@ start_button.addEventListener("click", () => {
 
 socket.on(`start-game:${room_id}`, (data) => {
     console.log("game started");
+})
+
+// > > START HANDLER > >
+
+socket.on(`return-message:${room_id}`, (message) => {
+    error_out.innerHTML = message;
 })

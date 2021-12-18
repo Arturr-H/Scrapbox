@@ -9,6 +9,18 @@ body{
 	color: var(--color-def);
 }
 
+main{
+	height: 100%;
+	width: 100%;
+	display: grid; 
+	grid-template-columns: 0.4fr 1.6fr 1fr; 
+	grid-template-rows: 0.2fr 1.1fr 1fr; 
+	gap: 0px 0px; 
+	grid-template-areas: 
+		"Sidebar Header Header"
+		"Sidebar Body Body"
+		"Sidebar Body Body"; 
+}
 
 /*=-----------=/
 /              /
@@ -17,16 +29,14 @@ body{
 /=-----------=*/
 
 nav{
-	position: fixed;
-	height: 100%; width: var(--nav-width);
+	grid-area: Sidebar;
+	height: 100%;
 	background-color: var(--nav-bg);
 
 	display: flex;
 	align-items: center;
 	flex-direction: column;
 	border-right: 2px solid #ffffff0e;
-
-	z-index: 2;
 }.nav-wrapper{
 	margin-top: 1rem;
 	width: var(--menu-width);
@@ -99,20 +109,28 @@ nav hr{
 
 
 header{
-	position: absolute;
-	height: var(--header-height);
-	width: 100%;
+	grid-area: Header;
+	/* height: var(--header-height); */
 	background-color: var(--header-bg);
 	
+	padding: 0 2rem;
+
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	border-bottom: 2px solid #ffffff0e;
-
-	z-index: 1;
+	justify-content: space-between;
 }
 
+.search{
+	width: 40%;
+}
+label[for="search"]{
+	position: absolute;
+}
 
+.body{
+	grid-area: Body;
+	background-color: var(--bg-def);
+}
 
 
 
@@ -134,7 +152,7 @@ header{
 .profile{
 	display: flex;
 	align-items: center;
-	margin: 0 1rem;
+	gap: 1rem;
 }.profile img{
 	width: 2.5rem; height: 2.5rem;
 	border-radius: 50%;

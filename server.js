@@ -26,11 +26,19 @@ const generate_roomcode = () => crypto.randomBytes(32).toString("hex");
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
+//default paths
+const default_paths = {
+    illegal_game: path.resolve("frontend/html/error-pages/roomError.html"),
+    home: path.resolve("frontend/html/index.html"),
+    room: path.resolve("frontend/html/room.html"),
+}
+
 //Mutational variables
 let rooms = {};
 
 //Constant variables
 const MAX_PLAYERS_PER_ROOM = 16;
+const MIN_PLAYERS_PER_ROOM = 2;
 
 //Express static folders
 app.use("/", express.static(path.join(__dirname, 'resources')))
@@ -51,17 +59,19 @@ app.get("/api/create-room", (req, res) => {
     //crypto functionen som jag gjorde
     const roomcode = generate_roomcode();
 
-    //ledaren av spelet
+    //game leader.
     const leader = req.cookies["usnm"];
 
     //Create the room
     rooms[roomcode] = {
         roomcode: roomcode,
         game: {
-            players: {},
+            players: [leader],
             leader: leader,
             started: false,
             mature: false,
+            
+            next_game_id: generate_roomcode()
         }
     };
 
@@ -76,66 +86,78 @@ app.get("/room/:roomID?", (req, res) => {
     try{
         //Check if room exists
         if(!rooms[roomID]){
-            res.sendFile(path.resolve("frontend/html/error-pages/roomError.html"));
-            return;
+            return res.sendFile(default_paths.illegal_game);
         }
         //Check if room is full
         else if(Object.keys(rooms[roomID].game.players).length >= MAX_PLAYERS_PER_ROOM){
-            res.redirect("/");
-            return;
+            return res.sendFile(default_paths.illegal_game);
         }
         //Check if room is started
         else if(rooms[roomID].game.started){
-            res.redirect("/");
-            return;
+            return res.sendFile(default_paths.illegal_game);
         }
         //Else join the room
         else{
-            res.sendFile(path.resolve("frontend/html/room.html"));
+            res.sendFile(default_paths.room);
         }
     }catch{
         res.sendStatus(404);
     }
 })
 
-//room listing, so the user can get data
-//after room action has been taken...
+//room listing, so the user can get data after room action has been taken...
 app.get("/api/get-room-data", (req, res) => {
 
     const room_id = req.headers.room;
 
     //send the data to the user
-    res.json(rooms[room_id]);
+    if (rooms[room_id]){
+        return res.json(rooms[room_id]);
+    }else{
+        return res.sendStatus(404);
+    }
 });
 
 
 //Socket.io "routes"
 io.on("connection", (socket) => {
 
-    //Join a room
-    socket.on("join-room", (room_data) => {
-        // console.log(room_data);
-    })
-
     //Start the game
     socket.on("start-game", (room_data) => {
 
+        const player_amount = rooms[room_data.id].game.players.length;
+        const room_leader = rooms[room_data.id].game.leader
+        const next_room_id = rooms[room_data.id].game.next_game_id;
+        
         //check if player is leader
-        if(rooms[room_data.id].game.leader == room_data.player){
-            io.emit(`start-game:${room_data.id}`, "game started");
+        if(room_leader == room_data.player){
+            if(player_amount >= MIN_PLAYERS_PER_ROOM){
+                io.emit(`start-game:${room_data.id}`, next_room_id);
 
-            //Set the game to started
-            rooms[room_data.id].game.started = true;
+                //Set the game to started
+                rooms[room_data.id].game.started = true;
+            }else{
+                io.emit(`return-message:${room_data.id}`, "2 players required to start the game.");
+            }
         }
     });
 
+    //Player is joining
     socket.on("player-join", (data) => {
         const room_id = data.room_id;
         const player = data.player;
 
         //Check if player is already in the room
-        if(!rooms[room_id].game.players[player]){
-            socket.emit(`player-join:${room_id}`, player);
+        if(!rooms[room_id].game.players.includes(player)){
+
+            //Add player to the room
+            rooms[room_id].game.players = [
+                ...rooms[room_id].game.players,
+                player
+            ];
+            
+            //emit the players currently in the room
+            io.emit(`player-join:${room_id}`, rooms[room_id].game.players);
         }
     })
 })
