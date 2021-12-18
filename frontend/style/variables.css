@@ -1,0 +1,37 @@
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons+Round);
+ @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+ 
+ :root{
+	--bg-def: #f7f6fb;
+	--bg-sec: #2A348E;
+
+	--color-def: #353535;
+	--color-sec: #f7f6fb;
+	/*Navbar Variables*/
+	--nav-bg: #ffffff;
+	--nav-width: 14rem;
+	--menu-width: 80%;
+	--menu-item-active: #618cfb;
+
+	--header-height: 4rem;
+}.light{
+		--bg-def: #f7f6fb;
+	--bg-sec: #2A348E;
+
+	--color-def: #353535;
+	--color-sec: #f7f6fb;
+	/*Navbar Variables*/
+	--nav-bg: #ffffff;
+
+}
+.dark{
+	--bg-def: hsl(0, 0%, 8%);
+	--bg-sec: #2A348E;
+
+	--color-def: #ffffff;
+	--color-sec: #f7f6fb;
+	/*Navbar Variables*/
+	--nav-bg: hsl(0, 0%, 10%);
+	--header-bg: hsl(0, 0%, 9%);
+
+}
