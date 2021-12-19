@@ -25,18 +25,24 @@
 		<!-- Scripts -->
 		<script src="/socket.io/socket.io.js" defer></script>
 		<script src="https://artur.red/script/cookies.js" defer></script>
-		<script src="https://artur.red/script/room.js" defer></script>
+		<script src="https://artur.red/script/game/room.js" defer></script>
 
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/variables.css" />
 		<link rel="stylesheet" href="https://artur.red/style/style.css" />
 
 		<!-- Title -->
-		<title>Game</title>
+		<title>Game - Lobby</title>
 	</head>
 
 	<body>
-		<h1>Welcum to squid game!!!!!</h1>
+		<h1>ROOM MAN</h1>
+		<button id="start-button">Start game!</button>
 
+		<ul id="player-list"></ul>
+
+		<h4 id="player-count">0/16</h4>
+
+		<h2 id="error-message-output"></h2>
 	</body>
 </html>

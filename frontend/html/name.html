@@ -23,26 +23,26 @@
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
 		
 		<!-- Scripts -->
-		<script src="/socket.io/socket.io.js" defer></script>
 		<script src="https://artur.red/script/cookies.js" defer></script>
-		<script src="https://artur.red/script/room.js" defer></script>
+        <script src="https://artur.red/script/name-select.js" defer></script>
 
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/variables.css" />
 		<link rel="stylesheet" href="https://artur.red/style/style.css" />
 
 		<!-- Title -->
-		<title>Game - Lobby</title>
+		<title>Name Select</title>
 	</head>
 
 	<body>
-		<h1>ROOM MAN</h1>
-		<button id="start-button">Start game!</button>
+        <h2>Please select your name:</h2>
+        <div id="name-select">
+            <input type="text" id="name-input" placeholder="Enter your name here...">
+            <button id="submit-name">Submit name!</button>    
+        </div>
 
-		<ul id="player-list"></ul>
-
-		<h4 id="player-count">0/16</h4>
-
-		<h2 id="error-message-output"></h2>
+		<script>
+			const queued_room = "<%- room %>";
+		</script>
 	</body>
 </html>

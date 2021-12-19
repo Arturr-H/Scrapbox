@@ -13,7 +13,7 @@ main{
 	height: 100%;
 	width: 100%;
 	display: grid; 
-	grid-template-columns: 0.4fr 1.6fr 1fr; 
+	grid-template-columns: fit-content(100%) 1.6fr 1fr; 
 	grid-template-rows: 0.2fr 1.1fr 1fr; 
 	gap: 0px 0px; 
 	grid-template-areas: 
@@ -33,10 +33,12 @@ nav{
 	height: 100%;
 	background-color: var(--nav-bg);
 
+	min-width: 14rem;
+
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	border-right: 2px solid #ffffff0e;
+	border-right: 2px solid var(--border-color);
 }.nav-wrapper{
 	margin-top: 1rem;
 	width: var(--menu-width);
@@ -99,13 +101,19 @@ nav hr{
 	width: 2rem; 
 	height: 2rem;
 	color: var(--color-def);
-	opacity: .7;
+	opacity: .8;
 }.social-links svg:hover{
 	opacity: 1;
 }
 
 
-
+hr.vertical{
+	width: 1px;
+	height: 100%;
+	border: none;
+	border-right: 2px solid var(--border-color);
+	margin: 0 1rem; padding: 0;
+}
 
 
 header{
@@ -113,18 +121,67 @@ header{
 	/* height: var(--header-height); */
 	background-color: var(--header-bg);
 	
-	padding: 0 2rem;
+	padding: 0 2rem 0 5rem;
+	position: relative;
 
+
+	/*Center searchbar, and put profile to left*/
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 }
+.search-bar{
+	height: 2.5rem;
+	width: 20%; max-width: 30rem;
+	position: relative;
+
+	display: flex;
+	align-items: center;
+}
 
 .search{
-	width: 40%;
+	width: 100%;
+	height: 100%;
+	
+	padding-left: 2.6rem;
+
+	background-color: var(--nav-bg);
+	border: none;
+	border-radius: 5px;
+
+	font-size: 1rem;
+	font-weight: 400;
+	font-family: "Source Sans Pro", sans-serif;
+	color: var(--color-def);
+	border: 1px solid var(--nav-bg);
+
+	transition: border .1s ease-in-out;
+}.search::placeholder{
+	color: var(--color-def);
+
+	opacity: .7;
+}.search:focus{
+	outline: none;
+	border: 1px solid var(--color-def);
 }
 label[for="search"]{
 	position: absolute;
+	display: flex;
+	align-items: center;
+	left: 10px
+}label[for="search"] svg{
+	width: 1.3rem; 
+	height: 1.3rem;
+	color: var(--color-def);
+	opacity: .8;
+}
+
+
+.user{
+	position: relative;
+	display: flex;
+	align-items: center;
+	height: 2.5rem;
 }
 
 .body{

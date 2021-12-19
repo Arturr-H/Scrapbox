@@ -14,6 +14,11 @@ const PORT       = 8081;
 //Path for better path handling
 const path       = require("path");
 
+//Render HTML for variable passing.
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname);
+
 //cors for 3party requests
 const cors = require("cors");
 app.use(cors());
@@ -30,8 +35,9 @@ app.use(cookieParser());
 const default_paths = {
     illegal_game: path.resolve("frontend/html/error-pages/roomError.html"),
     home: path.resolve("frontend/html/index.html"),
-    room: path.resolve("frontend/html/room.html"),
-    game_room: path.resolve("frontend/html/game.html"),
+    room: path.resolve("frontend/html/game/room.html"),
+    game_room: path.resolve("frontend/html/game/game.html"),
+    name_select: path.resolve("frontend/html/name.html"),
 }
 
 //Mutational variables
@@ -42,45 +48,58 @@ const MAX_PLAYERS_PER_ROOM = 16;
 const MIN_PLAYERS_PER_ROOM = 2;
 
 //Express static folders
-app.use("/", express.static(path.join(__dirname, 'resources')))
-app.use("/script", express.static(path.join(__dirname, 'frontend/scripts')))
-app.use("/style", express.static(path.join(__dirname, 'frontend/style')))
-app.use("/page", express.static(path.join(__dirname, 'frontend/html')))
+app.use("/", express.static(path.join(__dirname, 'resources')));
+app.use("/script", express.static(path.join(__dirname, 'frontend/scripts')));
+app.use("/style", express.static(path.join(__dirname, 'frontend/style')));
+app.use("/page", express.static(path.join(__dirname, 'frontend/html')));
 
 //Express Routes    || STATIC PAGES ONLY ||
 app.get("/", (req, res) => {
-    res.sendFile(path.resolve("frontend/html/index.html"));
-})
+    res.sendFile(default_paths.home);
+});
 
 //Express Routes    || *NON STATIC PAGES ONLY ||
 
 //room creation
 app.get("/api/create-room", (req, res) => {
 
-    //crypto functionen som jag gjorde
+    //generate room code
     const roomcode = generate_roomcode();
-
-    //game leader.
     const leader = req.cookies["usnm"];
 
     //Create the room
     rooms[roomcode] = {
         roomcode: roomcode,
         game: {
-            players: [leader],
+            players: [],
             leader: leader,
             started: false,
             mature: false,
         }
     };
 
-    //send the user to the newly created room
-    res.redirect(`/room/${roomcode}`);
-})
+    //Check if user has a name, then redirect to the
+    //name selection page with the created room code
+    //so they automatically rejoin after selecting their name.
+    if( !req.cookies.usnm
+        || req.cookies.usnm == null
+        || req.cookies.usnm.length <= 2
+    ) return res.redirect(`/name/game-queue/${roomcode}`);
+
+    //send the user to the newly created room if they have a name.
+    return res.redirect(`/room/${roomcode}`);
+});
 
 //room joining
 app.get("/room/:roomID?", (req, res) => {
+
     const roomID = req.params.roomID;
+
+    //Check if user has a name
+    if( !req.cookies.usnm
+        || req.cookies.usnm == null
+        || req.cookies.usnm.length <= 2
+    ) return res.redirect(`/name/game-queue/${roomID}`);
 
     try{
         //Check if room exists
@@ -102,11 +121,20 @@ app.get("/room/:roomID?", (req, res) => {
     }catch{
         res.sendStatus(404);
     }
-})
+});
 //         | | | | LINKED  | | | |        //
 //game joining
 app.get("/game/:gameID?", (req, res) => {
+
     const game_id = req.params.gameID;
+
+    //Check if user has a name, a user should not be
+    //able to join a already started game, if they
+    //don't have a name, so we redirect them to home.
+    if( !req.cookies.usnm
+        || req.cookies.usnm == null
+        || req.cookies.usnm.length <= 2
+    ) return res.redirect("/");
 
     try{
         //Check if room exists
@@ -135,7 +163,7 @@ app.get("/game/:gameID?", (req, res) => {
     }catch{
         return res.sendFile(default_paths.illegal_game);
     }
-})
+});
 
 //room listing, so the user can get data after room action has been taken...
 app.get("/api/get-room-data", (req, res) => {
@@ -150,6 +178,14 @@ app.get("/api/get-room-data", (req, res) => {
     }
 });
 
+//name selection, and saves the game that is queued so
+//the user gets automatically redirected to the game after
+//they have selected their name.
+app.get("/name/game-queue/:id?", (req, res) => {
+    res.render(default_paths.name_select, {
+        room: req.params.id
+    });
+});
 
 //Socket.io "routes"
 io.on("connection", (socket) => {

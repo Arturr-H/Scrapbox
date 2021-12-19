@@ -1,15 +1,22 @@
 Frotnend:
 
-
+- header nabar
+- respoiseve sidebar
 
 Backend:
 
- - Start room ∆
- - not able to join room if aldready started ∆
- - only leader may start ∆
- - player listing ∆
- - actual start room ∆
- - minimum player start count ∆
- - A counter ∆
- - Cant join unstarted games. ∆
- - Cant join started games your not signed up for aka joined the waiting lobby. ∆
+ - Room & game creating : 
+    - Start room ∆
+    - not able to join room if aldready started ∆
+    - only leader may start ∆
+    - player listing ∆
+    - actual start room ∆
+    - minimum player start count ∆
+    - A counter ∆
+    - Cant join unstarted games. ∆
+    - Cant join started games your not signed up for aka joined the waiting lobby. ∆
+    
+     - MIN & MAX player per room ∆
+ 
+ - Name select:
+   - Auto redirect back to the game after name has been selected;
