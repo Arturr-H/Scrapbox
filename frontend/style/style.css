@@ -14,7 +14,7 @@ main{
 	width: 100%;
 	display: grid; 
 	grid-template-columns: fit-content(100%) 1.6fr 1fr; 
-	grid-template-rows: 0.2fr 1.1fr 1fr; 
+	grid-template-rows: 0.25fr 1.05fr 1fr; 
 	gap: 0px 0px; 
 	grid-template-areas: 
 		"Sidebar Header Header"
@@ -70,7 +70,19 @@ nav hr{
 	display: flex;
 	align-items: center;
 
+	user-select: none;
+
 	padding: .8rem 0 .8rem 1rem;
+}.nav-item.active .nav-link{
+	color: var(--color-sec);
+}.nav-item.active:after{
+	content: "";
+	position: absolute;
+	left: -1.5rem;
+	width: 7px;
+	height: 100%;
+	background-color: var(--color-sec);
+	border-radius: 100px;
 }
 .nav-link{
 	color: var(--color-def);
@@ -132,7 +144,7 @@ header{
 }
 .search-bar{
 	height: 2.5rem;
-	width: 20%; max-width: 30rem;
+	width: 40%; max-width: 35rem;
 	position: relative;
 
 	display: flex;
@@ -144,6 +156,7 @@ header{
 	height: 100%;
 	
 	padding-left: 2.6rem;
+	padding-right: 1rem;
 
 	background-color: var(--nav-bg);
 	border: none;
@@ -189,6 +202,72 @@ label[for="search"]{
 	background-color: var(--bg-def);
 }
 
+.body-wrapper{
+	margin-left: 5rem;
+	width: calc(100% - 10rem);
+}
+
+.header .header-card{
+	width: 80%;
+	border-radius: 20px;
+	background: linear-gradient(160deg, #e51fea -50%, #fa9848);
+	display: flex;
+	flex-flow: column;
+	padding: 1rem 1rem;
+}.header .header-card h1{
+	margin: 0; padding: 1rem 1rem;
+	font-size: 2.2rem;
+	color: var(--color-inverted);
+}.header-card .buttons{
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+
+	padding: 1rem 1rem;
+}.dots{
+	width: calc(80% + 2rem);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}.dots .dot{
+	width: 10px;
+	height: 10px;
+	padding: 1rem .5rem;
+}.dot span{
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: var(--border-color);
+	border-radius: 50%;
+}.dot.active span{
+	background-color: var(--color-sec);
+}
+
+button{
+	width: 9rem; height: 3.5rem;
+	/* padding: .8rem 3rem; */
+	border-radius: 1000px;
+	border: none;
+
+	font-size: 1.2rem;
+	border: 2px solid var(--color-inverted);
+	cursor: pointer;
+	mix-blend-mode: screen;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: .3rem;
+} button.inverted{
+	background: none;
+	mix-blend-mode: normal;
+	color: var(--color-inverted);
+	border: 2px solid var(--color-inverted);
+}button:hover{
+	opacity: .9;
+}
+
+
 
 
 .logo{
@@ -220,3 +299,12 @@ label[for="search"]{
 	font-weight: 400;
 	color: var(--color-def);
 }
+
+
+
+
+/*=-----------=/
+/              /
+/    Footer    /
+/              /
+/=-----------=*/

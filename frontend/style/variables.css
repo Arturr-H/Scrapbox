@@ -1,6 +1,7 @@
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons+Round);
- @import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Source+Sans+Pro&display=swap'); 
- :root{
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Source+Sans+Pro&display=swap'); 
+
+:root{
 	/* --bg-def: #f7f6fb;
 	--bg-sec: #2A348E;
 
@@ -14,27 +15,28 @@
 
 	--header-height: 4rem;
 }
+
 @media (prefers-color-scheme: light){
 	:root{
 		--bg-def: hsl(0, 0%, 95%);
 
 		--color-def: #333333;
-		--color-sec: #353535;
+		--color-sec: #f45172;
+		
 		/*Navbar Variables*/
 		--nav-bg: hsl(0, 0%, 98%);
-		--header-bg: hsl(0, 0%, 97%);
+		/* --header-bg: hsl(0, 0%, 97%); */
 
 		--border-color: #e5e5e5;
 	}
 }
-
 
 @media (prefers-color-scheme: dark){
 	:root{
 		--bg-def: #212236;
 
 		--color-def: #ffffff;
-		--color-sec: #f7f6fb;
+		--color-sec: #047cfd;
 
 		/*Navbar Variables*/
 		--nav-bg: #24293D;
@@ -43,3 +45,32 @@
 		--border-color: #2c3145;
 	}
 }
+
+.light{
+	--bg-def: #FBFBFB;
+
+	--color-def: #333333;
+	--color-inverted: #ffffff;
+	--color-sec: #f45172;
+	
+	/*Navbar Variables*/
+	--nav-bg: #ffffff;
+	/* --header-bg: hsl(0, 0%, 97%); */
+
+	--border-color: hsl(0, 0%, 97%);
+}
+
+.dark{
+	--bg-def: #212236;
+
+	--color-def: #ffffff;
+	--color-inverted: #ffffff;
+	--color-sec: #047cfd;
+
+	/*Navbar Variables*/
+	--nav-bg: #24293D;
+	/* --header-bg: hsl(0, 0%, 9%); */
+
+	--border-color: #2c3145;
+}
+

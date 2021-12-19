@@ -1,7 +1,7 @@
 Frotnend:
 
 - header nabar
-- respoiseve sidebar
+- respoiseve sidebar ∆
 
 Backend:
 
@@ -16,7 +16,18 @@ Backend:
     - Cant join unstarted games. ∆
     - Cant join started games your not signed up for aka joined the waiting lobby. ∆
     
-     - MIN & MAX player per room ∆
+    - MIN & MAX player per room ∆
+
+    Lobby Settings:
+      - Mature ∆
+      - Kick players (leader) ∆ 
+    
+     - smallcodes (integers)
+     - htACCES hide URL
  
  - Name select:
-   - Auto redirect back to the game after name has been selected;
+   - Auto redirect back to the game after name has been selected; ∆
+   
+
+  - Crash preventing: 
+    - done? ∆

@@ -26,6 +26,7 @@ app.use(cors());
 //Crypto for room code generation
 const crypto     = require("crypto");
 const generate_roomcode = () => crypto.randomBytes(32).toString("hex");
+const generate_small_code = () => parseInt(Math.random() * (10000000 - 1000000) + 1000000);
 
 //cookie parser
 const cookieParser = require("cookie-parser");
@@ -58,6 +59,22 @@ app.get("/", (req, res) => {
     res.sendFile(default_paths.home);
 });
 
+app.get("/:small_code?", (req, res) => {
+
+    const small_code = req.params.small_code;
+
+    Object.values(rooms).forEach(room => {
+
+        console.log(room)
+
+        if (room.small_code == small_code){
+            return res.redirect(`/room/${room.roomcode}`);
+        }
+    })
+
+    return res.sendStatus(404);
+})
+
 //Express Routes    || *NON STATIC PAGES ONLY ||
 
 //room creation
@@ -65,16 +82,22 @@ app.get("/api/create-room", (req, res) => {
 
     //generate room code
     const roomcode = generate_roomcode();
+    const small_code = generate_small_code();
     const leader = req.cookies["usnm"];
 
     //Create the room
     rooms[roomcode] = {
         roomcode: roomcode,
+        small_code: small_code,
+
         game: {
             players: [],
             leader: leader,
             started: false,
-            mature: false,
+
+            config: {
+                mature: false,
+            }
         }
     };
 
@@ -197,16 +220,20 @@ io.on("connection", (socket) => {
         const room_leader = rooms[room_data.id].game.leader
         const room_id = room_data.id;
         
-        //check if player is leader
-        if(room_leader == room_data.player){
-            if(player_amount >= MIN_PLAYERS_PER_ROOM){
-                io.emit(`start-game:${room_data.id}`, room_id);
+        try{
+            //check if player is leader
+            if(room_leader == room_data.player){
+                if(player_amount >= MIN_PLAYERS_PER_ROOM){
+                    io.emit(`start-game:${room_data.id}`, room_id);
 
-                //Set the game to started
-                rooms[room_data.id].game.started = true;
-            }else{
-                io.emit(`return-message:${room_data.id}`, "2 players required to start the game.");
+                    //Set the game to started
+                    rooms[room_data.id].game.started = true;
+                }else{
+                    io.emit(`return-message:${room_data.id}`, "2 players required to start the game.");
+                }
             }
+        }catch{
+            return false;
         }
     });
 
@@ -215,18 +242,74 @@ io.on("connection", (socket) => {
         const room_id = data.room_id;
         const player = data.player;
 
-        //Check if player is already in the room
-        if(!rooms[room_id].game.players.includes(player)){
+        try{
+            //Check if player is already in the room
+            if(!rooms[room_id].game.players.includes(player)){
 
-            //Add player to the room
-            rooms[room_id].game.players = [
-                ...rooms[room_id].game.players,
-                player
-            ];
-            
-            //emit the players currently in the room
-            io.emit(`player-join:${room_id}`, rooms[room_id].game.players);
+                //Add player to the room
+                rooms[room_id].game.players = [
+                    ...rooms[room_id].game.players,
+                    player
+                ];
+                
+                //emit the players currently in the room
+                io.emit(`player-join:${room_id}`, rooms[room_id].game.players);
+            }
+        }catch{
+            return false;
         }
+    })
+
+    //GAME CONFIGURATION -------------------
+    socket.on("config:mature-toggle", (room_data) => {
+        //Room_data contains "room", "mature" and "player".
+
+        const room_id = room_data.room;
+        const player = room_data.player;
+        const new_mature_value = room_data.mature;
+
+        try{
+            //First, check if the player is the leader, 
+            //because only the leader may change settings
+            if (rooms[room_id].game.leader == player){
+                //Then change the mature value to the one inputted
+                rooms[room_id].game.config.mature = new_mature_value;
+    
+                //send the data back to the other players.
+                io.emit(`config:mature-toggle:${room_id}`, new_mature_value)
+            }
+        }catch{
+            return false;
+        }
+
+    })
+
+    socket.on("config:user-kick", (data) => {
+        const kick_request = data.kick_request;
+        const kick_requester = data.kick_requester;
+        const room_id = data.room_id;
+
+
+        try{
+            //check if kick_requester is the leader
+            //of their room.
+            if (rooms[room_id].game.leader == kick_requester){
+                //remove the user from the list
+                rooms[room_id].game.players.splice(
+                    rooms[room_id].game.players.indexOf(kick_request),
+                    1
+                );
+        
+                //send the full player list back to the players.
+                io.emit(`config:user-kick:${room_id}`, {
+                    kicked_player: kick_request,
+                    new_player_list: rooms[room_id].game.players
+                });
+            }
+        }catch{
+            return false;
+        }
+            
     })
 })
 
