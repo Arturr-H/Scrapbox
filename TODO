@@ -11,3 +11,5 @@ Backend:
  - actual start room ∆
  - minimum player start count ∆
  - A counter ∆
+ - Cant join unstarted games. ∆
+ - Cant join started games your not signed up for aka joined the waiting lobby. ∆

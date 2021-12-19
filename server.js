@@ -31,6 +31,7 @@ const default_paths = {
     illegal_game: path.resolve("frontend/html/error-pages/roomError.html"),
     home: path.resolve("frontend/html/index.html"),
     room: path.resolve("frontend/html/room.html"),
+    game_room: path.resolve("frontend/html/game.html"),
 }
 
 //Mutational variables
@@ -70,8 +71,6 @@ app.get("/api/create-room", (req, res) => {
             leader: leader,
             started: false,
             mature: false,
-            
-            next_game_id: generate_roomcode()
         }
     };
 
@@ -104,6 +103,39 @@ app.get("/room/:roomID?", (req, res) => {
         res.sendStatus(404);
     }
 })
+//         | | | | LINKED  | | | |        //
+//game joining
+app.get("/game/:gameID?", (req, res) => {
+    const game_id = req.params.gameID;
+
+    try{
+        //Check if room exists
+        if(!rooms[game_id]){
+            return res.sendFile(default_paths.illegal_game);
+        }
+
+        //Check if user is in room
+        if(!rooms[game_id].game.players.includes(req.cookies["usnm"])){
+            return res.sendFile(default_paths.illegal_game);
+        }
+
+        //Check if game is started
+        else if(!rooms[game_id].game.started){
+            return res.sendFile(default_paths.illegal_game);
+        }
+
+        //Else join the room if its started
+        if (rooms[game_id].game.started){
+            res.sendFile(default_paths.game_room);
+        }
+
+        else{
+            return res.sendFile(default_paths.illegal_game);
+        }
+    }catch{
+        return res.sendFile(default_paths.illegal_game);
+    }
+})
 
 //room listing, so the user can get data after room action has been taken...
 app.get("/api/get-room-data", (req, res) => {
@@ -127,12 +159,12 @@ io.on("connection", (socket) => {
 
         const player_amount = rooms[room_data.id].game.players.length;
         const room_leader = rooms[room_data.id].game.leader
-        const next_room_id = rooms[room_data.id].game.next_game_id;
+        const room_id = room_data.id;
         
         //check if player is leader
         if(room_leader == room_data.player){
             if(player_amount >= MIN_PLAYERS_PER_ROOM){
-                io.emit(`start-game:${room_data.id}`, next_room_id);
+                io.emit(`start-game:${room_data.id}`, room_id);
 
                 //Set the game to started
                 rooms[room_data.id].game.started = true;

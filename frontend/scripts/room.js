@@ -68,8 +68,8 @@ start_button.addEventListener("click", () => {
     });
 });
 
-socket.on(`start-game:${room_id}`, (data) => {
-    console.log("game started");
+socket.on(`start-game:${room_id}`, (next_game_id) => {
+    window.open(`https://artur.red/game/${next_game_id}`, "_self");
 })
 
 // > > START HANDLER > >
