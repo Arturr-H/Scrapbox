@@ -22,6 +22,11 @@
 		<meta name="audience" content="Everyone">
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
 		
+		<!-- Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+
 		<!-- Scripts -->
 		<script src="/socket.io/socket.io.js" defer></script>
 
@@ -34,8 +39,89 @@
 	</head>
 
 	<body>
-		<h1 style="text-align: center; font-size: 12rem;">404</h1>
-        <h2 style="text-align: center;">Sorry! We could not find the room you were looking for!</h2>
-        <a href="https://artur.red" style="text-align: center; color: white;">Back to start</a>
+		<main>
+			<nav>
+				<div class="nav-wrapper">
+					<div class="logo">
+						<a class="logo-link" href="https://artur.red/">
+							<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/White_Circle.svg/2048px-White_Circle.svg.png" alt="">
+							<h1>Balls Co.</h1>
+						</a>
+					</div>
+					<ul class="nav-menu">
+						<li class="nav-item" >
+							<a href="https://artur.red" class="nav-link">
+								<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M16.2855 2H19.5521C20.9036 2 22 3.1059 22 4.47018V7.7641C22 9.12735 20.9036 10.2343 19.5521 10.2343H16.2855C14.933 10.2343 13.8366 9.12735 13.8366 7.7641V4.47018C13.8366 3.1059 14.933 2 16.2855 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M4.44892 2H7.71449C9.06703 2 10.1634 3.1059 10.1634 4.47018V7.7641C10.1634 9.12735 9.06703 10.2343 7.71449 10.2343H4.44892C3.09638 10.2343 2 9.12735 2 7.7641V4.47018C2 3.1059 3.09638 2 4.44892 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M4.44892 13.7657H7.71449C9.06703 13.7657 10.1634 14.8716 10.1634 16.2369V19.5298C10.1634 20.8941 9.06703 22 7.71449 22H4.44892C3.09638 22 2 20.8941 2 19.5298V16.2369C2 14.8716 3.09638 13.7657 4.44892 13.7657Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M16.2855 13.7657H19.5521C20.9036 13.7657 22 14.8716 22 16.2369V19.5298C22 20.8941 20.9036 22 19.5521 22H16.2855C14.933 22 13.8366 20.8941 13.8366 19.5298V16.2369C13.8366 14.8716 14.933 13.7657 16.2855 13.7657Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<p>Dashboard</p>
+							</a>
+						</li>
+						<hr>
+						<li class="nav-item">
+							<a href="room" class="nav-link">
+								<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M8.84825 12.314V16.059" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M10.759 14.1867H6.9379" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M15.3661 12.428H15.2591" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M17.1796 16.0026H17.0726" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M8.07217 2C8.07217 2.74048 8.68466 3.34076 9.44019 3.34076H10.4967C11.6623 3.34492 12.6065 4.27026 12.6118 5.41266V6.08771" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M16.4283 21.9626C13.4231 22.0135 10.473 22.0114 7.57275 21.9626C4.3535 21.9626 2 19.6664 2 16.5113V11.8617C2 8.70661 4.3535 6.41038 7.57275 6.41038C10.4889 6.36053 13.4411 6.36157 16.4283 6.41038C19.6476 6.41038 22 8.70764 22 11.8617V16.5113C22 19.6664 19.6476 21.9626 16.4283 21.9626Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<p>Games</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M11.9899 15.7961V11.3771" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M11.9899 8.20432H11.9999" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M16.3346 2.75021H7.66561C4.64461 2.75021 2.75061 4.88921 2.75061 7.91621V16.0842C2.75061 19.1112 4.63561 21.2502 7.66561 21.2502H16.3336C19.3646 21.2502 21.2506 19.1112 21.2506 16.0842V7.91621C21.2506 4.88921 19.3646 2.75021 16.3346 2.75021Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<p>News</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M11.4923 2.789H7.7533C4.6783 2.789 2.75031 4.966 2.75031 8.048V16.362C2.75031 19.444 4.6693 21.621 7.7533 21.621H16.5773C19.6623 21.621 21.5813 19.444 21.5813 16.362V12.334" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M8.8278 10.9209L16.3008 3.4479C17.2318 2.5179 18.7408 2.5179 19.6718 3.4479L20.8888 4.6649C21.8198 5.5959 21.8198 7.1059 20.8888 8.0359L13.3798 15.5449C12.9728 15.9519 12.4208 16.1809 11.8448 16.1809H8.0988L8.1928 12.4009C8.2068 11.8449 8.4338 11.3149 8.8278 10.9209Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M15.1652 4.60251L19.7312 9.16851" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>							
+								<p>Forum</p>
+							</a>
+						</li>
+						<hr>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M20.8066 7.62358L20.1842 6.54349C19.6576 5.62957 18.4907 5.31429 17.5755 5.83869V5.83869C17.1399 6.09531 16.6201 6.16812 16.1307 6.04106C15.6413 5.91399 15.2226 5.59749 14.9668 5.16134C14.8023 4.88412 14.7139 4.56836 14.7105 4.24601V4.24601C14.7254 3.72919 14.5304 3.22837 14.17 2.85764C13.8096 2.48691 13.3145 2.27783 12.7975 2.27805H11.5435C11.037 2.27804 10.5513 2.47988 10.194 2.83891C9.83667 3.19795 9.63716 3.68456 9.63959 4.19109V4.19109C9.62458 5.23689 8.77246 6.07678 7.72655 6.07667C7.4042 6.07332 7.08844 5.98491 6.81122 5.82038V5.82038C5.89605 5.29598 4.7291 5.61126 4.20252 6.52519L3.53433 7.62358C3.00839 8.53636 3.31938 9.70258 4.22998 10.2323V10.2323C4.82189 10.574 5.18652 11.2056 5.18652 11.889C5.18652 12.5725 4.82189 13.204 4.22998 13.5458V13.5458C3.32054 14.0719 3.00921 15.2353 3.53433 16.1453V16.1453L4.16591 17.2346C4.41263 17.6798 4.82659 18.0083 5.31618 18.1474C5.80577 18.2866 6.33062 18.2249 6.77461 17.976V17.976C7.21106 17.7213 7.73117 17.6515 8.21932 17.7822C8.70748 17.9128 9.12322 18.233 9.37415 18.6716C9.53868 18.9489 9.62709 19.2646 9.63044 19.587V19.587C9.63044 20.6435 10.4869 21.5 11.5435 21.5H12.7975C13.8505 21.5 14.7055 20.6491 14.7105 19.5961V19.5961C14.7081 19.088 14.9089 18.6 15.2681 18.2407C15.6274 17.8814 16.1155 17.6806 16.6236 17.6831C16.9452 17.6917 17.2596 17.7797 17.5389 17.9394V17.9394C18.4517 18.4653 19.6179 18.1543 20.1476 17.2437V17.2437L20.8066 16.1453C21.0617 15.7075 21.1318 15.186 21.0012 14.6963C20.8706 14.2067 20.5502 13.7893 20.111 13.5366V13.5366C19.6717 13.2839 19.3514 12.8665 19.2208 12.3769C19.0902 11.8873 19.1602 11.3658 19.4153 10.9279C19.5812 10.6383 19.8214 10.3982 20.111 10.2323V10.2323C21.0161 9.70286 21.3264 8.54346 20.8066 7.63274V7.63274V7.62358Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<circle cx="12.1751" cy="11.889" r="2.63616" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<p>Settings</p>
+							</a>
+						</li>
+					</ul>
+					<div class="social-links">
+						<a href="https://github.com/Arturr-H/NamePlease" target="_blank">
+							<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Logo Github</title><path d="M256 32C132.3 32 32 134.9 32 261.7c0 101.5 64.2 187.5 153.2 217.9a17.56 17.56 0 003.8.4c8.3 0 11.5-6.1 11.5-11.4 0-5.5-.2-19.9-.3-39.1a102.4 102.4 0 01-22.6 2.7c-43.1 0-52.9-33.5-52.9-33.5-10.2-26.5-24.9-33.6-24.9-33.6-19.5-13.7-.1-14.1 1.4-14.1h.1c22.5 2 34.3 23.8 34.3 23.8 11.2 19.6 26.2 25.1 39.6 25.1a63 63 0 0025.6-6c2-14.8 7.8-24.9 14.2-30.7-49.7-5.8-102-25.5-102-113.5 0-25.1 8.7-45.6 23-61.6-2.3-5.8-10-29.2 2.2-60.8a18.64 18.64 0 015-.5c8.1 0 26.4 3.1 56.6 24.1a208.21 208.21 0 01112.2 0c30.2-21 48.5-24.1 56.6-24.1a18.64 18.64 0 015 .5c12.2 31.6 4.5 55 2.2 60.8 14.3 16.1 23 36.6 23 61.6 0 88.2-52.4 107.6-102.3 113.3 8 7.1 15.2 21.1 15.2 42.5 0 30.7-.3 55.5-.3 63 0 5.4 3.1 11.5 11.4 11.5a19.35 19.35 0 004-.4C415.9 449.2 480 363.1 480 261.7 480 134.9 379.7 32 256 32z" stroke="currentColor" fill="currentColor"/></svg>
+						</a>
+						<a href="#">
+							<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Logo Instagram</title><path d="M349.33 69.33a93.62 93.62 0 0193.34 93.34v186.66a93.62 93.62 0 01-93.34 93.34H162.67a93.62 93.62 0 01-93.34-93.34V162.67a93.62 93.62 0 0193.34-93.34h186.66m0-37.33H162.67C90.8 32 32 90.8 32 162.67v186.66C32 421.2 90.8 480 162.67 480h186.66C421.2 480 480 421.2 480 349.33V162.67C480 90.8 421.2 32 349.33 32z" stroke="currentColor" fill="currentColor"/><path d="M377.33 162.67a28 28 0 1128-28 27.94 27.94 0 01-28 28zM256 181.33A74.67 74.67 0 11181.33 256 74.75 74.75 0 01256 181.33m0-37.33a112 112 0 10112 112 112 112 0 00-112-112z" stroke="currentColor" fill="currentColor"/></svg>
+						</a>
+						<a href="#">
+							<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Logo Twitter</title><path d="M496 109.5a201.8 201.8 0 01-56.55 15.3 97.51 97.51 0 0043.33-53.6 197.74 197.74 0 01-62.56 23.5A99.14 99.14 0 00348.31 64c-54.42 0-98.46 43.4-98.46 96.9a93.21 93.21 0 002.54 22.1 280.7 280.7 0 01-203-101.3A95.69 95.69 0 0036 130.4c0 33.6 17.53 63.3 44 80.7A97.5 97.5 0 0135.22 199v1.2c0 47 34 86.1 79 95a100.76 100.76 0 01-25.94 3.4 94.38 94.38 0 01-18.51-1.8c12.51 38.5 48.92 66.5 92.05 67.3A199.59 199.59 0 0139.5 405.6a203 203 0 01-23.5-1.4A278.68 278.68 0 00166.74 448c181.36 0 280.44-147.7 280.44-275.8 0-4.2-.11-8.4-.31-12.5A198.48 198.48 0 00496 109.5z" stroke="currentColor" fill="currentColor"/></svg>
+						</a>
+					</div>
+				</div>
+			</nav>
+			<div class="body">
+				<h1 style="text-align: center; font-size: 12rem;">404</h1>
+				<h2 style="text-align: center;">Sorry! We could not find the room you were looking for! <a href="https://artur.red">Back to start</a></h2>
+			</div>
+		</main>
 	</body>
 </html>
