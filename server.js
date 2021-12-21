@@ -222,16 +222,19 @@ app.get("/game/:gameID?", (req, res) => {
     try{
         //Check if room exists
         if(!rooms[game_id]){
+            console.log("1")
             return res.sendFile(default_paths.illegal_game);
         }
 
         //Check if user is in room
-        if(!rooms[game_id].game.players.includes(req.cookies["usnm"])){
+        if(!rooms[game_id].game.players.find(x => x.player === req.cookies.usnm)){
+            console.log("2")
             return res.sendFile(default_paths.illegal_game);
         }
 
         //Check if game is started
         else if(!rooms[game_id].game.started){
+            console.log("3")
             return res.sendFile(default_paths.illegal_game);
         }
 
@@ -241,6 +244,7 @@ app.get("/game/:gameID?", (req, res) => {
         }
 
         else{
+            console.log("4")
             return res.sendFile(default_paths.illegal_game);
         }
     }catch{
