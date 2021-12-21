@@ -10,9 +10,17 @@ const error_out = document.getElementById("error-message-output");
 const player_count = document.getElementById("player-count");
 
 const toggle_mature = document.getElementById("mature-toggle");
+const lobby_short_id = document.getElementById("lobby-short-id");
 
 //mini functions
-const display_players = (players) => players.map(player => `<li>${player}</li>`).join("");
+const display_players = (players) => players.map(player_obj => `
+    <li class="player">
+        <img src="https://artur.red/profile-images/pi-${player_obj.pfp}.png" alt="profile image">
+        <p>${player_obj.player}</p>
+
+        <span class="kick-button" onclick="kick_user('${player_obj.player}')">+</span>
+    </li>
+`).join("");
 const display_player_count = (players) => player_count.innerHTML = `<h4>${players.length}/16</h4>`;
 
 
@@ -21,7 +29,8 @@ const display_player_count = (players) => player_count.innerHTML = `<h4>${player
 //Send that the player has joined the game
 socket.emit("player-join", {
     room_id: room_id,
-    player: getCookie("usnm")
+    player: getCookie("usnm"),
+    pfp: getCookie("pfp"),
 });
 
 //When other players join
@@ -49,6 +58,9 @@ socket.on(`player-join:${room_id}`, (data) => {
 
         player_list.innerHTML = display_players(players);
         display_player_count(players);
+
+        //display the lobby ID (short one)
+        lobby_short_id.innerHTML = room_data_json.small_code;
 
     }catch{
         console.log("error");

@@ -29,18 +29,21 @@
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/variables.css" />
 		<link rel="stylesheet" href="https://artur.red/style/style.css" />
+		<link rel="stylesheet" href="https://artur.red/style/global.css" />
 
 		<!-- Title -->
 		<title>Funny Game Collection</title>
 	</head>
 
-	<body class="light">
+	<body class="dark">
 		<main>
 			<nav>
 				<div class="nav-wrapper">
 					<div class="logo">
-						<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/White_Circle.svg/2048px-White_Circle.svg.png" alt="">
-						<h1>Balls Co.</h1>
+						<a class="logo-link" href="https://artur.red/">
+							<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/White_Circle.svg/2048px-White_Circle.svg.png" alt="">
+							<h1>Balls Co.</h1>
+						</a>
 					</div>
 					<ul class="nav-menu">
 						<li class="nav-item active" >
@@ -56,7 +59,7 @@
 						</li>
 						<hr>
 						<li class="nav-item">
-							<a href="#" class="nav-link">
+							<a href="room" class="nav-link">
 								<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M8.84825 12.314V16.059" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 									<path d="M10.759 14.1867H6.9379" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -123,14 +126,17 @@
 					</label>
 				</div>
 				<div class="user">
-					<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M3.50083 13.7871V13.5681C3.53295 12.9202 3.7406 12.2925 4.10236 11.7496C4.7045 11.0975 5.1167 10.2983 5.29571 9.43598C5.29571 8.7695 5.29571 8.0935 5.35393 7.42703C5.65469 4.21842 8.82728 2 11.9611 2H12.0387C15.1725 2 18.345 4.21842 18.6555 7.42703C18.7137 8.0935 18.6555 8.7695 18.704 9.43598C18.8854 10.3003 19.2972 11.1019 19.8974 11.7591C20.2618 12.2972 20.4698 12.9227 20.4989 13.5681V13.7776C20.5206 14.648 20.2208 15.4968 19.6548 16.1674C18.907 16.9515 17.8921 17.4393 16.8024 17.5384C13.607 17.8812 10.383 17.8812 7.18762 17.5384C6.09914 17.435 5.08576 16.9479 4.33521 16.1674C3.778 15.4963 3.48224 14.6526 3.50083 13.7871Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-						<path d="M9.55493 20.8518C10.0542 21.4784 10.7874 21.884 11.5922 21.9787C12.3971 22.0734 13.2072 21.8495 13.8433 21.3564C14.0389 21.2106 14.2149 21.041 14.3672 20.8518" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					</svg>
+					<div class="notification active">
+						<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd" clip-rule="evenodd" d="M3.50083 13.7871V13.5681C3.53295 12.9202 3.7406 12.2925 4.10236 11.7496C4.7045 11.0975 5.1167 10.2983 5.29571 9.43598C5.29571 8.7695 5.29571 8.0935 5.35393 7.42703C5.65469 4.21842 8.82728 2 11.9611 2H12.0387C15.1725 2 18.345 4.21842 18.6555 7.42703C18.7137 8.0935 18.6555 8.7695 18.704 9.43598C18.8854 10.3003 19.2972 11.1019 19.8974 11.7591C20.2618 12.2972 20.4698 12.9227 20.4989 13.5681V13.7776C20.5206 14.648 20.2208 15.4968 19.6548 16.1674C18.907 16.9515 17.8921 17.4393 16.8024 17.5384C13.607 17.8812 10.383 17.8812 7.18762 17.5384C6.09914 17.435 5.08576 16.9479 4.33521 16.1674C3.778 15.4963 3.48224 14.6526 3.50083 13.7871Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M9.55493 20.8518C10.0542 21.4784 10.7874 21.884 11.5922 21.9787C12.3971 22.0734 13.2072 21.8495 13.8433 21.3564C14.0389 21.2106 14.2149 21.041 14.3672 20.8518" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+
 					<hr class="vertical">
 					<div class="profile">
-						<p>Xx_Sexmaster_xX</p>
-						<img src="https://t3.rbxcdn.com/82713f915f2d7576bb88c1ffc3a9c8ca" alt="">
+						<p>John Doe</p>
+						<img src="https://i.ibb.co/MMG8p9j/164260.jpg" alt="">
 					</div>
 				</div>
 				
@@ -138,28 +144,79 @@
 			<div class="body">
 				<div class="body-wrapper">
 					<div class="header">
-						<div class="header-card">
-							<h1>Play our latest game<br>Find the Cumsock</h1>
-							<div class="buttons">
-								<button>
-									Play
-									<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C17.5228 2 22 6.47716 22 12C22 17.5228 17.5228 22 12 22C6.47716 22 2 17.5228 2 12C2 6.47716 6.47716 2 12 2Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-										<path fill-rule="evenodd" clip-rule="evenodd" d="M15.0501 12.4669C14.3211 13.2529 12.3371 14.5829 11.3221 15.0099C11.1601 15.0779 10.7471 15.2219 10.6581 15.2239C10.4691 15.2299 10.2871 15.1239 10.1991 14.9539C10.1651 14.8879 10.0651 14.4569 10.0331 14.2649C9.93811 13.6809 9.88911 12.7739 9.89011 11.8619C9.88911 10.9049 9.94211 9.95489 10.0481 9.37689C10.0761 9.22089 10.1581 8.86189 10.1821 8.80389C10.2271 8.69589 10.3091 8.61089 10.4081 8.55789C10.4841 8.51689 10.5711 8.49489 10.6581 8.49789C10.7471 8.49989 11.1091 8.62689 11.2331 8.67589C12.2111 9.05589 14.2801 10.4339 15.0401 11.2439C15.1081 11.3169 15.2951 11.5129 15.3261 11.5529C15.3971 11.6429 15.4321 11.7519 15.4321 11.8619C15.4321 11.9639 15.4011 12.0679 15.3371 12.1549C15.3041 12.1999 15.1131 12.3999 15.0501 12.4669Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-									</svg>
-								</button>
-								<button class="inverted">Explore</button>
+						<div class="slides">
+							<div class="slide">
+								<h1>Play our latest game<br>Scrapbox</h1>
+								<div class="buttons">
+									<button>
+										Play
+										<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C17.5228 2 22 6.47716 22 12C22 17.5228 17.5228 22 12 22C6.47716 22 2 17.5228 2 12C2 6.47716 6.47716 2 12 2Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M15.0501 12.4669C14.3211 13.2529 12.3371 14.5829 11.3221 15.0099C11.1601 15.0779 10.7471 15.2219 10.6581 15.2239C10.4691 15.2299 10.2871 15.1239 10.1991 14.9539C10.1651 14.8879 10.0651 14.4569 10.0331 14.2649C9.93811 13.6809 9.88911 12.7739 9.89011 11.8619C9.88911 10.9049 9.94211 9.95489 10.0481 9.37689C10.0761 9.22089 10.1581 8.86189 10.1821 8.80389C10.2271 8.69589 10.3091 8.61089 10.4081 8.55789C10.4841 8.51689 10.5711 8.49489 10.6581 8.49789C10.7471 8.49989 11.1091 8.62689 11.2331 8.67589C12.2111 9.05589 14.2801 10.4339 15.0401 11.2439C15.1081 11.3169 15.2951 11.5129 15.3261 11.5529C15.3971 11.6429 15.4321 11.7519 15.4321 11.8619C15.4321 11.9639 15.4011 12.0679 15.3371 12.1549C15.3041 12.1999 15.1131 12.3999 15.0501 12.4669Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</button>
+									<button class="inverted">Explore</button>
+								</div>
+	
+								<img src="https://artur.red/images/asdas.png" alt="">
+							</div>
+							<div class="slide" style="background: url(https://images.unsplash.com/photo-1490367605959-06955305859b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80) center center">
+								<h1>I just quit my job<br>For youtube</h1>
+								<div class="buttons">
+									<button>
+										Play
+										<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C17.5228 2 22 6.47716 22 12C22 17.5228 17.5228 22 12 22C6.47716 22 2 17.5228 2 12C2 6.47716 6.47716 2 12 2Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M15.0501 12.4669C14.3211 13.2529 12.3371 14.5829 11.3221 15.0099C11.1601 15.0779 10.7471 15.2219 10.6581 15.2239C10.4691 15.2299 10.2871 15.1239 10.1991 14.9539C10.1651 14.8879 10.0651 14.4569 10.0331 14.2649C9.93811 13.6809 9.88911 12.7739 9.89011 11.8619C9.88911 10.9049 9.94211 9.95489 10.0481 9.37689C10.0761 9.22089 10.1581 8.86189 10.1821 8.80389C10.2271 8.69589 10.3091 8.61089 10.4081 8.55789C10.4841 8.51689 10.5711 8.49489 10.6581 8.49789C10.7471 8.49989 11.1091 8.62689 11.2331 8.67589C12.2111 9.05589 14.2801 10.4339 15.0401 11.2439C15.1081 11.3169 15.2951 11.5129 15.3261 11.5529C15.3971 11.6429 15.4321 11.7519 15.4321 11.8619C15.4321 11.9639 15.4011 12.0679 15.3371 12.1549C15.3041 12.1999 15.1131 12.3999 15.0501 12.4669Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</button>
+									<button class="inverted">Explore</button>
+								</div>
+	
+								<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Mark_Rober_2020.jpg/640px-Mark_Rober_2020.jpg" alt="">
+							</div>
+							<div class="slide" style="background: url(https://images.unsplash.com/photo-1586626299432-314f103d655d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fGxpemFyZHxlbnwwfDB8MHx8&auto=format&fit=crop&w=500&q=60) center center">
+								<h1>These are my people<br>"si vessa dout data"</h1>
+								<div class="buttons">
+									<button>
+										Agree
+										<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C17.5228 2 22 6.47716 22 12C22 17.5228 17.5228 22 12 22C6.47716 22 2 17.5228 2 12C2 6.47716 6.47716 2 12 2Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+											<path fill-rule="evenodd" clip-rule="evenodd" d="M15.0501 12.4669C14.3211 13.2529 12.3371 14.5829 11.3221 15.0099C11.1601 15.0779 10.7471 15.2219 10.6581 15.2239C10.4691 15.2299 10.2871 15.1239 10.1991 14.9539C10.1651 14.8879 10.0651 14.4569 10.0331 14.2649C9.93811 13.6809 9.88911 12.7739 9.89011 11.8619C9.88911 10.9049 9.94211 9.95489 10.0481 9.37689C10.0761 9.22089 10.1581 8.86189 10.1821 8.80389C10.2271 8.69589 10.3091 8.61089 10.4081 8.55789C10.4841 8.51689 10.5711 8.49489 10.6581 8.49789C10.7471 8.49989 11.1091 8.62689 11.2331 8.67589C12.2111 9.05589 14.2801 10.4339 15.0401 11.2439C15.1081 11.3169 15.2951 11.5129 15.3261 11.5529C15.3971 11.6429 15.4321 11.7519 15.4321 11.8619C15.4321 11.9639 15.4011 12.0679 15.3371 12.1549C15.3041 12.1999 15.1131 12.3999 15.0501 12.4669Z" stroke="#200E32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</button>
+									<button class="inverted">Nah fuck you</button>
+								</div>
+	
+								<img src="https://cdn.sweclockers.com/artikel/bild/86810?l=eyJyZXNvdXJjZSI6IlwvYXJ0aWtlbFwvYmlsZFwvODY4MTAiLCJmaWx0ZXJzIjpbImM9MCwxMzgsMTUwMCw4MDciLCJ0PXBhbmVCYW5uZXIiXSwicGFyYW1zIjp7ImNhY2hlQnVzdGVyIjoiMjAyMTA1MDEifSwia2V5IjoiMmI2MDZjNDEyNGY0MjMwMjE4MWI3OTg1NGZmODRkZjgifQ%3D%3D" alt="">
 							</div>
 						</div>
 						<div class="dots">
-							<a href="javascript:void(0)" class="dot active" aria-label="dot"><span></span></a>
-							<a href="javascript:void(0)" class="dot" aria-label="dot"><span></span></a>
-							<a href="javascript:void(0)" class="dot" aria-label="dot"><span></span></a>
+							<a href="javascript:void(0)" class="dot active" aria-label="dot" onclick="setPage(1)"><span></span></a>
+							<a href="javascript:void(0)" class="dot" aria-label="dot" onclick="setPage(2)"><span></span></a>
+							<a href="javascript:void(0)" class="dot" aria-label="dot" onclick="setPage(3)"><span></span></a>
 							
 						</div>
 					</div>
+					<hr>
+					<div class="question">
+						<div class="card">
+							<h1>Game 1</h1>
+						</div>
+						<div class="card">
+							<h1>Game 2</h1>
+						</div>
+						<div class="card">
+							<h1>Game 3</h1>
+						</div>
+
+					</div>
 				</div>
-				
+
+				<form action="" id="idea-form">
+					<input id="idea-text" type="text" placeholder="Enter text...">
+					<input type="submit" style="display: none;">
+				</form>
 			</div>
 		</main>
 	</body>

@@ -14,6 +14,10 @@
 	--menu-item-active: #618cfb;
 
 	--header-height: 4rem;
+
+	--1-1: 0; /*ok basically this means that you take number one and number two and like add the toghether you know. */
+
+	--UI-scale: .85; /*UI scale for all elements*/
 }
 
 @media (prefers-color-scheme: light){
@@ -58,6 +62,8 @@
 	/* --header-bg: hsl(0, 0%, 97%); */
 
 	--border-color: hsl(0, 0%, 97%);
+
+	--dot-color: hsl(0, 0%, 83%);
 }
 
 .dark{
@@ -72,5 +78,7 @@
 	/* --header-bg: hsl(0, 0%, 9%); */
 
 	--border-color: #2c3145;
+	--dot-color: hsl(237, 16%, 35%);
+
 }
 

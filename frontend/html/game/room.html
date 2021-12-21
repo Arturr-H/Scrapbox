@@ -27,25 +27,59 @@
 		<script src="https://artur.red/script/cookies.js" defer></script>
 		<script src="https://artur.red/script/game/room.js" defer></script>
 
+
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/variables.css" />
-		<link rel="stylesheet" href="https://artur.red/style/style.css" />
+		<link rel="stylesheet" href="https://artur.red/style/room.css" />
+		<link rel="stylesheet" href="https://artur.red/style/global.css" />
+
 
 		<!-- Title -->
 		<title>Game - Lobby</title>
 	</head>
 
-	<body>
-		<h1>ROOM MAN</h1>
-		<button id="start-button">Start game!</button>
+	<body class="light">
+		<main>
+			<nav>
+				<div class="nav-wrapper">
+					<div class="logo">
+						<a class="logo-link" href="https://artur.red/">
+							<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/White_Circle.svg/2048px-White_Circle.svg.png" alt="">
+							<h1>Balls Co.</h1>
+						</a>
+					</div>
+					<hr>
+					<ul class="player-list" id="player-list">
 
-		<ul id="player-list"></ul>
+					</ul>
+					<hr>
+					<h4 id="player-count">0/16</h4>
+				</div>
+			</nav>
+			<header>
+				<div class="notch">
+					<div class="code">
+						<h1 id="lobby-short-id"></h1>
+					</div>
+				</div>
+			</header>
 
-		<h4 id="player-count">0/16</h4>
+			<button id="start-button">Start game!</button>
+			<input type="checkbox" id="mature-toggle">
+			<h2 id="error-message-output"></h2>
+		</main>
 
-		<h2 id="error-message-output"></h2>
-
-		<input type="checkbox" id="mature-toggle">
 		
+		<!-- <div class="body">
+			<h1>Lobby Room</h1>
+			<button id="start-button">Start game!</button>
+			<ul id="player-list"></ul>
+			
+			<h4 id="player-count">0/16</h4>
+			
+			<h2 id="error-message-output"></h2>
+	
+			<input type="checkbox" id="mature-toggle">
+		</div> -->
 	</body>
 </html>

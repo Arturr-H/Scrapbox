@@ -22,12 +22,22 @@ Backend:
       - Mature ∆
       - Kick players (leader) ∆ 
     
-     - smallcodes (integers)
-     - htACCES hide URL
+     - smallcodes (integers) ∆
+     - rooms should only be joinable from smallcodes, not urls. ∆
+    
+     - Players should join on smallcode execution, not the url.. ∆
+     This means that users will not be able to directly join  a url, they are forced to have the smallcode. ∆
+
+      -Lobby input
+      - lobby ID output
  
- - Name select:
-   - Auto redirect back to the game after name has been selected; ∆
-   
+
+    EMOJIS AS PFP EMOJIS AS PFP
+
+
+  - Name select:
+    - Auto redirect back to the game after name has been selected; ∆
+
 
   - Crash preventing: 
     - done? ∆

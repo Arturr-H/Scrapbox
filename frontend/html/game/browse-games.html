@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#000000" />
+		<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+		<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+		<!-- Meta -->
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="keywords" content="Artur.red">
+		<meta name="author" content="Artur Hoffsummer, Aaron Clauss">
+		<meta name="publisher" content="Artur Hoffsummer, Aaron Clauss">
+		<meta name="copyright" content="Artur Hoffsummer, Aaron Clauss">
+		<meta name="description" content="Funny Game Collection (go ghahehi)">
+		<meta name="page-type" content="Games">
+		<meta name="audience" content="Everyone">
+
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
+		
+		<!-- Scripts -->
+		<script src="/socket.io/socket.io.js" defer></script>
+		<script src="https://artur.red/script/cookies.js" defer></script>
+		<script src="https://artur.red/script/game/game-join.js" defer></script>
+
+
+		<!-- Styles -->
+		<link rel="stylesheet" href="https://artur.red/style/variables.css" />
+		<link rel="stylesheet" href="https://artur.red/style/room.css" />
+		<link rel="stylesheet" href="https://artur.red/style/global.css" />
+
+		<!-- Title -->
+		<title>Browse Games</title>
+	</head>
+
+	<body class="dark">
+
+		<div class="logo top">
+			<a class="logo-link" href="https://artur.red/">
+				<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/White_Circle.svg/2048px-White_Circle.svg.png" alt="">
+				<h1>Balls Co.</h1>
+			</a>
+		</div>
+
+		<div class="main-block-container">
+			<div class="box main-block simple">
+				<h1>Rooms</h1>
+
+				<div class="room-list">
+					<div class="room">
+						<h3>1/16</h3>
+						<h3>Mature</h3>
+						<h3>Artur</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>3/16</h3>
+						<h3>Regular</h3>
+						<h3>Someone</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>15/16</h3>
+						<h3>Mature</h3>
+						<h3>Jon doe</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>0/16</h3>
+						<h3>Mature</h3>
+						<h3>No one</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>5/16</h3>
+						<h3>Regular</h3>
+						<h3>Hashalla</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>1/16</h3>
+						<h3>Mature</h3>
+						<h3>Artur</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>3/16</h3>
+						<h3>Regular</h3>
+						<h3>Someone</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>15/16</h3>
+						<h3>Mature</h3>
+						<h3>Jon doe</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>0/16</h3>
+						<h3>Mature</h3>
+						<h3>No one</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>5/16</h3>
+						<h3>Regular</h3>
+						<h3>Hashalla</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>1/16</h3>
+						<h3>Mature</h3>
+						<h3>Artur</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>3/16</h3>
+						<h3>Regular</h3>
+						<h3>Someone</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>15/16</h3>
+						<h3>Mature</h3>
+						<h3>Jon doe</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>0/16</h3>
+						<h3>Mature</h3>
+						<h3>No one</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>5/16</h3>
+						<h3>Regular</h3>
+						<h3>Hashalla</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>1/16</h3>
+						<h3>Mature</h3>
+						<h3>Artur</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>3/16</h3>
+						<h3>Regular</h3>
+						<h3>Someone</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>15/16</h3>
+						<h3>Mature</h3>
+						<h3>Jon doe</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>0/16</h3>
+						<h3>Mature</h3>
+						<h3>No one</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+					<div class="room">
+						<h3>5/16</h3>
+						<h3>Regular</h3>
+						<h3>Hashalla</h3>
+						<img src="https://artur.red/icons/light/Login.svg" alt="join">
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

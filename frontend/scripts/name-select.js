@@ -14,6 +14,16 @@ submit_name.addEventListener('click', () => {
 
     else{
         setCookie("usnm", name_input.value, 30);
-        window.open(`/room/${queued_room}`, "_self");
+
+        if (queued_room != "none"){
+            window.open(`/${queued_room}`, "_self");
+        }else{
+            window.open(`https://artur.red`, "_self");
+        }
     }
 });
+
+
+const select_image = (img) => {
+    setCookie("pfp", img, 30);
+}
