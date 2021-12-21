@@ -206,7 +206,7 @@ input[type="checkbox"]{
 
 	margin-left: 1vmax;
 }
-label{
+.block > label{
 	width: 5vmax;
 	height: 2.5vmax;
 	box-sizing: border-box;
@@ -219,13 +219,13 @@ label{
 
 	background: rgb(233, 82, 82);
 }
-input[type=checkbox]:checked + label{
+input[type="checkbox"]:checked + label{
 	background:#55e868;
 }
-input[type=checkbox]:checked + label:before{
+input[type="checkbox"]:checked + label:before{
 	left: calc(100% - 2.1vmax);
 }
-label:before{
+.block > label:before{
 	transition: left .2s ease;
 	content: '';
 	width: 1.8vmax;

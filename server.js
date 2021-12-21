@@ -113,7 +113,7 @@ app.get("/api/create-room", (req, res) => {
             started: false,
             config: {
                 mature: false,
-                private: true,
+                public: true,
             }
         }
     };
@@ -139,11 +139,11 @@ app.get("/browse", (req, res) => {
 })
 //Browse games functionality (API)
 app.get("/api/browse", (req, res) => {
-    //only send the rooms that are not private
+    //only send the rooms that are public
     const rooms_to_send = {};
     
     for(let room in rooms) {
-        if(!rooms[room].game.config.private) {
+        if(rooms[room].game.config.public) {
             rooms_to_send[room] = rooms[room];
         }
     }
@@ -337,22 +337,27 @@ io.on("connection", (socket) => {
     })
 
     //GAME CONFIGURATION -------------------
-    socket.on("config:mature-toggle", (room_data) => {
-        //Room_data contains "room", "mature" and "player".
+    socket.on("config:settings-toggle", (data) => {
 
-        const room_id = room_data.room;
-        const player = room_data.player;
-        const new_mature_value = room_data.mature;
+        const room_id = data.room;
+        const player = data.player;
+        const new_value = data.new_value;
+        const setting = data.setting;
 
         try{
             //First, check if the player is the leader, 
             //because only the leader may change settings
             if (rooms[room_id].game.leader == player){
-                //Then change the mature value to the one inputted
-                rooms[room_id].game.config.mature = new_mature_value;
-    
+                //Then change the setting value to the one inputted
+                rooms[room_id].game.config[setting] = new_value;
+
                 //send the data back to the other players.
-                io.emit(`config:mature-toggle:${room_id}`, new_mature_value)
+                io.emit(`config:settings-toggle:${room_id}`, {
+                    room: rooms[room_id].game,
+                    player: player,
+                    setting: setting,
+                    new_value: new_value
+                });
             }
         }catch{
             return false;

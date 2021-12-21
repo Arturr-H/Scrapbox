@@ -123,23 +123,34 @@ socket.on(`return-message:${room_id}`, (message) => {
 
 
 toggle_mature.addEventListener("click", () => {
-    socket.emit(`config:mature-toggle`, {
+    socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: getCookie("usnm"),
-        mature: toggle_mature.checked
+        new_value: toggle_mature.checked,
+        setting: "mature"
     })
 });
+
 
 toggle_public.addEventListener("click", () => {
-    socket.emit(`config:public-toggle`, {
+    socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: getCookie("usnm"),
-        public: toggle_public.checked
+        new_value: toggle_public.checked,
+        setting: "public"
     })
 });
 
-socket.on(`config:mature-toggle:${room_id}`, (new_mature) => {
-    notice(`Mature mode is now ${new_mature ? "on" : "off"}`);
+socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
+    notice(`${new_data.player} has changed the ${new_data.setting} setting to ${new_data.new_value}`);
+
+    //set the checkbox to the new value
+    if (new_data.setting == "mature") {
+        toggle_mature.checked = new_data.new_value;
+    }
+    if (new_data.setting == "public") {
+        toggle_public.checked = new_data.new_value;
+    }
 });
 
 // maturity
