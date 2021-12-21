@@ -26,6 +26,7 @@
 		<script src="/socket.io/socket.io.js" defer></script>
 		<script src="https://artur.red/script/cookies.js" defer></script>
 		<script src="https://artur.red/script/game/room.js" defer></script>
+		<script src="https://artur.red/script/notice.js" defer></script>
 
 
 		<!-- Styles -->
@@ -39,7 +40,7 @@
 	</head>
 
 	<body class="light">
-		<main>
+		<main id="main">
 			<nav>
 				<div class="nav-wrapper">
 					<div class="logo">
@@ -56,30 +57,38 @@
 					<h4 id="player-count">0/16</h4>
 				</div>
 			</nav>
+
 			<header>
 				<div class="notch">
 					<div class="code">
-						<h1 id="lobby-short-id"></h1>
+						<h1 id="lobby-short-id" class="lobby-short-id"></h1>
 					</div>
 				</div>
 			</header>
 
-			<button id="start-button">Start game!</button>
-			<input type="checkbox" id="mature-toggle">
-			<h2 id="error-message-output"></h2>
-		</main>
+			<div class="main-room-section">
 
-		
-		<!-- <div class="body">
-			<h1>Lobby Room</h1>
-			<button id="start-button">Start game!</button>
-			<ul id="player-list"></ul>
-			
-			<h4 id="player-count">0/16</h4>
-			
-			<h2 id="error-message-output"></h2>
-	
-			<input type="checkbox" id="mature-toggle">
-		</div> -->
+				<button id="start-button">Start game!</button>
+
+
+
+				<div class="block">
+					<input id="mature" type="checkbox" />
+					<label for="mature"></label>
+					<span>Mature</span>
+				</div>
+				<div class="block">
+					<input id="public" type="checkbox" />
+					<label for="public"></label>
+					<span>Public</span>
+				</div>
+
+
+
+
+				
+				<h2 id="error-message-output"></h2>
+			</div>
+		</main>
 	</body>
 </html>

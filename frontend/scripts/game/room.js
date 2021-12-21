@@ -8,9 +8,10 @@ const start_button = document.getElementById("start-button");
 const player_list = document.getElementById("player-list");
 const error_out = document.getElementById("error-message-output");
 const player_count = document.getElementById("player-count");
-
-const toggle_mature = document.getElementById("mature-toggle");
 const lobby_short_id = document.getElementById("lobby-short-id");
+
+const toggle_mature = document.getElementById("mature");
+const toggle_public = document.getElementById("public");
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
@@ -24,6 +25,15 @@ const display_players = (players) => players.map(player_obj => `
 const display_player_count = (players) => player_count.innerHTML = `<h4>${players.length}/16</h4>`;
 
 
+
+lobby_short_id.addEventListener("click", () => {
+    //copy the short id to the clipboard
+    navigator.clipboard.writeText("https://artur.red/" + lobby_short_id.innerHTML);
+    notice("Copied to clipboard!");
+})
+
+
+
 // > > JOIN HANDLER  &  PLAYER COUNTER > >
 
 //Send that the player has joined the game
@@ -35,11 +45,20 @@ socket.emit("player-join", {
 
 //When other players join
 socket.on(`player-join:${room_id}`, (data) => {
-    //Add the player to the list
-    player_list.innerHTML = display_players(data);
-    display_player_count(data);
 
-    console.log("shitting")
+    //Add the player to the list
+    if (data.new_player_list != undefined){
+        player_list.innerHTML = display_players(data.new_player_list);
+        display_player_count(data.new_player_list);
+    }
+
+    //If its not the player
+    if (data.new_player != undefined){
+        if (data.new_player.player != getCookie("usnm")) {
+            notice(`${data.new_player.player} has joined the game!`);
+        }
+    }
+
 });
 
 //For checking how many players are in the room (because websockets don't save sent data)
@@ -84,7 +103,11 @@ start_button.addEventListener("click", () => {
 });
 
 socket.on(`start-game:${room_id}`, (next_game_id) => {
-    window.open(`https://artur.red/game/${next_game_id}`, "_self");
+    notice("Starting game...");
+
+    setTimeout(() => {
+        window.open(`https://artur.red/game/${next_game_id}`, "_self");
+    }, 1000);
 })
 
 socket.on(`return-message:${room_id}`, (message) => {
@@ -98,7 +121,6 @@ socket.on(`return-message:${room_id}`, (message) => {
 //
 // > > CONFIG HANDLER > >
 
-// maturity
 
 toggle_mature.addEventListener("click", () => {
     socket.emit(`config:mature-toggle`, {
@@ -108,8 +130,16 @@ toggle_mature.addEventListener("click", () => {
     })
 });
 
+toggle_public.addEventListener("click", () => {
+    socket.emit(`config:public-toggle`, {
+        room: room_id,
+        player: getCookie("usnm"),
+        public: toggle_public.checked
+    })
+});
+
 socket.on(`config:mature-toggle:${room_id}`, (new_mature) => {
-    alert(`room is now: ${new_mature}`);
+    notice(`Mature mode is now ${new_mature ? "on" : "off"}`);
 });
 
 // maturity
@@ -129,6 +159,8 @@ socket.on(`config:user-kick:${room_id}`, (data) => {
 
     const kicked_player = data.kicked_player;
     const new_player_list = data.new_player_list;
+
+    notice(`${kicked_player} has been kicked!`);
 
     if(kicked_player == getCookie("usnm")){
         window.open("https://artur.red", "_self");

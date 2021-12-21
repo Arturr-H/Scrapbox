@@ -314,7 +314,10 @@ io.on("connection", (socket) => {
         }
         
         try{
-            io.emit(`player-join:${room_id}`, rooms[room_id].game.players);
+            io.emit(`player-join:${room_id}`, {
+                new_player_list: rooms[room_id].game.players,
+                new_player: player_obj
+            });
             
             //Check if player is already in the room
             if(!rooms[room_id].game.players.includes(player_obj)){
@@ -411,10 +414,15 @@ app.get("/:small_code?", (req, res) => {
         if (room.small_code == small_code){
 
             found_room = true;
-
             const room_id = room.roomcode
+
+            //Check if the player is kicked from the room.
+            if(room.game.kicked_players.find(x => x.player == player_obj.player)){
+                return res.send(custom_message("You have been kicked from this room."));
+            }
+
             //add the player to the room player list if player is not undefined
-            if (player){
+            if (player && !room.game.players.find(x => x.player === player)){
                 rooms[room_id].game.players = [
                     ...rooms[room_id].game.players,
                     player_obj
