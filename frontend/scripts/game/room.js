@@ -81,6 +81,10 @@ socket.on(`player-join:${room_id}`, (data) => {
         //display the lobby ID (short one)
         lobby_short_id.innerHTML = room_data_json.small_code;
 
+        //set the game config
+        toggle_mature.checked = room_data_json.game.config.mature;
+        toggle_public.checked = room_data_json.game.config.public;
+
     }catch{
         console.log("error");
     }

@@ -222,7 +222,10 @@ button{
 }
 
 
-
+a{
+	text-decoration: none;
+	color: rgba(255, 255, 255, 0.685);
+}
 .room-list{
 
 	display: flex;
@@ -240,7 +243,7 @@ button{
 	mask-size: 100%, 0px 100%;
 	mask-position: 0 0, 100% 0;
 	mask-repeat: no-repeat, no-repeat;
-}.room-list > .room{
+}.room-list > a > .room{
 	width: 100%;
 	height: max-content;
 	min-height: max-content;
@@ -264,9 +267,9 @@ button{
 	cursor: pointer;
 	transition: background-color .1s ease-in-out;
 	
-}.room-list > .room:hover{
+}.room-list > a > .room:hover{
 	background-color: var(--bg-hover);
-}.room-list > .room > img{
+}.room-list > a > .room > img{
 	margin-left: auto;
 	display: block;
 	cursor: pointer;

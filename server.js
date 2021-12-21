@@ -113,7 +113,7 @@ app.get("/api/create-room", (req, res) => {
             started: false,
             config: {
                 mature: false,
-                public: true,
+                public: false,
             }
         }
     };
