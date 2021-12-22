@@ -185,6 +185,25 @@ label[for="search"]{
 	opacity: .8;
 }
 
+input[type="text"].custom{
+	background-color: var(--bg-def);
+	border: .12vmax solid var(--border-color);
+	border-radius: .8vmax;
+	padding: calc(.8vmax * var(--UI-scale));
+	font-size: calc(1vmax * var(--UI-scale));
+	width: calc(25vmax * var(--UI-scale));
+	height: calc(5vmax * var(--UI-scale));
+	box-sizing: border-box;
+	margin: 0;
+	outline: none;
+	font-size: calc(1.8vmax * var(--UI-scale));
+
+	color: rgb(165, 165, 165);
+}input[type="text"].custom:focus{
+	border: .125vmax solid rgb(105, 105, 237);
+	color: var(--text-color);
+}
+
 button{
 	width: calc(9vmax * var(--UI-scale)); height: calc(3.5vmax * var(--UI-scale));
 	/* padding: calc(.8vmax * var(--UI-scale)) calc(3vmax * var(--UI-scale)); */
@@ -226,6 +245,10 @@ button{
 .body-wrapper{
 	margin-left: calc(5vmax * var(--UI-scale));
 	width: calc(80% - calc(10vmax * var(--UI-scale)));
+
+	display: flex;
+	flex-direction: column;
+	gap: 1vmax;
 }
 .slides{
 	position: relative;
@@ -312,8 +335,13 @@ button{
 	flex: 1;
 	/* width: 100%; */
 	aspect-ratio: 1;
-	background: black;
+	background: var(--nav-bg);
 	font-size: calc(1.3vmax * var(--UI-scale));
+
+	border-radius: calc(1.25vmax * var(--UI-scale));
+
+	box-sizing: border-box;
+	padding: calc(1vmax * var(--UI-scale));
 }
 
 

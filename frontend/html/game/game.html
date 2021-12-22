@@ -25,18 +25,51 @@
 		<!-- Scripts -->
 		<script src="/socket.io/socket.io.js" defer></script>
 		<script src="https://artur.red/script/cookies.js" defer></script>
-		<script src="https://artur.red/script/game/room.js" defer></script>
+		<script src="https://artur.red/script/notice.js" defer></script>
+		<script src="https://artur.red/script/game/game.js" defer></script>
 
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/variables.css" />
-		<link rel="stylesheet" href="https://artur.red/style/style.css" />
+		<link rel="stylesheet" href="https://artur.red/style/global.css" />
+		<link rel="stylesheet" href="https://artur.red/style/game.css" />
 
 		<!-- Title -->
 		<title>Game</title>
 	</head>
 
 	<body class="dark">
-		<h1>Welcum to squid game!!!!!</h1>
+		<main>
+			<nav>
+				<div class="nav-wrapper">
+					<div class="logo">
+						<a class="logo-link" href="https://artur.red/">
+							<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/White_Circle.svg/2048px-White_Circle.svg.png" alt="">
+							<h1>Balls Co.</h1>
+						</a>
+					</div>
+					<hr>
+					<ul class="player-list" id="player-list">
 
+					</ul>
+					<hr>
+				</div>
+			</nav>
+			
+			<div class="main-room-section" id="text-input-area">
+
+				<div class="center">
+
+					<h1>What's one thing that you wish you never knew about?</h1>
+				</div>
+				
+				<div class="center">
+					<div class="mini-container">
+						<h1>Write an answer.</h1>
+						<textarea id="text-input" placeholder="Use atleast 15 words.."></textarea>
+						<button id="text-submit" class="btn">Submit</button>
+					</div>
+				</div>
+			</div>
+		</main>
 	</body>
 </html>

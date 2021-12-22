@@ -35,6 +35,16 @@ app.use(cookieParser());
 //fs for file handling
 const fs = require("fs");
 
+const questions = require(path.resolve("server/questions.js"));
+const get_questions = (questionCount, players, type) => {
+    questionsArray = []
+    for (let i = 0; i < questionCount; i++) {
+        questionsArray.push(questions.getQuestion(players, type))
+    }
+    return questionsArray;
+}
+
+
 //default paths
 const default_paths = {
     illegal_game: path.resolve("frontend/html/error-pages/roomError.html"),
@@ -98,7 +108,8 @@ app.get("/api/create-room", (req, res) => {
     const pfp = req.cookies["pfp"];
     const leader_obj = {
         player: leader,
-        pfp: pfp
+        pfp: pfp,
+        done: false, //Done means that the player has finished their selection / text input
     }
 
     //Create the room
@@ -106,6 +117,7 @@ app.get("/api/create-room", (req, res) => {
         roomcode: roomcode,
         small_code: small_code,
 
+        
         game: {
             players: [leader_obj],
             kicked_players: [],
@@ -114,7 +126,10 @@ app.get("/api/create-room", (req, res) => {
             config: {
                 mature: false,
                 public: false,
-            }
+            },
+            current_snippets: [],
+            current_questions: [],
+            current_player_answers: [],
         }
     };
 
@@ -171,6 +186,7 @@ app.get("/room/:roomID", (req, res) => {
     const player_obj = {
         player: req.cookies.usnm,
         pfp: req.cookies.pfp,
+        done: false,
     }
 
     try{
@@ -240,6 +256,12 @@ app.get("/game/:gameID?", (req, res) => {
 
         //Else join the room if its started
         if (rooms[game_id].game.started){
+
+            //All the names of the players in the room
+            const players_in_room = rooms[game_id].game.players.map(x => x.player);
+
+            //add the questions to the room
+            rooms[game_id].game.current_questions = get_questions(3, players_in_room, rooms[game_id].game.config.mature?"mature":"normal");
             res.sendFile(default_paths.game_room);
         }
 
@@ -314,7 +336,8 @@ io.on("connection", (socket) => {
 
         const player_obj = {
             player: player,
-            pfp: pfp
+            pfp: pfp,
+            done: false,
         }
         
         try{
@@ -401,6 +424,86 @@ io.on("connection", (socket) => {
         }
             
     })
+
+    //GAME PLAY -------------------
+    socket.on("game:text", (data) => {
+        const room_id = data.room_id;
+        const player = data.player;
+        const text = data.text;
+
+        try{
+            //check if player is in room
+            if (rooms[room_id].game.players.find(x => x.player === player)){
+
+                //split the text into an array of words, and randomize it using Math.random
+                const words = text.split(" ");
+                const random_words = words.sort(() => Math.random() - 0.5);
+
+                //randomly concat the random_words to the current_snippets array
+                rooms[room_id].game.current_snippets = [
+                    ...rooms[room_id].game.current_snippets,
+                    ...random_words
+                ];
+                //randomly sort the array, and then remove any duplicates
+                rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.sort(() => Math.random() - 0.5);
+                rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.filter((v, i, a) => a.indexOf(v) === i);
+
+                //Make the player that sent in the text to done
+                rooms[room_id].game.players.find(x => x.player === player).done = true;
+
+                //boolean to check if all players are done
+                const all_done = rooms[room_id].game.players.every(x => x.done);
+                if(all_done){
+                    //make all players not done
+                    rooms[room_id].game.players.forEach(x => x.done = false);
+                }
+
+                //send the text to the players
+                io.emit(`game:text:${room_id}`, {
+                    players: rooms[room_id].game.players,
+                    current_snippets: rooms[room_id].game.current_snippets,
+                    all_done: all_done
+                });
+            }
+        }catch(err){
+            console.log(err)
+            return false;
+        }
+    });
+
+    socket.on("game:submit-sentence", (data) => {
+        const room_id = data.room_id;
+        const player = data.player;
+        const sentence = data.sentence;
+
+        try{
+            //check if player is in room
+            if (rooms[room_id].game.players.find(x => x.player === player)){
+
+                //add the sentence to the list of submitted sentences
+                rooms[room_id].game.current_player_answers.push({
+                    player: player,
+                    sentence: sentence
+                });
+
+                //set the player to done
+                rooms[room_id].game.players.find(x => x.player === player).done = true;
+
+                //check if all players have submitted
+                const all_done = rooms[room_id].game.players.every(x => x.done);
+
+                //send the data back to the players
+                io.emit(`game:submit-sentence:${room_id}`, {
+                    players: rooms[room_id].game.players,
+                    current_player_answers: rooms[room_id].game.current_player_answers,
+                    all_done: all_done
+                });
+
+            }
+        }catch{
+            return false;
+        }
+    })
 })
 
 
@@ -413,7 +516,8 @@ app.get("/:small_code?", (req, res) => {
 
     const player_obj = {
         player: player,
-        pfp: pfp
+        pfp: pfp,
+        done: false,
     }
 
     let found_room = false;

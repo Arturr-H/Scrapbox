@@ -148,6 +148,11 @@ hr{
 }
 
 
+h1{
+	font-size: calc(1.5vmax * var(--UI-scale));
+	font-weight: 500;
+	margin: 0; padding: 0;
+}
 
 
 
