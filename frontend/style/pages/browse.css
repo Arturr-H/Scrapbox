@@ -1,0 +1,57 @@
+@import url(https://artur.red/style/global.css);
+
+@import url(https://artur.red/style/components/button.css);
+@import url(https://artur.red/style/components/custom/logo.css);
+@import url(https://artur.red/style/components/custom/grid-container.css);
+
+a{
+	text-decoration: none;
+	color: rgba(255, 255, 255, 0.685);
+}
+.room-list{
+
+	display: flex;
+	flex-direction: column;
+	gap: 1vmax;
+
+	box-sizing: border-box;
+	padding: 1vmax 0;
+
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+
+	mask-image: linear-gradient(to bottom, transparent,black calc(1vmax * var(--UI-scale)), black calc(100% - calc(5vmax * var(--UI-scale))), transparent), linear-gradient(black, black);
+	mask-size: 100%, 0px 100%;
+	mask-position: 0 0, 100% 0;
+	mask-repeat: no-repeat, no-repeat;
+}.room-list > a > .room{
+	width: 100%;
+	height: max-content;
+	min-height: max-content;
+	
+	display: grid;
+	grid-template-columns: 9vmax 10vmax 9vmax 2fr;
+	gap: calc(1vmax * var(--UI-scale));
+
+	justify-content: center;
+	align-items: center;
+
+	background-color: var(--bg-def);
+	border: .12vmax solid var(--border-color);
+	border-radius: .8vmax;
+	padding: calc(.2vmax * var(--UI-scale)) 2vmax;
+	box-sizing: border-box;
+	margin: 0;
+	outline: none;
+
+	cursor: pointer;
+	transition: background-color .1s ease-in-out;
+	
+}.room-list > a > .room:hover{
+	background-color: var(--bg-hover);
+}.room-list > a > .room > img{
+	margin-left: auto;
+	display: block;
+	cursor: pointer;
+}

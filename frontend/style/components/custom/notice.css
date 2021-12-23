@@ -1,0 +1,35 @@
+.notice{
+	width: max-content;
+	min-width: 10vmax;
+	height: 3vmax;
+	background: var(--main-color);
+	color: white;
+
+	padding: 0 2vmax;
+
+	position: fixed;
+	border-radius: .8vmax;
+
+	left: 50%;
+	bottom: 1vmax;
+	transform: translateX(-50%);
+
+	box-shadow: 0 1vmax 3vmax rgba(0, 0, 0, 0.305);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	cursor: pointer;
+	user-select: none;
+
+	animation: notice-intro .25s ease-in-out forwards;
+}
+@keyframes notice-intro {
+	from{
+		bottom: 0vmax;
+		transform: translateY(125%) translateX(-50%);
+	}to{
+		bottom: 1vmax;
+		transform: translateY(0%) translateX(-50%);
+	}
+}

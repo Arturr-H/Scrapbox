@@ -1,0 +1,66 @@
+@import url(https://artur.red/style/global.css);
+
+
+@import url(https://artur.red/style/components/text-input.css);
+@import url(https://artur.red/style/components/text.css);
+@import url(https://artur.red/style/components/hr.css);
+@import url(https://artur.red/style/components/custom/grid-container.css);
+@import url(https://artur.red/style/components/custom/logo.css);
+@import url(https://artur.red/style/components/custom/navbar-vertical.css);
+@import url(https://artur.red/style/components/custom/navbar-horizontal.css);
+@import url(https://artur.red/style/components/custom/content-slider.css);
+@import url(https://artur.red/style/components/custom/profile.css);
+
+
+.body{
+	position: relative;
+	grid-area: Body;
+	background-color: var(--bg-def);
+	overflow-y: scroll;
+}
+
+.body-wrapper{
+	margin-left: calc(5vmax * var(--UI-scale));
+	width: calc(80% - calc(10vmax * var(--UI-scale)));
+
+	display: flex;
+	flex-direction: column;
+	gap: 1vmax;
+}
+
+
+.question{
+	width: 100%; height: max-content;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: calc(2vmax * var(--UI-scale));
+}.question .card{
+	flex: 1;
+	/* width: 100%; */
+	aspect-ratio: 1;
+	background: var(--nav-bg);
+	font-size: calc(var(--font-small) * var(--UI-scale));
+
+	border-radius: calc(1.25vmax * var(--UI-scale));
+
+	box-sizing: border-box;
+	padding: calc(1vmax * var(--UI-scale));
+}
+
+
+.notification{
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.notification.active:after{
+	content: "";
+	position: absolute;
+	width: calc(0.625vmax * var(--UI-scale)); height: calc(0.625vmax * var(--UI-scale));
+	background-color: var(--color-sec);
+	border-radius: 50%;
+	top: calc(-0.3125vmax * var(--UI-scale)); right: calc(-0.3125vmax * var(--UI-scale));
+}

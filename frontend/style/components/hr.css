@@ -1,0 +1,14 @@
+hr{
+	color: var(--color-def);
+	width: 100%;
+	opacity: 0.1;
+	border-radius: calc(100vmax * var(--UI-scale));
+	border: calc(0.0625vmax * var(--UI-scale)) solid var(--color-def);
+	margin: calc(1vmax * var(--UI-scale)) 0; padding: 0;
+}hr.vertical{
+	width: calc(0.0625vmax * var(--UI-scale));
+	height: 100%;
+	border: none;
+	border-right: calc(0.125vmax * var(--UI-scale)) solid var(--border-color);
+	margin: 0 calc(1vmax * var(--UI-scale)); padding: 0;
+}

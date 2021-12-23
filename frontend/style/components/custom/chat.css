@@ -1,0 +1,28 @@
+.chat-output{
+	height: 50%;
+	width: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+
+	box-sizing: border-box;
+	padding: .5vmax;
+
+	word-wrap: break-word;
+	white-space: normal;
+
+	mask-image: linear-gradient(to bottom, transparent,black calc(3vmax * var(--UI-scale)), black calc(100% - calc(3vmax * var(--UI-scale))), transparent), linear-gradient(black, black);
+	mask-size: 100%, 0px 100%;
+	mask-position: 0 0, 100% 0;
+	mask-repeat: no-repeat, no-repeat;
+}.chat-output > p{
+	margin: 0%;
+}
+#chat-form > #chat-input{
+	width: 100%;
+	height: min-content;
+	font-size: var(--font-small);
+}

@@ -1,0 +1,26 @@
+.notch{
+	width: calc(35vmax * var(--UI-scale));
+	height: 100%;
+	background: var(--nav-bg);
+	background-size: cover !important;
+	border: 2px solid var(--border-color);
+		display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0 0 1000px 1000px;
+}
+
+.code h1{
+	position: relative;
+	font-size: calc(var(--font-big) * var(--UI-scale));
+	margin: 0; padding: 0 calc(3vmax * var(--UI-scale));
+
+	font-family: "Poppins", sans-serif;
+	font-weight: 300;
+    cursor: pointer;
+}.lobby-short-id{
+	cursor: pointer;
+
+}.lobby-short-id:hover{
+	color: rgb(230, 230, 230);
+}

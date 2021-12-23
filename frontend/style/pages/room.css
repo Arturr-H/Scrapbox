@@ -1,0 +1,39 @@
+@import url(https://artur.red/style/global.css);
+
+
+@import url(https://artur.red/style/components/text-input.css);
+@import url(https://artur.red/style/components/text.css);
+@import url(https://artur.red/style/components/hr.css);
+@import url(https://artur.red/style/components/checkbox.css);
+@import url(https://artur.red/style/components/button.css);
+@import url(https://artur.red/style/components/custom/logo.css);
+@import url(https://artur.red/style/components/custom/chat.css);
+@import url(https://artur.red/style/components/custom/notice.css);
+@import url(https://artur.red/style/components/custom/room-notch.css);
+@import url(https://artur.red/style/components/custom/game-navbar.css);
+
+
+.main-room-section{
+    grid-area: Body;
+	display: flex;
+	flex-direction: column;
+	gap: 1vmax;
+
+	width: 100%;
+
+	box-sizing: border-box;
+	padding: 1vmax;
+}
+header{
+	grid-area: Header;
+
+	/* background-color: var(--nav-bg); */
+	/* border-bottom: 2px solid var(--border-color); */
+
+	position: relative;
+
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

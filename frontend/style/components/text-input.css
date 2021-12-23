@@ -1,0 +1,40 @@
+input[type="text"]{
+	background-color: var(--bg-def);
+	border: .12vmax solid var(--border-color);
+	border-radius: .8vmax;
+	padding: calc(.8vmax * var(--UI-scale));
+
+	width: calc(25vmax * var(--UI-scale));
+	height: calc(5vmax * var(--UI-scale));
+	box-sizing: border-box;
+	margin: 0;
+	outline: none;
+	font-size: calc(var(--font-small) * var(--UI-scale));
+
+	color: rgb(165, 165, 165);
+}input[type="text"]:focus{
+	border: .125vmax solid rgb(105, 105, 237);
+	color: var(--text-color);
+}
+
+textarea{
+	background-color: var(--bg-def);
+	border: .12vmax solid var(--border-color);
+	border-radius: .8vmax;
+
+	padding: calc(.8vmax * var(--UI-scale));
+
+	width: calc(65vmax * var(--UI-scale));
+	height: calc(25vmax * var(--UI-scale));
+
+	box-sizing: border-box;
+	margin: 0;
+	outline: none;
+	font-size: calc(var(--font-small) * var(--UI-scale));
+
+	color: rgb(165, 165, 165);
+	resize: none;
+}textarea:focus{
+	border: .125vmax solid rgb(105, 105, 237);
+	color: var(--text-color);
+}

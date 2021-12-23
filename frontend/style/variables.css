@@ -1,5 +1,5 @@
-@import url(https://fonts.googleapis.com/icon?family=Material+Icons+Round);
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Source+Sans+Pro&display=swap'); 
+@import url(https://fonts.googleapis.com/css2?family=Poppins:wght@200;400&display=swap);
+
 
 :root{
 	/* --bg-def: #f7f6fb;
@@ -20,6 +20,11 @@
 	--1-1: 0; /*ok basically this means that you take number one and number two and like add the toghether you know. */
 
 	--UI-scale: .85; /*UI scale for all elements*/
+
+	--contrast: #67b671;
+
+	--font-big: 2vmax;
+	--font-small: 1.4vmax;	
 }
 
 @media (prefers-color-scheme: light){
