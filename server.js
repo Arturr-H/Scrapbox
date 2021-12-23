@@ -45,7 +45,7 @@ const get_questions = (questionCount, players, type) => {
 }
 
 
-//default paths
+//default file paths
 const default_paths = {
     illegal_game: path.resolve("frontend/html/error-pages/roomError.html"),
     home: path.resolve("frontend/html/index.html"),
@@ -76,6 +76,10 @@ const MAX_PLAYERS_PER_ROOM = 16;
 const MIN_PLAYERS_PER_ROOM = 2;
 
 const QUESTION_COUNT = 2;
+const ROOM_CLEANUP_TIME = 1000 * 60 * 60; //1 hour
+const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 5 * 60; //5 minutes
+
+const DEBUG = false;
 
 //Express static folders
 app.use("/", express.static(path.join(__dirname, 'resources')));
@@ -108,11 +112,15 @@ app.get("/api/create-room", (req, res) => {
 
     const leader = req.cookies["usnm"];
     const pfp = req.cookies["pfp"];
+    const uid = req.cookies["uid"];
+
     const leader_obj = {
         player: leader,
+        uid: uid,
         pfp: pfp,
         done: false, //Done means that the player has finished their selection / text input
         leader: true,
+        online: true
     }
 
     //Create the room
@@ -120,7 +128,8 @@ app.get("/api/create-room", (req, res) => {
         roomcode: roomcode,
         small_code: small_code,
 
-        
+        cleanup: new Date().getTime() + ROOM_CLEANUP_TIME,
+
         game: {
             players: [leader_obj],
             kicked_players: [],
@@ -173,7 +182,6 @@ app.get("/room/:roomID", (req, res) => {
     const roomID = req.params.roomID;
     let room_small_code;
 
-
     try{
         room_small_code = rooms[roomID].small_code || null;
     }catch{
@@ -186,14 +194,18 @@ app.get("/room/:roomID", (req, res) => {
         || req.cookies.usnm.length <= 2
     ) return res.redirect(`/name/game-queue/${room_small_code}`);
 
-    const player_obj = {
-        player: req.cookies.usnm,
-        pfp: req.cookies.pfp,
-        done: false,
-        leader: (rooms[roomID].game.leader == req.cookies.usnm),
-    }
-
+    
     try{
+        const player_obj = {
+            player: req.cookies.usnm,
+            uid: req.cookies.uid,
+            pfp: req.cookies.pfp,
+            done: false,
+            leader: (rooms[roomID].game.leader == req.cookies.usnm),
+            online: true
+        }
+        //make the player online: true
+        rooms[roomID].game.players.find(x => x.player === req.cookies.usnm).online = true;
         //Check if room exists
         if(!rooms[roomID]){
             return res.sendFile(default_paths.illegal_game);
@@ -222,7 +234,8 @@ app.get("/room/:roomID", (req, res) => {
         else{
             return res.sendFile(default_paths.illegal_game);
         }
-    }catch{
+    }catch(err){
+        if (DEBUG) console.log(err);
         res.sendStatus(404);
     }
 });
@@ -270,7 +283,8 @@ app.get("/game/:gameID?", (req, res) => {
             console.log("4")
             return res.sendFile(default_paths.illegal_game);
         }
-    }catch{
+    }catch(err){
+        if (DEBUG) console.log(err);
         return res.sendFile(default_paths.illegal_game);
     }
 });
@@ -301,6 +315,20 @@ app.get("/name", (req, res) => {
     });
 });
 
+
+//Check every minute if there are any rooms that have
+//surpassed the cleanup time. If there are, then delete them.
+setInterval(() => {
+    const time = new Date().getTime();
+
+    Object.keys(rooms).forEach(room => {
+        //check if the room has surpassed the cleanup time
+        if(rooms[room].cleanup < time){
+            delete rooms[room];
+            console.log(`Deleted room ${room}`);
+        }
+    });
+}, ROOM_CLEANUP_CHECK_INTERVAL);
 
 //Socket.io "routes"
 io.on("connection", (socket) => {
@@ -336,13 +364,18 @@ io.on("connection", (socket) => {
             const room_id = data.room_id;
             const player = data.player;
             const pfp = data.pfp;
+            const uid = data.uid;
 
             const player_obj = {
                 player: player,
+                uid: uid,
                 pfp: pfp,
                 done: false,
                 leader: (rooms[room_id].game.leader == player),
+                online: true
             }
+            //make the player online: true
+            rooms[room_id].game.players.find(x => x.player === player).online = true;
        
             io.emit(`player-join:${room_id}`, {
                 new_player_list: rooms[room_id].game.players,
@@ -366,6 +399,58 @@ io.on("connection", (socket) => {
             return false;
         }
     })
+
+    //Disconnect
+    socket.on("disconnect", () => {
+
+        try{
+
+            //get the user's name
+            const user = socket.handshake.headers.cookie.split(";").find(x => x.includes("usnm")).split("=")[1];
+            const user_id = socket.handshake.headers.cookie.split(";").find(x => x.includes("uid")).split("=")[1];
+            
+            //get the room id via the user_id
+            const room_id = Object.keys(rooms).find(x => rooms[x].game.players.find(y => y.uid === user_id));
+
+            if (!room_id) return;
+
+            //make the player online: false
+            rooms[room_id].game.players.find(x => x.player === user).online = false;
+            
+            //remove the user from the room after 5 seconds have passed.
+            //if the user manages to reconnect, the timeout will be cancelled.
+            setTimeout(() => {
+
+                //if the user is still not online after 5 seconds, remove them from the room
+                if(!rooms[room_id].game.players.find(x => x.uid === user_id).online){
+                    
+                    //remove the player from the room
+                    rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.uid !== user_id);
+
+                    //Make the next player the leader, if there
+                    //are no more players, delete the room
+                    if(rooms[room_id].game.players.length == 0){
+                        console.log("delete room");
+                        delete rooms[room_id];
+                    }else{
+                        console.log("make leader");
+                        rooms[room_id].game.leader = rooms[room_id].game.players[0].player;
+                        rooms[room_id].game.players[0].leader = true;
+
+                        //emit the players currently in the room
+                        io.emit(`player-leave:${room_id}`, {
+                            new_player_list: rooms[room_id].game.players,
+                        });
+                    }
+                }
+            }, 5000);
+            
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    });
+
 
     //GAME CONFIGURATION -------------------
     socket.on("config:settings-toggle", (data) => {
@@ -549,7 +634,6 @@ io.on("connection", (socket) => {
         }
     });
 
-
     //ROOM CHAT -------------------
     socket.on("chat:message", (data) => {
         try{
@@ -599,6 +683,7 @@ app.get("/:small_code?", (req, res) => {
         const small_code = req.params.small_code;
         const player = req.cookies.usnm;
         const pfp = req.cookies.pfp;
+        const uid = req.cookies.uid;
         
         //get the room id from the small code, rooms is an object
         const get_roomcode = () => {
@@ -614,9 +699,11 @@ app.get("/:small_code?", (req, res) => {
         
         const player_obj = {
             player: player,
+            uid: uid,
             pfp: pfp,
             done: false,
-            leader: (rooms[room_id].game.leader == player)
+            leader: (rooms[room_id].game.leader == player),
+            online: true
         }
         
         let found_room = false;
@@ -627,6 +714,11 @@ app.get("/:small_code?", (req, res) => {
                 
                 found_room = true;
                 const room_id = room.roomcode
+
+                //make the player online: true if the player exists
+                if (room.game.players.find(x => x.player === player)){
+                    room.game.players.find(x => x.player === player).online = true;
+                }
                 
                 //Check if the player is kicked from the room.
                 if(room.game.kicked_players.find(x => x.player == player_obj.player)){
@@ -649,13 +741,11 @@ app.get("/:small_code?", (req, res) => {
             return res.sendStatus(404);
         }
     }
-    catch{
+    catch(err){
+        if (DEBUG) console.log(err);
         return res.sendStatus(404);
     }
 })
-    
-    
-
 
 
 //Listeners

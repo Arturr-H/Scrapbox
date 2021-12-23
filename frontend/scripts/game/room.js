@@ -187,3 +187,10 @@ socket.on(`config:user-kick:${room_id}`, (data) => {
 
 
 // > > CONFIG HANDLER > >
+
+socket.on(`player-leave:${room_id}`, (data) => {
+    const new_player_list = data.new_player_list;
+
+    player_list.innerHTML = display_players(new_player_list);
+    display_player_count(new_player_list);
+});

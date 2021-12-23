@@ -17,7 +17,7 @@ header{
 	width: 40%; max-width: calc(35vmax * var(--UI-scale));
 	position: relative;
 
-	display: flex;
+	display: flex; 
 	align-items: center;
 
 }.search-bar > .search{
@@ -29,10 +29,9 @@ header{
 
 	border: none;
 	border-radius: calc(0.3125vmax * var(--UI-scale));
-
-	font-size: calc(var(--font-small) * var(--UI-scale));
-	font-weight: 400;
-	font-family: "Source Sans Pro", sans-serif;
+	
+	font-size: 0.8vmax;
+	font-weight: 300;
 	color: var(--color-def);
 	border: calc(0.0625vmax * var(--UI-scale)) solid var(--nav-bg);
 
@@ -50,6 +49,7 @@ label[for="search"]{
 	display: flex;
 	align-items: center;
 	left: calc(0.625vmax * var(--UI-scale))
+
 }label[for="search"] svg{
 	width: calc(1.3vmax * var(--UI-scale)); 
 	height: calc(1.3vmax * var(--UI-scale));

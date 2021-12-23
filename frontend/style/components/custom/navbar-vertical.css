@@ -40,7 +40,7 @@ nav{
 	content: "";
 	position: absolute;
 	left: calc(-1.5vmax * var(--UI-scale));
-	width: calc(0.5vmax * var(--UI-scale));
+	width: calc(0.6vmax * var(--UI-scale));
 	height: 100%;
 	background-color: var(--color-sec);
 	border-radius: calc(100vmax * var(--UI-scale));
