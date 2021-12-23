@@ -16,7 +16,13 @@ let snippet_output;
 
 //all the questions
 let questions;
-let sentence = [];
+let sentences = [];
+let current_question_index = -1;//-1 because it adds up to 0 when it's the first question
+let current_snippets = [];
+
+//it cycles through all the questions and
+//all the player items using this variable
+let current_voting_index = 0;
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
@@ -75,11 +81,8 @@ text_submit.addEventListener("click", async () => {
 });
 //Text server in
 socket.on(`game:text:${room_id}`, (data) => {
-    const current_snippets = data.current_snippets;
+    current_snippets = data.current_snippets;
     const players = data.players;
-
-    console.log(current_snippets);
-    console.log(players);
 
     //update the player list
     player_list.innerHTML = display_players(players);
@@ -88,69 +91,100 @@ socket.on(`game:text:${room_id}`, (data) => {
         //re render the player list, with the players not done
         player_list.innerHTML = display_players(players);
         
-        text_input_area.innerHTML = display_question_view(0, current_snippets);
+        text_input_area.innerHTML = display_question_view(current_snippets);
     }
 });
 
 // -------------------------------------------------- QUESTIONS -------------------------------------------------- //
 
-const display_question_view = (index, current_snippets) => `
-    <div class="center">
-        <h1>${questions[index]}</h1>
-    </div>
-    <div class="center">
-        <div class="snippet-output" id="snippet-output"></div>
-        <button onclick="submit_sentence()" style="width: 30%;" id="submit-">Submit</button>
-    </div>
+const display_question_view = (current_snippets) => {
+    
+    current_question_index++;
 
-    <div class="center">
+    if (current_question_index >= questions.length) {
+    
+        send_sentences();
+        
+        return `
+            <div class="center">
+                <h1>Waiting for other players...</h1>
+            </div>
+        `;
+    }
 
-        <div class="snippet-input" id="snippet-input">
-            ${
-                current_snippets.map(word => `
-                    <span onclick="add_word('${word}')">${word}</span>
-                `).join(" ")
-            }
+    sentences.push([]);
+
+    return `
+        <div class="center">
+            <h1>${questions[current_question_index]}</h1>
         </div>
-    </div>
-`;
+        <div class="center">
+            <div class="snippet-output" id="snippet-output"></div>
+            <button onclick="submit_sentence()" style="width: 30%;" id="submit-">Submit</button>
+        </div>
+
+        <div class="center">
+
+            <div class="snippet-input" id="snippet-input">
+                ${
+                    current_snippets.map(word => `
+                        <span onclick="add_word('${word}')">${word}</span>
+                    `).join(" ")
+                }
+            </div>
+        </div>
+    `;
+}
 
 // -------------------------------------------------- SNIPPET INPUT -------------------------------------------------- //
 
 const add_word = (word) => {
-    sentence.push(word);
+    console.log(sentences)
+    console.log(current_question_index)
+    sentences[current_question_index].push(word);
 
     snippet_output = document.getElementById("snippet-output");
-    snippet_output.innerHTML = sentence.join(" ");
+    snippet_output.innerHTML = sentences[current_question_index].join(" ");
+}
+const submit_sentence = () => {
+
+    text_input_area.innerHTML = display_question_view(current_snippets);
+
 }
 
-const submit_sentence = () => {
-    socket.emit("game:submit-sentence", {
+
+const send_sentences = () => {
+    socket.emit("game:submit-sentences", {
         room_id: room_id,
-        sentence: sentence.join(" "),
+        sentences: sentences,
         player: getCookie("usnm")
     });
-
-    //clear the game area's children
-    text_input_area.innerHTML = `
-        <div class="center">
-            <h1>Waiting for other players...</h1>
-        </div>
-    `;
 }
-socket.on(`game:submit-sentence:${room_id}`, (data) => {
+socket.on(`game:submit-sentences:${room_id}`, (data) => {
     const players = data.players;
     const current_player_answers = data.current_player_answers;
+
+    console.log(data);
 
     //update the player list
     player_list.innerHTML = display_players(players);
 
-    if(data.all_done){
-            
-        text_input_area.innerHTML = `
-            <div class="center">
-                <h1>${current_player_answers.map(e => e.sentence).join("<br />")}</h1>
-            </div>
-        `
+    //render the voting view if all players have submitted their sentences
+    if(data.all_done) {
+        text_input_area.innerHTML = display_voting_view(current_player_answers);
     }
 })
+
+
+// -------------------------------------------------- DISPLAY VOTING -------------------------------------------------- //
+
+const display_voting_view = (current_player_answers) => {
+    return `
+        <div class="center">
+            <h1>${questions[current_voting_index]}</h1>
+        </div>
+        <div class="center">
+            <h1>${current_player_answers.map(e => e.sentences[current_voting_index]).join("<br />")}</h1>
+        </div>
+    `;
+}

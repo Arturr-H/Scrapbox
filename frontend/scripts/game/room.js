@@ -15,7 +15,7 @@ const toggle_public = document.getElementById("public");
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
-    <li class="player">
+    <li class="player ${player_obj.leader?'leader':''}">
         <img src="https://artur.red/profile-images/pi-${player_obj.pfp}.png" alt="profile image">
         <p>${player_obj.player}</p>
 

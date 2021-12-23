@@ -75,6 +75,8 @@ let rooms = {};
 const MAX_PLAYERS_PER_ROOM = 16;
 const MIN_PLAYERS_PER_ROOM = 2;
 
+const QUESTION_COUNT = 2;
+
 //Express static folders
 app.use("/", express.static(path.join(__dirname, 'resources')));
 app.use("/script", express.static(path.join(__dirname, 'frontend/scripts')));
@@ -110,6 +112,7 @@ app.get("/api/create-room", (req, res) => {
         player: leader,
         pfp: pfp,
         done: false, //Done means that the player has finished their selection / text input
+        leader: true,
     }
 
     //Create the room
@@ -187,6 +190,7 @@ app.get("/room/:roomID", (req, res) => {
         player: req.cookies.usnm,
         pfp: req.cookies.pfp,
         done: false,
+        leader: (rooms[roomID].game.leader == req.cookies.usnm),
     }
 
     try{
@@ -238,19 +242,16 @@ app.get("/game/:gameID?", (req, res) => {
     try{
         //Check if room exists
         if(!rooms[game_id]){
-            console.log("1")
             return res.sendFile(default_paths.illegal_game);
         }
 
         //Check if user is in room
         if(!rooms[game_id].game.players.find(x => x.player === req.cookies.usnm)){
-            console.log("2")
             return res.sendFile(default_paths.illegal_game);
         }
 
         //Check if game is started
         else if(!rooms[game_id].game.started){
-            console.log("3")
             return res.sendFile(default_paths.illegal_game);
         }
 
@@ -261,7 +262,7 @@ app.get("/game/:gameID?", (req, res) => {
             const players_in_room = rooms[game_id].game.players.map(x => x.player);
 
             //add the questions to the room
-            rooms[game_id].game.current_questions = get_questions(3, players_in_room, rooms[game_id].game.config.mature?"mature":"normal");
+            rooms[game_id].game.current_questions = get_questions(QUESTION_COUNT, players_in_room, rooms[game_id].game.config.mature?"mature":"normal");
             res.sendFile(default_paths.game_room);
         }
 
@@ -307,11 +308,11 @@ io.on("connection", (socket) => {
     //Start the game
     socket.on("start-game", (room_data) => {
 
-        const player_amount = rooms[room_data.id].game.players.length;
-        const room_leader = rooms[room_data.id].game.leader
-        const room_id = room_data.id;
-        
         try{
+            const player_amount = rooms[room_data.id].game.players.length;
+            const room_leader = rooms[room_data.id].game.leader
+            const room_id = room_data.id;
+        
             //check if player is leader
             if(room_leader == room_data.player){
                 if(player_amount >= MIN_PLAYERS_PER_ROOM){
@@ -330,34 +331,37 @@ io.on("connection", (socket) => {
 
     //Player is joining
     socket.on("player-join", (data) => {
-        const room_id = data.room_id;
-        const player = data.player;
-        const pfp = data.pfp;
 
-        const player_obj = {
-            player: player,
-            pfp: pfp,
-            done: false,
-        }
-        
         try{
+            const room_id = data.room_id;
+            const player = data.player;
+            const pfp = data.pfp;
+
+            const player_obj = {
+                player: player,
+                pfp: pfp,
+                done: false,
+                leader: (rooms[room_id].game.leader == player),
+            }
+       
             io.emit(`player-join:${room_id}`, {
                 new_player_list: rooms[room_id].game.players,
                 new_player: player_obj
             });
             
             //Check if player is already in the room
-            if(!rooms[room_id].game.players.includes(player_obj)){
+            // if(!rooms[room_id].game.players.includes(player_obj)){
                 
-                //Add player to the room
-                // rooms[room_id].game.players = [
-                //     ...rooms[room_id].game.players,
-                //     player_obj
-                // ];
+            //     //Add player to the room
+            //     // rooms[room_id].game.players = [
+            //     //     ...rooms[room_id].game.players,
+            //     //     player_obj
+            //     // ]; 
 
-                //emit the players currently in the room
-                io.emit(`player-join:${room_id}`, rooms[room_id].game.players);
-            }
+            //     console.log(rooms[room_id].game.players);
+            //     //emit the players currently in the room
+            //     io.emit(`player-join:${room_id}`, rooms[room_id].game.players);
+            // }
         }catch{
             return false;
         }
@@ -366,12 +370,12 @@ io.on("connection", (socket) => {
     //GAME CONFIGURATION -------------------
     socket.on("config:settings-toggle", (data) => {
 
-        const room_id = data.room;
-        const player = data.player;
-        const new_value = data.new_value;
-        const setting = data.setting;
-
         try{
+            const room_id = data.room;
+            const player = data.player;
+            const new_value = data.new_value;
+            const setting = data.setting;
+
             //First, check if the player is the leader, 
             //because only the leader may change settings
             if (rooms[room_id].game.leader == player){
@@ -393,12 +397,11 @@ io.on("connection", (socket) => {
     })
 
     socket.on("config:user-kick", (data) => {
-        const kick_request = data.kick_request;
-        const kick_requester = data.kick_requester;
-        const room_id = data.room_id;
-
 
         try{
+            const kick_request = data.kick_request;
+            const kick_requester = data.kick_requester;
+            const room_id = data.room_id;
 
             //check if kick_requester is the leader
             //of their room.
@@ -427,11 +430,11 @@ io.on("connection", (socket) => {
 
     //GAME PLAY -------------------
     socket.on("game:text", (data) => {
-        const room_id = data.room_id;
-        const player = data.player;
-        const text = data.text;
-
         try{
+            const room_id = data.room_id;
+            const player = data.player;
+            const text = data.text;
+
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
@@ -471,19 +474,22 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("game:submit-sentence", (data) => {
-        const room_id = data.room_id;
-        const player = data.player;
-        const sentence = data.sentence;
+    socket.on("game:submit-sentences", (data) => {
 
         try{
+            const room_id = data.room_id;
+            const player = data.player;
+            const sentences = data.sentences;
+
+            console.log(sentences, player, room_id);
+
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
-                //add the sentence to the list of submitted sentences
+                //add the sentences to the list of submitted sentences
                 rooms[room_id].game.current_player_answers.push({
                     player: player,
-                    sentence: sentence
+                    sentences: sentences
                 });
 
                 //set the player to done
@@ -492,8 +498,10 @@ io.on("connection", (socket) => {
                 //check if all players have submitted
                 const all_done = rooms[room_id].game.players.every(x => x.done);
 
+                console.log(all_done);
+
                 //send the data back to the players
-                io.emit(`game:submit-sentence:${room_id}`, {
+                io.emit(`game:submit-sentences:${room_id}`, {
                     players: rooms[room_id].game.players,
                     current_player_answers: rooms[room_id].game.current_player_answers,
                     all_done: all_done
@@ -504,7 +512,43 @@ io.on("connection", (socket) => {
             return false;
         }
     })
-})
+
+    //VOTING -------------------
+    socket.on("game:vote", (data) => {
+        
+        try{
+            const room_id = data.room_id;
+            const player = data.player;
+            const vote = data.vote;
+
+            //check if player is in room
+            if (rooms[room_id].game.players.find(x => x.player === player)){
+
+                //add the vote to the list of votes
+                rooms[room_id].game.current_player_votes.push({
+                    player: player,
+                    vote: vote
+                });
+
+                //set the player to done
+                rooms[room_id].game.players.find(x => x.player === player).done = true;
+
+                //check if all players have voted
+                const all_done = rooms[room_id].game.players.every(x => x.done);
+
+                //send the data back to the players
+                io.emit(`game:vote:${room_id}`, {
+                    players: rooms[room_id].game.players,
+                    current_player_votes: rooms[room_id].game.current_player_votes,
+                    all_done: all_done
+                });
+
+            }
+        }catch{
+            return false;
+        }
+    });
+});
 
 
 
@@ -514,10 +558,23 @@ app.get("/:small_code?", (req, res) => {
     const player = req.cookies.usnm;
     const pfp = req.cookies.pfp;
 
+    //get the room id from the small code, rooms is an object
+    const get_roomcode = () => {
+        for (let room in rooms){
+            if (rooms[room].small_code == small_code){
+                return room;
+            }
+        }
+        return false;
+    }
+    const room_id = get_roomcode();
+
+
     const player_obj = {
         player: player,
         pfp: pfp,
         done: false,
+        leader: (rooms[room_id].game.leader == player)
     }
 
     let found_room = false;

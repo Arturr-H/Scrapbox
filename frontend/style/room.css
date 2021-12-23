@@ -34,7 +34,10 @@ main{
 	height: calc(2.2vmax * var(--UI-scale)); width: calc(2.2vmax * var(--UI-scale));
 }.player p{
 	font-size: calc(1vmax * var(--UI-scale));
+}.player.leader{
+	background-color: orange;
 }
+
 
 
 header{
@@ -142,7 +145,42 @@ header{
 .header.create{ grid-area: Header-C; }
 .body.join{ grid-area: Body-J; border-right: 2px solid var(--border-color); }
 .body.create{ grid-area: Body-C; }
+.body.join.name-select{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 
+	gap: calc(1vmax * var(--UI-scale));
+}
+.body.create.pfp-select{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-items: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	gap: calc(1vmax * var(--UI-scale));
+	width: 100%;
+	height: min-content;
+
+	margin: auto;
+
+	padding: calc(1vmax * var(--UI-scale));
+	box-sizing: border-box;
+}.pfp-select{
+	width: min-content;
+	display: inline-block;
+	height: min-content;
+}.pfp-select > button{
+	background: var(--border-color);
+	transition: filter .05s ease;
+}.pfp-select > button:hover{
+	filter: brightness(90%);
+}.pfp-select > button:active{
+	filter: brightness(80%);
+}
 .Footer{
 	grid-area: Footer;
 
@@ -333,6 +371,10 @@ a{
 	padding: 1vmax;
 }
 .start-button{
-	background: var(--main-color);
-	color: white;
+	bottom: 1vmax;
+	right: 1vmax;
+	position: absolute;
+
+	background: #67b671;
+	color: var(--bg-def);
 }
