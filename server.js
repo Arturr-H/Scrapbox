@@ -554,61 +554,67 @@ io.on("connection", (socket) => {
 
 app.get("/:small_code?", (req, res) => {
 
-    const small_code = req.params.small_code;
-    const player = req.cookies.usnm;
-    const pfp = req.cookies.pfp;
-
-    //get the room id from the small code, rooms is an object
-    const get_roomcode = () => {
-        for (let room in rooms){
-            if (rooms[room].small_code == small_code){
-                return room;
+    try{
+        
+        const small_code = req.params.small_code;
+        const player = req.cookies.usnm;
+        const pfp = req.cookies.pfp;
+        
+        //get the room id from the small code, rooms is an object
+        const get_roomcode = () => {
+            for (let room in rooms){
+                if (rooms[room].small_code == small_code){
+                    return room;
+                }
             }
+            return false;
         }
-        return false;
-    }
-    const room_id = get_roomcode();
-
-
-    const player_obj = {
-        player: player,
-        pfp: pfp,
-        done: false,
-        leader: (rooms[room_id].game.leader == player)
-    }
-
-    let found_room = false;
-
-    Object.values(rooms).forEach(room => {
-
-        if (room.small_code == small_code){
-
-            found_room = true;
-            const room_id = room.roomcode
-
-            //Check if the player is kicked from the room.
-            if(room.game.kicked_players.find(x => x.player == player_obj.player)){
-                return res.send(custom_message("You have been kicked from this room."));
-            }
-
-            //add the player to the room player list if player is not undefined
-            if (player && !room.game.players.find(x => x.player === player)){
-                rooms[room_id].game.players = [
-                    ...rooms[room_id].game.players,
-                    player_obj
-                ];
-            }
-
-            return res.redirect(`/room/${room.roomcode}`);
+        const room_id = get_roomcode();
+        
+        
+        const player_obj = {
+            player: player,
+            pfp: pfp,
+            done: false,
+            leader: (rooms[room_id].game.leader == player)
         }
-    })
-
-    if (!found_room){
+        
+        let found_room = false;
+        
+        Object.values(rooms).forEach(room => {
+            
+            if (room.small_code == small_code){
+                
+                found_room = true;
+                const room_id = room.roomcode
+                
+                //Check if the player is kicked from the room.
+                if(room.game.kicked_players.find(x => x.player == player_obj.player)){
+                    return res.send(custom_message("You have been kicked from this room."));
+                }
+                
+                //add the player to the room player list if player is not undefined
+                if (player && !room.game.players.find(x => x.player === player)){
+                    rooms[room_id].game.players = [
+                        ...rooms[room_id].game.players,
+                        player_obj
+                    ];
+                }
+                
+                return res.redirect(`/room/${room.roomcode}`);
+            }
+        })
+        
+        if (!found_room){
+            return res.sendStatus(404);
+        }
+    }
+    catch{
         return res.sendStatus(404);
     }
 })
-
-
+    
+    
 
 
 
