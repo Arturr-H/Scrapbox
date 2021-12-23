@@ -26,6 +26,7 @@
 		<script src="/socket.io/socket.io.js" defer></script>
 		<script src="https://artur.red/script/cookies.js" defer></script>
 		<script src="https://artur.red/script/game/room.js" defer></script>
+		<script src="https://artur.red/script/game/room-chat.js" defer></script>
 		<script src="https://artur.red/script/notice.js" defer></script>
 
 
@@ -55,6 +56,11 @@
 					</ul>
 					<hr>
 					<h4 id="player-count">0/16</h4>
+
+					<div id="chat-output" class="chat-output"></div>
+					<form id="chat-form" action="">
+						<input type="text" id="chat-input" placeholder="Chat...">
+					</form>
 				</div>
 			</nav>
 

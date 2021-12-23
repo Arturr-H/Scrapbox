@@ -548,6 +548,46 @@ io.on("connection", (socket) => {
             return false;
         }
     });
+
+
+    //ROOM CHAT -------------------
+    socket.on("chat:message", (data) => {
+        try{
+            const room_id = data.room_id;
+            const player = data.player;
+            //filter message from xss and bad words
+            const message = data.message
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+
+
+
+            //check if player is in room
+            if (rooms[room_id].game.players.find(x => x.player === player)){
+
+                //add the message to the list of messages
+                // rooms[room_id].game.messages.push({
+                //     player: player,
+                //     message: message
+                // });
+
+
+
+                //send the message to the players
+                io.emit(`chat:message:${room_id}`, {
+                    player: player,
+                    message: message
+                });
+
+            }
+        }catch{
+            return false;
+        }
+    });
 });
 
 
