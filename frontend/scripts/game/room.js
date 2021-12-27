@@ -6,7 +6,6 @@ const room_id = window.location.pathname.split('/')[2];
 //HTML elements
 const start_button = document.getElementById("start-button");
 const player_list = document.getElementById("player-list");
-const error_out = document.getElementById("error-message-output");
 const player_count = document.getElementById("player-count");
 const lobby_short_id = document.getElementById("lobby-short-id");
 
@@ -16,14 +15,13 @@ const toggle_public = document.getElementById("public");
 //mini functions
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.leader?'leader':''}">
-        <img src="https://artur.red/profile-images/pi-${player_obj.pfp}.png" alt="profile image">
+        <img src="https://artur.red/profile-images/pi-${player_obj.pfp}.png" alt="Player profile image">
         <p>${player_obj.player}</p>
 
         <span class="kick-button" onclick="kick_user('${player_obj.player}')">+</span>
     </li>
 `).join("");
 const display_player_count = (players) => player_count.innerHTML = `<h4>${players.length}/16</h4>`;
-
 
 
 lobby_short_id.addEventListener("click", () => {
@@ -115,7 +113,7 @@ socket.on(`start-game:${room_id}`, (next_game_id) => {
 })
 
 socket.on(`return-message:${room_id}`, (message) => {
-    error_out.innerHTML = message;
+    notice(message);
 })
 
 // > > START HANDLER > >

@@ -14,9 +14,9 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="keywords" content="Artur.red">
-		<meta name="author" content="Artur Hoffsummer, Aaron Clauss">
-		<meta name="publisher" content="Artur Hoffsummer, Aaron Clauss">
-		<meta name="copyright" content="Artur Hoffsummer, Aaron Clauss">
+		<meta name="author" content="Artur Hoffsummer">
+		<meta name="publisher" content="Artur Hoffsummer">
+		<meta name="copyright" content="Artur Hoffsummer">
 		<meta name="description" content="Funny Game Collection (go ghahehi)">
 		<meta name="page-type" content="Games">
 		<meta name="audience" content="Everyone">
@@ -30,53 +30,46 @@
 
 
 		<!-- Styles -->
-		<link rel="stylesheet" href="https://artur.red/style/variables.css" />
-		<link rel="stylesheet" href="https://artur.red/style/pages/game-join.css" />
+		<link rel="stylesheet" href="https://artur.red/style/global.css" />
 
 		<!-- Title -->
 		<title>Join Game</title>
 	</head>
 
 	<body class="dark">
+		<div class="center">
+			<div class="floating">
+				<div class="grid-2x2-2">
 
-		<div class="logo top">
-			<a class="logo-link" href="https://artur.red/">
-				<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/White_Circle.svg/2048px-White_Circle.svg.png" alt="">
-				<h1>Balls Co.</h1>
-			</a>
-		</div>
-
-		<div class="main-block-container">
-			<div class="main-block">
-
-				<div class="box header join">
-					<h1>Join Room</h1>
-				</div>
-				<div class="box header create">
-					<h1>Create Room</h1>
-				</div>
-
-				<div class="box body join" style="flex-direction: column;">
-					<form action="" id="room-code-form">
-						<input type="text"  maxlength="7" placeholder="Enter room code" id="code-input">
-						<button style="width: min-content; padding: 0 3vmax;" id="join-button">Join</button>
-						<input type="submit" style="display: none;">
-					</form>
-					<p style="color: rgba(255, 255, 255, 0.475);">
-						Join a lobby using a room code containing 7 characters. You'll need to be nice to everyone or else you might get kicked by the game moderator. Good luck winning!
-					</p>
-				</div>
-		
-				
-				<div class="box body create" style="flex-direction: column;">
-					<a href="https://artur.red/api/create-room"><button>Create room!</button></a>
-					<p style="color: rgba(255, 255, 255, 0.475);">
-						A lobby with maximum 16 players, You'll be the leader of this lobby, which means you'll be able to kick players from the lobby, moderate, and change game settings.
-					</p>
-				</div>
-
-				<div class="box Footer">
-					<a href="https://artur.red/browse"><button>Browse Lobbies!</button></a>
+					<div class="border-bottom border-right header" style="grid-area: Header-1;">
+						<h1>Join Room</h1>
+					</div>
+					<div class="border-bottom header" style="grid-area: Header-2;">
+						<h1>Create Room</h1>
+					</div>
+					
+					<div class="border-bottom border-right" style="grid-area: Content-1;">
+						<form action="" id="room-code-form">
+							<input type="text"  maxlength="7" placeholder="Enter room code" id="code-input">
+							<button id="join-button">Join</button>
+							<input type="submit" style="display: none;">
+						</form>
+						<p>
+							Join a lobby using a room code containing 7 characters. You'll need to be nice to everyone or else you might get kicked by the game moderator. Good luck winning!
+						</p>
+					</div>
+					
+					
+					<div class="border-bottom" style="grid-area: Content-2;">
+						<a href="https://artur.red/api/create-room"><button>Create room!</button></a>
+						<p>
+							A lobby with maximum 16 players, You'll be the leader of this lobby, which means you'll be able to kick players from the lobby, moderate, and change game settings.
+						</p>
+					</div>
+					
+					<div style="grid-area: Footer;">
+						<a href="https://artur.red/browse"><button>Browse Lobbies!</button></a>
+					</div>
 				</div>
 			</div>
 		</div>

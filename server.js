@@ -8,7 +8,7 @@ const server     = http.createServer(app);
 const { Server } = require("socket.io");
 const io         = new Server(server);
 
-//Artur.red no cname port
+//8080: backend.artur.red, 8081: artur.red
 const PORT       = 8081;
 
 //Path for better path handling
@@ -77,7 +77,7 @@ const MIN_PLAYERS_PER_ROOM = 2;
 
 const QUESTION_COUNT = 2;
 const ROOM_CLEANUP_TIME = 1000 * 60 * 60; //1 hour
-const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 5 * 60; //5 minutes
+const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
 
 const DEBUG = false;
 
@@ -89,7 +89,7 @@ app.use("/page", express.static(path.join(__dirname, 'frontend/html')));
 
 //Express Routes    || STATIC PAGES ONLY ||
 app.get("/", (req, res) => {
-    res.sendFile(default_paths.home);
+    res.sendFile(default_paths.room_select);
 });
 //Express Routes    || *NON STATIC PAGES ONLY ||
 app.get("/api/send-idea", (req, res) => {
@@ -314,7 +314,6 @@ app.get("/name", (req, res) => {
         room: "none"
     });
 });
-
 
 //Check every minute if there are any rooms that have
 //surpassed the cleanup time. If there are, then delete them.
