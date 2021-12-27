@@ -192,7 +192,9 @@ app.get("/room/:roomID", (req, res) => {
     if( !req.cookies.usnm
         || req.cookies.usnm == null
         || req.cookies.usnm.length <= 2
-    ) return res.redirect(`/name/game-queue/${room_small_code}`);
+    ) return res.redirect(`/name/game-queue/${roomID}`); //I used to have room_small_code here, however
+    //this means that if an user does not have a name, they will be redirected to the game, even if they
+    //are not invited to the room.
 
     
     try{
@@ -684,17 +686,19 @@ app.get("/:small_code?", (req, res) => {
         const pfp = req.cookies.pfp;
         const uid = req.cookies.uid;
         
+        console.log(small_code);
+
         //get the room id from the small code, rooms is an object
         const get_roomcode = () => {
             for (let room in rooms){
                 if (rooms[room].small_code == small_code){
+                    console.log("shit", rooms[room])
                     return room;
                 }
             }
             return false;
         }
         const room_id = get_roomcode();
-        
         
         const player_obj = {
             player: player,

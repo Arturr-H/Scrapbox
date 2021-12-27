@@ -12,7 +12,7 @@ submit_name.addEventListener('click', () => {
         alert('Please enter a valid name');
         return;
     }
-    //check if name doesnt contain special characters
+    //check if name doesn't contain special characters
     else if(!name_input.value.match(/^[a-zA-Z0-9]+$/)){
         alert('Name can only contain a-z 0-9');
         return;
