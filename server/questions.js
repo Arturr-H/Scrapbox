@@ -103,7 +103,7 @@ module.exports = {
             `What are some inappropriate places to use a VR headset?`,
             `Describe the usage of ${r(item)}`,
             `It's a pity that kids these days are all getting involved with ${Blank()}.`,
-            `★✩✩✩✩ Do NOT go here! Found ${Blank()} in my spaghetti bolognese!`,
+            `Do NOT go here! Found ${Blank()} in my spaghetti bolognese!`,
             `Life for American Indians was forever changed when the White Man introduced them to ${Blank()}.`,
             `What is ${name}'s guilty pleasure?`
         ];

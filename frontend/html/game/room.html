@@ -43,31 +43,46 @@
 			<nav>
 
 				<ul id="player-list">
+					<li class="player leader">
+						<img src="https://artur.red/profile-images/pi-5.png" alt="profile image">
+						<p>Balleman</p>
+					</li>
+	
+					<li class="player active">
+						<img src="https://artur.red/profile-images/pi-7.png" alt="profile image">
+						<p>adsasdasd</p>
+					</li>
+					<li class="player leader">
+						<img src="https://artur.red/profile-images/pi-5.png" alt="profile image">
+						<p>Balleman</p>
+					</li>
+	
+					<li class="player active">
+						<img src="https://artur.red/profile-images/pi-7.png" alt="profile image">
+						<p>adsasdasd</p>
+					</li>
+					<li class="player leader">
+						<img src="https://artur.red/profile-images/pi-5.png" alt="profile image">
+						<p>Balleman</p>
+					</li>
+	
+					<li class="player active">
+						<img src="https://artur.red/profile-images/pi-7.png" alt="profile image">
+						<p>adsasdasd</p>
+					</li>
 				</ul>
 				<p id="player-count">0/16</p>
 
 			</nav>
 
-			<div>
-
-
-				<div class="main-room-section">
-
-					<div class="room-section-header">
-						<h1 id="lobby-short-id">${room_id}</h1>
-					</div>
-					
-					<div>
-						<div class="grid-2x2-2">
-
-							<div class="border-bottom border-right header" style="grid-area: Header-1;">
-								<h1>Settings</h1>
-							</div>
-							<div class="border-bottom header" style="grid-area: Header-2;">
-								<h1>Chat</h1>
-							</div>
-							
-							<div class="border-bottom border-right mid settings" style="grid-area: Content-1;">
+			<div class="main-room-section">
+				<div class="room-section-header">
+					<h1 id="lobby-short-id">${room_id}</h1>
+				</div>
+				<div>
+					<div class="container">
+						<div class="config">
+							<div class="column">
 								<div class="block">
 									<input id="mature" type="checkbox" />
 									<label for="mature"></label>
@@ -79,25 +94,40 @@
 									<span>Public</span>
 								</div>
 							</div>
-							
-							
-							<div class="border-bottom chat-container" style="grid-area: Content-2;">
+						</div>
+						<div class="chat-container">
+							<div id="chat-output" class="chat-output">
 
-								<div id="chat-output" class="chat-output">
-
-								</div>
-								<form id="chat-form" action="">
-									<input class="width" type="text" id="chat-input" placeholder="Chat...">
-								</form>
 							</div>
-							
-							<div style="grid-area: Footer;">
-								<button id="start-button">Start game!</button>
-							</div>
+							<form id="chat-form" action="">
+								<input class="width" type="text" id="chat-input" placeholder="Chat...">
+							</form>
 						</div>
 					</div>
+
+					<button id="start-button" class="bottom">Start game!</button>
 				</div>
+
 			</div>
 		</main>
 	</body>
 </html>
+<!-- 
+<div class="grid-2x2-2">
+	<div class="border-bottom border-right header" style="grid-area: Header-1;">
+		<h1>Settings</h1>
+	</div>
+	<div class="border-bottom header" style="grid-area: Header-2;">
+		<h1>Chat</h1>
+	</div>
+
+	
+	
+	<div class="border-bottom chat-container" style="grid-area: Content-2;">
+
+
+	</div>
+	
+	<div style="grid-area: Footer;">
+	</div>
+</div> -->

@@ -276,13 +276,14 @@ app.get("/game/:gameID?", (req, res) => {
             //All the names of the players in the room
             const players_in_room = rooms[game_id].game.players.map(x => x.player);
 
-            //add the questions to the room
-            rooms[game_id].game.current_questions = get_questions(QUESTION_COUNT, players_in_room, rooms[game_id].game.config.mature?"mature":"normal");
+            //add the questions to the room if they are not already there
+            if(rooms[game_id].game.current_questions.length == 0){
+                rooms[game_id].game.current_questions = get_questions(QUESTION_COUNT, players_in_room, rooms[game_id].game.config.mature?"mature":"normal");
+            }
             res.sendFile(default_paths.game_room);
         }
 
         else{
-            console.log("4")
             return res.sendFile(default_paths.illegal_game);
         }
     }catch(err){
@@ -326,7 +327,6 @@ setInterval(() => {
         //check if the room has surpassed the cleanup time
         if(rooms[room].cleanup < time){
             delete rooms[room];
-            console.log(`Deleted room ${room}`);
         }
     });
 }, ROOM_CLEANUP_CHECK_INTERVAL);
@@ -382,20 +382,7 @@ io.on("connection", (socket) => {
                 new_player_list: rooms[room_id].game.players,
                 new_player: player_obj
             });
-            
-            //Check if player is already in the room
-            // if(!rooms[room_id].game.players.includes(player_obj)){
-                
-            //     //Add player to the room
-            //     // rooms[room_id].game.players = [
-            //     //     ...rooms[room_id].game.players,
-            //     //     player_obj
-            //     // ]; 
 
-            //     console.log(rooms[room_id].game.players);
-            //     //emit the players currently in the room
-            //     io.emit(`player-join:${room_id}`, rooms[room_id].game.players);
-            // }
         }catch{
             return false;
         }
@@ -415,9 +402,12 @@ io.on("connection", (socket) => {
 
             if (!room_id) return;
 
-            //make the player online: false
-            rooms[room_id].game.players.find(x => x.player === user).online = false;
-            
+            //make the player online: false ONLY if the game is not started
+            if(!rooms[room_id].game.started){
+                rooms[room_id].game.players.find(x => x.player === user).online = false;   
+            }
+            else return;
+
             //remove the user from the room after 5 seconds have passed.
             //if the user manages to reconnect, the timeout will be cancelled.
             setTimeout(() => {
@@ -429,12 +419,10 @@ io.on("connection", (socket) => {
                     rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.uid !== user_id);
 
                     //Make the next player the leader, if there
-                    //are no more players, delete the room
+                    //are no more players, delete the room. 
                     if(rooms[room_id].game.players.length == 0){
-                        console.log("delete room");
                         delete rooms[room_id];
                     }else{
-                        console.log("make leader");
                         rooms[room_id].game.leader = rooms[room_id].game.players[0].player;
                         rooms[room_id].game.players[0].leader = true;
 
@@ -447,7 +435,7 @@ io.on("connection", (socket) => {
             }, 5000);
             
         }catch(err){
-            console.log(err);
+            if (DEBUG) console.log(err);
             return false;
         }
     });
@@ -555,7 +543,7 @@ io.on("connection", (socket) => {
                 });
             }
         }catch(err){
-            console.log(err)
+            if (DEBUG) console.log(err)
             return false;
         }
     });
@@ -583,8 +571,6 @@ io.on("connection", (socket) => {
 
                 //check if all players have submitted
                 const all_done = rooms[room_id].game.players.every(x => x.done);
-
-                console.log(all_done);
 
                 //send the data back to the players
                 io.emit(`game:submit-sentences:${room_id}`, {
