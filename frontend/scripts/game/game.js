@@ -131,7 +131,7 @@ const display_question_view = (current_snippets) => {
         <div class="center">
             <h1>${questions[current_question_index]}</h1>
         </div>
-        <div class="center">
+        <div class="center column container">
             <div class="snippet-output" id="snippet-output"></div>
             <button onclick="submit_sentence()" style="width: 30%;" id="submit-">Submit</button>
         </div>
@@ -141,7 +141,7 @@ const display_question_view = (current_snippets) => {
             <div class="snippet-input" id="snippet-input">
                 ${
                     current_snippets.map(word => `
-                        <span onclick="add_word('${word}')">${word}</span>
+                        <span onclick="add_word('${filter_xss(word)}')" class="snippet">${word}</span>
                     `).join(" ")
                 }
             </div>
@@ -155,7 +155,9 @@ const add_word = (word) => {
     sentences[current_question_index].sentence.push(filter_xss(word));
 
     snippet_output = document.getElementById("snippet-output");
-    snippet_output.innerHTML = sentences[current_question_index].sentence.join(" ");
+    snippet_output.innerHTML = sentences[current_question_index].sentence.map(word => `
+        <span class="snippet">${word}</span>
+    `).join("");
 }
 const submit_sentence = () => {
 
@@ -191,16 +193,27 @@ socket.on(`game:submit-sentences:${room_id}`, (data) => {
 
 const start_voting_interval = (current_player_answers) => {
     current_voting_index = 0;
-    voting_interval = setInterval(() => {
+
+    const try_render_voting_view = () => {
         if(current_voting_index >= questions.length){
             clearInterval(voting_interval);
+            display_results();
             return;
         }
 
         //render the voting view
         text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
         current_voting_index++;
-    }, 10000);
+    }
+
+    try_render_voting_view();
+    //∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆//
+    //So we set this interval so it switches between all the questions
+    //and answers, however there is a duplicate function above here as
+    //you probably can see. It's because setInterval is a function that
+    //calls the function first AFTER the interval time has passed.
+    //Otherwise it would be X seconds of nothingness.
+    voting_interval = setInterval(try_render_voting_view, 10000);
 }
 
 const display_voting_view = (current_player_answers, index) => {
@@ -212,16 +225,28 @@ const display_voting_view = (current_player_answers, index) => {
         <div class="center">
             ${
 
-                current_player_answers.map(player => {
+                current_player_answers.map((player, player_idx) => {
                     return `
                         <div class="player-answer">
                             <p>${
                                 player.sentences[index].sentence.join(" ")
                             }</p>
+                            <div class="bottom"></div>
+                            <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
+                            <p class="score">+250</p>
                         </div>
                     `;
                 })
             }
+        </div>
+    `;
+}
+
+
+const display_results = () => {
+    text_input_area.innerHTML = `
+        <div class="center">
+            <h1>Results</h1>
         </div>
     `;
 }

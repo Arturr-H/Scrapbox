@@ -555,8 +555,6 @@ io.on("connection", (socket) => {
             const player = data.player;
             const sentences = data.sentences;
 
-            console.log(sentences, player, room_id);
-
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
@@ -671,14 +669,11 @@ app.get("/:small_code?", (req, res) => {
         const player = req.cookies.usnm;
         const pfp = req.cookies.pfp;
         const uid = req.cookies.uid;
-        
-        console.log(small_code);
 
         //get the room id from the small code, rooms is an object
         const get_roomcode = () => {
             for (let room in rooms){
                 if (rooms[room].small_code == small_code){
-                    console.log("shit", rooms[room])
                     return room;
                 }
             }
