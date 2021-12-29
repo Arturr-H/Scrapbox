@@ -17,6 +17,9 @@ let questions;
 let sentences = [];
 let current_question_index = -1;//-1 because it adds up to 0 when it's the first question
 let current_snippets = [];
+let has_voted = false;
+
+let current_total_votes = {};
 
 //it cycles through all the questions and
 //all the player items using this variable
@@ -25,7 +28,7 @@ let current_voting_index = 0;
 //mini functions
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.done?"active":""}">
-        <img src="https://artur.red/profile-images/pi-${player_obj.pfp}.png" alt="profile image">
+        <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="profile image">
         <p>${player_obj.player}</p>
     </li>
 `).join("");
@@ -131,19 +134,24 @@ const display_question_view = (current_snippets) => {
         <div class="center">
             <h1>${questions[current_question_index]}</h1>
         </div>
-        <div class="center column container">
-            <div class="snippet-output" id="snippet-output"></div>
-            <button onclick="submit_sentence()" style="width: 30%;" id="submit-">Submit</button>
+        <div class="center column">
+            <div class="big-container">
+                <div class="snippet-output" id="snippet-output">
+                
+                </div>
+            </div>
+            <button onclick="submit_sentence()" style="width: 30%;">Submit</button>
         </div>
 
         <div class="center">
-
             <div class="snippet-input" id="snippet-input">
-                ${
-                    current_snippets.map(word => `
-                        <span onclick="add_word('${filter_xss(word)}')" class="snippet">${word}</span>
-                    `).join(" ")
-                }
+                <div>
+                    ${
+                        current_snippets.map(word => `
+                            <span onclick="add_word('${filter_xss(word)}')" class="snippet">${word}</span>
+                        `).join(" ")
+                    }
+                </div>
             </div>
         </div>
     `;
@@ -222,31 +230,79 @@ const display_voting_view = (current_player_answers, index) => {
         <div class="center">
             <h1>${questions[current_voting_index]}</h1>
         </div>
-        <div class="center">
+        <div class="center player-answer-container">
             ${
 
-                current_player_answers.map((player, player_idx) => {
-                    return `
-                        <div class="player-answer">
-                            <p>${
-                                player.sentences[index].sentence.join(" ")
-                            }</p>
-                            <div class="bottom"></div>
-                            <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
-                            <p class="score">+250</p>
-                        </div>
-                    `;
-                })
+                current_player_answers.map((player, player_idx) => `
+                    <div id="card_${player.player}" class="player-answer ${player == getCookie("usnm")?'disabled':''}" onclick="${
+                        
+                        //if its the own players card they should not be able to vote for themself.
+                        player == getCookie("usnm")?'':`vote_for('${player.player}')`
+
+                    }">
+                        
+                        <p>${
+                            player.sentences[index].sentence.join(" ")
+                        }</p>
+                        <div class="bottom"></div>
+                        <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
+                        <p class="score"></p>
+
+                        <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
+                    </div>
+                `).join("")
             }
         </div>
     `;
 }
 
+// -------------------------------------------------- HANDLE VOTING -------------------------------------------------- //
+
+const vote_for = (player) => {
+
+    if(!has_voted && player != getCookie("usnm")){
+        socket.emit("game:vote-for", {
+            room_id: room_id,
+            voter: getCookie("usnm"),
+            voted_for: player,
+        });
+
+        document.getElementById(`card_${player}`).classList.add("vote");
+
+        // loop through all elements with the class of player-answer and add the class "disabled"
+        document.querySelectorAll(".player-answer").forEach(player_answer => {
+            player_answer.classList.add("disabled");
+            player_answer.onclick = null;
+        });
+    }
+}
+socket.on(`game:vote-for:${room_id}`, (data) => {
+    const total_votes = data.total_votes;
+    const players = data.players;
+    const all_done = data.all_done;
+
+    //update the player list
+    player_list.innerHTML = display_players(players);
+
+    current_total_votes = total_votes;
+});
+
 
 const display_results = () => {
     text_input_area.innerHTML = `
-        <div class="center">
+        <div class="center column">
             <h1>Results</h1>
-        </div>
+
+            ${
+                //current_total_votes looks something like this: {player1: 250, player2: 150, player3: 500}
+                //sort current_total_votes by the value of the object
+                Object.keys(current_total_votes).sort((a, b) => current_total_votes[b] - current_total_votes[a]).map((player, player_idx) => `
+                    <span class="player-result ${player_idx == 0?'leader':''}" style="animation-delay: ${(Object.keys(current_total_votes).length - player_idx) * 3}s">
+                        <p>${player_idx+1}: ${player}</p>
+                        <p>${current_total_votes[player]*50}</p>
+                    </span>
+                `).join("")
+            }
+        </div>   
     `;
 }

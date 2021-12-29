@@ -142,6 +142,9 @@ app.get("/api/create-room", (req, res) => {
             current_snippets: [],
             current_questions: [],
             current_player_answers: [],
+            current_player_votes: {
+                [leader]: 0,
+            },
         }
     };
 
@@ -180,13 +183,6 @@ app.get("/api/browse", (req, res) => {
 app.get("/room/:roomID", (req, res) => {
 
     const roomID = req.params.roomID;
-    let room_small_code;
-
-    try{
-        room_small_code = rooms[roomID].small_code || null;
-    }catch{
-        room_small_code = null;    
-    }
 
     //Check if user has a name
     if( !req.cookies.usnm
@@ -208,6 +204,11 @@ app.get("/room/:roomID", (req, res) => {
         }
         //make the player online: true
         rooms[roomID].game.players.find(x => x.player === req.cookies.usnm).online = true;
+
+        //add the player to the voting list. if they are already in the list,
+        //nothing happens because you override the value of the key. 
+        rooms[roomID].game.current_player_votes[req.cookies.usnm] = 0;
+
         //Check if room exists
         if(!rooms[roomID]){
             return res.sendFile(default_paths.illegal_game);
@@ -570,6 +571,11 @@ io.on("connection", (socket) => {
                 //check if all players have submitted
                 const all_done = rooms[room_id].game.players.every(x => x.done);
 
+                //if all players are done, make all players not done
+                if(all_done){
+                    rooms[room_id].game.players.forEach(x => x.done = false);
+                }
+
                 //send the data back to the players
                 io.emit(`game:submit-sentences:${room_id}`, {
                     players: rooms[room_id].game.players,
@@ -584,40 +590,44 @@ io.on("connection", (socket) => {
     })
 
     //VOTING -------------------
-    socket.on("game:vote", (data) => {
+    socket.on("game:vote-for", (data) => {
         
         try{
             const room_id = data.room_id;
-            const player = data.player;
-            const vote = data.vote;
+            const voter = data.voter;
+            const voted_for = data.voted_for;
 
             //check if player is in room
-            if (rooms[room_id].game.players.find(x => x.player === player)){
+            if (rooms[room_id].game.players.find(x => x.player === voter)){
 
-                //add the vote to the list of votes
-                rooms[room_id].game.current_player_votes.push({
-                    player: player,
-                    vote: vote
-                });
+                //add the vote to the list of votes if
+                //the player is not voting for themselves
+                if(voter != voted_for){
+                    rooms[room_id].game.current_player_votes[voted_for] += 1;
+                }else return;
+
 
                 //set the player to done
-                rooms[room_id].game.players.find(x => x.player === player).done = true;
+                rooms[room_id].game.players.find(x => x.player === voter).done = true;
 
                 //check if all players have voted
                 const all_done = rooms[room_id].game.players.every(x => x.done);
 
                 //send the data back to the players
-                io.emit(`game:vote:${room_id}`, {
+                io.emit(`game:vote-for:${room_id}`, {
                     players: rooms[room_id].game.players,
-                    current_player_votes: rooms[room_id].game.current_player_votes,
+                    total_votes: rooms[room_id].game.current_player_votes,
                     all_done: all_done
                 });
 
             }
-        }catch{
+        }catch(err){
+            if (DEBUG) console.log(err)
             return false;
         }
     });
+
+
 
     //ROOM CHAT -------------------
     socket.on("chat:message", (data) => {

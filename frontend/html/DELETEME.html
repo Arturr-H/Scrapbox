@@ -9,78 +9,119 @@
 
     <link rel="stylesheet" href="https://artur.red/style/global.css">
     <script src="https://artur.red/script/cookies.js" defer></script>
-	<script src="https://artur.red/script/global.js" defer></script>
+    <script src="https://artur.red/script/global.js" defer></script>
 
 </head>
+
 <body class="dark">
     <main>
         <nav>
 
             <ul id="player-list">
                 <li class="player active">
-                    <img src="https://artur.red/profile-images/pi-5.png" alt="profile image">
+                    <img src="https://artur.red/faces/1.svg" alt="profile image">
                     <p>Balleman</p>
                 </li>
 
                 <li class="player active">
-                    <img src="https://artur.red/profile-images/pi-7.png" alt="profile image">
+                    <img src="https://artur.red/faces/2.svg" alt="profile image">
                     <p>adsasdasd</p>
                 </li>
+                <li class="player active">
+                    <img src="https://artur.red/faces/3.svg" alt="profile image">
+                    <p>Balleman</p>
+                </li>
+
+                <li class="player active">
+                    <img src="https://artur.red/faces/4.svg" alt="profile image">
+                    <p>adsasdasd</p>
+                </li>
+                <li class="player active">
+                    <img src="https://artur.red/faces/5.svg" alt="profile image">
+                    <p>Balleman</p>
+                </li>
+
+                <li class="player active">
+                    <img src="https://artur.red/faces/6.svg" alt="profile image">
+                    <p>adsasdasd</p>
+                </li>
+                <li class="player active">
+                    <img src="https://artur.red/faces/7.svg" alt="profile image">
+                    <p>Balleman</p>
+                </li>
+
+                <li class="player active">
+                    <img src="https://artur.red/faces/8.svg" alt="profile image">
+                    <p>adsasdasd</p>
+                </li>
+                <li class="player active">
+                    <img src="https://artur.red/faces/9.svg" alt="profile image">
+                    <p>Balleman</p>
+                </li>
+
+                <li class="player active">
+                    <img src="https://artur.red/faces/10.svg" alt="profile image">
+                    <p>adsasdasd</p>
+                </li>
+
+
             </ul>
             <p id="player-count">0/16</p>
 
         </nav>
 
         <div class="main-room-section" id="text-input-area">
+
             <div class="center">
-                <h1>What do you think about when you’re alone in bed?</h1>
+                <h1>I thought I'd never see a ________ again, but here we are.</h1>
             </div>
-            <div class="center">
+            <div class="center player-answer-container">
 
-                <div class="player-answer-container">
+                <div class="player-answer disabled" onclick="vote_for('Balleman')">
+                    <p>and some black mcDonalds</p>
+                    <div class="bottom"></div>
+                    <img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+                    <p class="score">+250</p>
 
-                    <div class="player-answer">
-                        <p>andMEGA GAY BALLS</p>
-                        <div class="bottom"></div>
-                        <img src="https://artur.red/images/cross-numbers/1.svg" class="card-number">
-                        <p class="score">+250</p>
-                    </div>
-                    <div class="player-answer">
-                        <p>really GAY Cocks man</p>
-                        <div class="bottom"></div>
-                        <img src="https://artur.red/images/cross-numbers/2.svg" class="card-number">
-                        <p class="score">+150</p>
-                    </div>
-                    <div class="player-answer">
-                        <p>really GAY Cocks man</p>
-                        <div class="bottom"></div>
-                        <img src="https://artur.red/images/cross-numbers/3.svg" class="card-number">
-                        <p class="score">+50</p>
-                    </div>
-                    <div class="player-answer">
-                        <p>really GAY Cocks man</p>
-                        <div class="bottom"></div>
-                        <img src="https://artur.red/images/cross-numbers/4.svg" class="card-number">
-                        <p class="score">+0</p>
-                    </div>
-                    <div class="player-answer">
-                        <p>really GAY Cocks man</p>
-                        <div class="bottom"></div>
-                        <img src="https://artur.red/images/cross-numbers/5.svg" class="card-number">
-                        <p class="score">+50</p>
-                    </div>
-                    <div class="player-answer">
-                        <p>really GAY Cocks man</p>
-                        <div class="bottom"></div>
-                        <img src="https://artur.red/images/cross-numbers/6.svg" class="card-number">
-                        <p class="score">+500</p>
-                    </div>
-                    
+                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
+                </div>
+                <div class="player-answer vote disabled" onclick="vote_for('nibba')">
+                    <p>snippa</p>
+                    <div class="bottom"></div>
+                    <img src="https://artur.red/images/cross-numbers/2.svg" class="card-number" alt="card-number">
+                    <p class="score">+250</p>
+                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
+                </div>
+
+                <div class="player-answer" onclick="vote_for('Balleman')">
+                    <p>and some black mcDonalds</p>
+                    <div class="bottom"></div>
+                    <img src="https://artur.red/images/cross-numbers/3.svg" class="card-number" alt="card-number">
+                    <p class="score">+250</p>
+                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
+                </div>
+                <div class="player-answer" onclick="vote_for('nibba')">
+                    <p>snippa</p>
+                    <div class="bottom"></div>
+                    <img src="https://artur.red/images/cross-numbers/4.svg" class="card-number" alt="card-number">
+                    <p class="score">+250</p>
+                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
+                </div>
+
+                <div class="player-answer" onclick="vote_for('Balleman')">
+                    <p>and some black mcDonalds</p>
+                    <div class="bottom"></div>
+                    <img src="https://artur.red/images/cross-numbers/5.svg" class="card-number" alt="card-number">
+                    <p class="score">+250</p>
+                </div>
+                <div class="player-answer" onclick="vote_for('nibba')">
+                    <p>snippa</p>
+                    <div class="bottom"></div>
+                    <img src="https://artur.red/images/cross-numbers/6.svg" class="card-number" alt="card-number">
+                    <p class="score">+250</p>
                 </div>
             </div>
         </div>
     </main>
-
-
 </body>
 </html>
