@@ -248,7 +248,7 @@ const display_voting_view = (current_player_answers, index) => {
                         <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
                         <p class="score"></p>
 
-                        <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
+                        <img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
                     </div>
                 `).join("")
             }

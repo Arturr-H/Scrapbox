@@ -52,7 +52,7 @@
 
 			<div class="main-room-section">
 				<div class="room-section-header">
-					<h1 id="lobby-short-id"></h1>
+					<h1 id="lobby-short-id" class="lobby-short-id">asdasd</h1>
 				</div>
 				<div>
 					<div class="container">
@@ -70,21 +70,30 @@
 								</div>
 							</div>
 						</div>
-						<div class="chat-container">
-							<div id="chat-output" class="chat-output">
-
-							</div>
-							<form id="chat-form" action="">
-								<input class="width" type="text" id="chat-input" placeholder="Chat...">
-							</form>
-						</div>
 					</div>
 
 					<button id="start-button" class="bottom">Start game!</button>
 				</div>
 
 			</div>
+
+			<div class="chat-container" id="chat-container">
+				<div class="top">
+					<div id="close-chat" class="blob" style="background: rgb(243, 106, 94); cursor: pointer;"></div>
+					<div class="blob" style="background: rgb(249, 189, 80);"></div>
+					<div class="blob" style="background: rgb(90, 195, 85);"></div>
+
+					<p>LOBBY CHAT</p>
+				</div>
+				
+				<div id="chat-output" class="chat-output"></div>
+				<form id="chat-form" action="">
+					<input class="width" type="text" id="chat-input" placeholder="Chat...">
+				</form>
+			</div>
 		</main>
+
+		<button class="open-chat" id="open-chat"></button>
 	</body>
 </html>
 <!-- 

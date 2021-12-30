@@ -9,6 +9,10 @@ const player_list = document.getElementById("player-list");
 const player_count = document.getElementById("player-count");
 const lobby_short_id = document.getElementById("lobby-short-id");
 
+const chat_container = document.getElementById("chat-container");
+const open_chat = document.getElementById("open-chat");
+const close_chat = document.getElementById("close-chat");
+
 const toggle_mature = document.getElementById("mature");
 const toggle_public = document.getElementById("public");
 
@@ -192,3 +196,56 @@ socket.on(`player-leave:${room_id}`, (data) => {
     player_list.innerHTML = display_players(new_player_list);
     display_player_count(new_player_list);
 });
+
+
+
+// CHAT CONTAINER
+
+let chat_open = false;
+
+//the chat container should be draggable with the mouse
+chat_container.addEventListener("mousedown", (e) => {
+    chat_container.style.cursor = "grabbing";
+    chat_container.style.userSelect = "none";
+    chat_container.style.transition = "none";
+
+    //get the mouse position
+    const mouse_x = e.clientX;
+    const mouse_y = e.clientY;
+
+    //get the chat container position
+    const chat_container_x = chat_container.getBoundingClientRect().left;
+    const chat_container_y = chat_container.getBoundingClientRect().top;
+
+    //when the mouse is moved
+    const move_chat_container = (e) => {
+        chat_container.style.left = e.clientX - mouse_x + chat_container_x + "px";
+        chat_container.style.top = e.clientY - mouse_y + chat_container_y + "px";
+    }
+
+    //when the mouse is released
+    const release_chat_container = () => {
+        chat_container.style.cursor = "grab";
+        chat_container.style.userSelect = "text";
+        chat_container.style.transition = "all .2s ease";
+
+        window.removeEventListener("mousemove", move_chat_container);
+        window.removeEventListener("mouseup", release_chat_container);
+    }
+
+    window.addEventListener("mousemove", move_chat_container);
+    window.addEventListener("mouseup", release_chat_container);
+
+});
+
+const toggle_chat = () => {
+    if(chat_open){
+        chat_container.style.display = "none";
+        chat_open = false;
+    }else{
+        chat_container.style.display = "grid";
+        chat_open = true;
+    }
+}
+open_chat.addEventListener("click", toggle_chat);
+close_chat.addEventListener("click", toggle_chat);

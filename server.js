@@ -3,21 +3,24 @@ const express    = require("express");
 const app        = express();
 
 //socket.io
-const http       = require('http')
+const http       = require("http")
 const server     = http.createServer(app);
 const { Server } = require("socket.io");
 const io         = new Server(server);
 
+//read .env files
+require("dotenv").config();
+
 //8080: backend.artur.red, 8081: artur.red
-const PORT       = 8081;
+const PORT       = process.env.PORT;
 
 //Path for better path handling
 const path       = require("path");
 
 //Render HTML for variable passing.
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-app.set('views', __dirname);
+app.engine("html", require("ejs").renderFile);
+app.set("view engine", "html");
+app.set("views", __dirname);
 
 //cors for 3party requests
 const cors = require("cors");
@@ -82,10 +85,10 @@ const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
 const DEBUG = false;
 
 //Express static folders
-app.use("/", express.static(path.join(__dirname, 'resources')));
-app.use("/script", express.static(path.join(__dirname, 'frontend/scripts')));
-app.use("/style", express.static(path.join(__dirname, 'frontend/style')));
-app.use("/page", express.static(path.join(__dirname, 'frontend/html')));
+app.use("/", express.static(path.join(__dirname, "resources")));
+app.use("/script", express.static(path.join(__dirname, "frontend/scripts")));
+app.use("/style", express.static(path.join(__dirname, "frontend/style")));
+app.use("/page", express.static(path.join(__dirname, "frontend/html")));
 
 //Express Routes    || STATIC PAGES ONLY ||
 app.get("/", (req, res) => {
@@ -308,9 +311,26 @@ app.get("/api/get-room-data", (req, res) => {
 //the user gets automatically redirected to the game after
 //they have selected their name.
 app.get("/name/game-queue/:id?", (req, res) => {
-    res.render(default_paths.name_select, {
-        room: req.params.id
-    });
+
+    
+    try{
+        const room_id = req.params.id;
+        
+        //get the room small code using the room id
+        const room_small_code = rooms[room_id].small_code;
+        
+        //Check if user has a name
+        if( req.cookies.usnm
+            || req.cookies.usnm != null
+            ) return res.redirect(`/${room_small_code}`);
+            
+        res.render(default_paths.name_select, {
+            room: req.params.id
+        });
+    }catch(err){
+        if (DEBUG) console.log(err);
+        res.sendStatus(404);
+    }
 });
 
 app.get("/name", (req, res) => {

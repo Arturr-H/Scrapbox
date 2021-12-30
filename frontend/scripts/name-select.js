@@ -23,7 +23,11 @@ submit_name.addEventListener('click', () => {
         setCookie("uid", get_random_id(), 30);
 
         if (queued_room != "none"){
-            window.open(`/${queued_room}`, "_self");
+            //so i've set up in the server that checks if the user
+            //has a name, if it has a name, it will redirect them
+            //to the room they were in, if not, it will redirect them
+            //to artur.red
+            window.location.reload();
         }else{
             window.open(`https://artur.red`, "_self");
         }
