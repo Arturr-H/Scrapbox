@@ -8,6 +8,7 @@ const start_button = document.getElementById("start-button");
 const player_list = document.getElementById("player-list");
 const player_count = document.getElementById("player-count");
 const lobby_short_id = document.getElementById("lobby-short-id");
+const config_area = document.getElementById("config-area");
 
 const chat_container = document.getElementById("chat-container");
 const open_chat = document.getElementById("open-chat");
@@ -15,14 +16,18 @@ const close_chat = document.getElementById("close-chat");
 
 const toggle_mature = document.getElementById("mature");
 const toggle_public = document.getElementById("public");
+const question_count = document.getElementById("question-count");
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.leader?'leader':''}">
-        <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
-        <p>${player_obj.player}</p>
-
-        <span class="kick-button" onclick="kick_user('${player_obj.player}')">+</span>
+        <div class="pfp">
+            <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
+        </div>
+        <div class="info">
+            <p>${player_obj.player}</p>
+            <img class="kick-button" onclick="kick_user('${player_obj.player}')" src="https://artur.red/icons/xmark.svg" alt="xmark">
+        </div>
     </li>
 `).join("");
 const display_player_count = (players) => player_count.innerHTML = `<h4>${players.length}/16</h4>`;
@@ -86,6 +91,15 @@ socket.on(`player-join:${room_id}`, (data) => {
         //set the game config
         toggle_mature.checked = room_data_json.game.config.mature;
         toggle_public.checked = room_data_json.game.config.public;
+        question_count.value = room_data_json.game.config.question_count;
+
+        if(room_data_json.game.leader == getCookie("usnm")){
+            start_button.style.display = "block";
+        }else{
+            config_area.innerHTML = `
+                <p>Waiting for <b>${room_data_json.game.leader}</b> to start the game</p>
+            `;
+        }
 
     }catch{
         console.log("error");
@@ -137,7 +151,6 @@ toggle_mature.addEventListener("click", () => {
     })
 });
 
-
 toggle_public.addEventListener("click", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -146,6 +159,16 @@ toggle_public.addEventListener("click", () => {
         setting: "public"
     })
 });
+
+question_count.addEventListener("change", () => {
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: getCookie("usnm"),
+        new_value: question_count.value,
+        setting: "question_count"
+    })
+});
+
 
 socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     notice(`${new_data.player} has changed the ${new_data.setting} setting to ${new_data.new_value}`);
@@ -156,6 +179,9 @@ socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     }
     if (new_data.setting == "public") {
         toggle_public.checked = new_data.new_value;
+    }
+    if (new_data.setting == "question_count") {
+        question_count.value = new_data.new_value;
     }
 });
 
@@ -249,3 +275,14 @@ const toggle_chat = () => {
 }
 open_chat.addEventListener("click", toggle_chat);
 close_chat.addEventListener("click", toggle_chat);
+
+//chat container can't be outside the window, and it should go back if it's outside
+window.addEventListener("resize", () => {
+    if(chat_container.getBoundingClientRect().right > window.innerWidth){
+        chat_container.style.left = window.innerWidth - chat_container.getBoundingClientRect().width + "px";
+    }
+    if(chat_container.getBoundingClientRect().bottom > window.innerHeight){
+        chat_container.style.top = window.innerHeight - chat_container.getBoundingClientRect().height + "px";
+    }
+});
+

@@ -26,6 +26,19 @@ app.set("views", __dirname);
 const cors = require("cors");
 app.use(cors());
 
+//os for processor info
+const os = require("os");
+
+//disk reading and writing
+const fs = require("fs");
+
+//get free disk space in GB
+const get_free_space = () => {
+    const disk = os.freemem();
+    const free_space = disk / 1000000000;
+    return free_space + " GB USED";
+}
+
 //Crypto for room code generation
 const crypto     = require("crypto");
 const generate_roomcode = () => crypto.randomBytes(32).toString("hex");
@@ -34,9 +47,6 @@ const generate_small_code = () => parseInt(Math.random() * (10000000 - 1000000) 
 //cookie parser
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-
-//fs for file handling
-const fs = require("fs");
 
 const questions = require(path.resolve("server/questions.js"));
 const get_questions = (questionCount, players, type) => {
@@ -141,6 +151,7 @@ app.get("/api/create-room", (req, res) => {
             config: {
                 mature: false,
                 public: false,
+                question_count: QUESTION_COUNT,
             },
             current_snippets: [],
             current_questions: [],
@@ -282,7 +293,11 @@ app.get("/game/:gameID?", (req, res) => {
 
             //add the questions to the room if they are not already there
             if(rooms[game_id].game.current_questions.length == 0){
-                rooms[game_id].game.current_questions = get_questions(QUESTION_COUNT, players_in_room, rooms[game_id].game.config.mature?"mature":"normal");
+                rooms[game_id].game.current_questions = get_questions(
+                    rooms[game_id].game.config.question_count,
+                    players_in_room,
+                    rooms[game_id].game.config.mature?"mature":"normal"
+                );
             }
             res.sendFile(default_paths.game_room);
         }
@@ -632,12 +647,17 @@ io.on("connection", (socket) => {
 
                 //check if all players have voted
                 const all_done = rooms[room_id].game.players.every(x => x.done);
+                
+                if(all_done){
+                    rooms[room_id].game.players.forEach(x => x.done = false);
+                }
 
                 //send the data back to the players
                 io.emit(`game:vote-for:${room_id}`, {
                     players: rooms[room_id].game.players,
                     total_votes: rooms[room_id].game.current_player_votes,
-                    all_done: all_done
+                    all_done: all_done,
+                    current_player_answers: rooms[room_id].game.current_player_answers
                 });
 
             }
@@ -646,7 +666,6 @@ io.on("connection", (socket) => {
             return false;
         }
     });
-
 
 
     //ROOM CHAT -------------------
@@ -668,14 +687,6 @@ io.on("connection", (socket) => {
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
-                //add the message to the list of messages
-                // rooms[room_id].game.messages.push({
-                //     player: player,
-                //     message: message
-                // });
-
-
-
                 //send the message to the players
                 io.emit(`chat:message:${room_id}`, {
                     player: player,
@@ -687,6 +698,29 @@ io.on("connection", (socket) => {
             return false;
         }
     });
+
+    //CLEARING -------------------
+    socket.on("game:clear-player-done", (data) => {
+        try{
+            const room_id = data.room_id;
+            const player = data.player;
+
+            //check if player is the leader of the room
+            if (rooms[room_id].game.leader === player){
+
+                //clear all players done
+                rooms[room_id].game.players.forEach(x => x.done = false);
+
+                //send the data back to the players
+                io.emit(`game:clear-player-done:${room_id}`, {
+                    players: rooms[room_id].game.players
+                });
+
+            }
+        }catch{
+            return false;
+        }
+    })
 });
 
 
@@ -764,5 +798,22 @@ app.get("/:small_code?", (req, res) => {
 
 //Listeners
 server.listen(PORT, () => {
+    console.log("Clearing game rooms...");
+    rooms = {};
+
+    console.log(`
+- RAM: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)}MB,
+- CPU: ${os.loadavg()[0]},
+- DISK_USAGE: ${get_free_space()},
+- PORT: ${PORT},
+- DEBUG: ${DEBUG},
+- SERVER_STARTED: ${new Date()},
+- PORT: $IP: ${os.networkInterfaces().eth0[0].address},
+- SERVER_NAME: ${os.hostname()},
+- HOME_DIR: ${os.homedir()},
+- OS: ${os.platform()} ${os.release()}
+    `);
+
+
     console.log("up and running");
 })

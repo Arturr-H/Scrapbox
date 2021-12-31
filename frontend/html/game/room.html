@@ -52,11 +52,12 @@
 
 			<div class="main-room-section">
 				<div class="room-section-header">
-					<h1 id="lobby-short-id" class="lobby-short-id">asdasd</h1>
+					<h1 id="lobby-short-id" class="lobby-short-id">
+					</h1>
 				</div>
 				<div>
 					<div class="container">
-						<div class="config">
+						<div class="config" id="config-area">
 							<div class="column">
 								<div class="block">
 									<input id="mature" type="checkbox" />
@@ -68,11 +69,26 @@
 									<label for="public"></label>
 									<span>Public</span>
 								</div>
+								<div class="block">
+									<select id="question-count" name="question-count">
+										<option value="1">1</option>
+										<option value="2" selected="selected">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
+										<option value="7">7</option>
+										<option value="8">8</option>
+										<option value="9">9</option>
+										<option value="10">10</option>
+									</select>
+									<span>Questions</span>
+								</div>
 							</div>
 						</div>
 					</div>
 
-					<button id="start-button" class="bottom">Start game!</button>
+					<button id="start-button" class="bottom" style="display: none;">Start game!</button>
 				</div>
 
 			</div>
@@ -83,7 +99,7 @@
 					<div class="blob" style="background: rgb(249, 189, 80);"></div>
 					<div class="blob" style="background: rgb(90, 195, 85);"></div>
 
-					<p>LOBBY CHAT</p>
+					<p>&lt;- LOBBY CHAT -&gt;</p>
 				</div>
 				
 				<div id="chat-output" class="chat-output"></div>

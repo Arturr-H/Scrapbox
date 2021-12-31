@@ -9,13 +9,15 @@
     --border: 1px solid rgba(255, 255, 255, 0.173);
     --border-color: rgba(0, 0, 0, 0.5);
 
-    --main-bg: #19222b;
 
-    --main-color: #272e3b;
+
+    --main-bg: hsl(250, 22%, 10%);
+
+    --main-color: hsl(250, 26%, 15%);
     --main-color-hover: #232933;
     --main-color-active: #22262d;
 
-    --text-color: white;
+    --text-color: rgb(255, 255, 255);
 
     --vibrant-green: #57cb57;
     --vibrant-yellow: #dfc925;
@@ -30,7 +32,7 @@ html{
     padding: 0; margin: 0;
 
     height: 100vh;
-    background: var(--main-bg-image);
+    /* background: var(--main-bg-image); */
     background-color: var(--main-color);
     background-size: 10rem 10rem;
 
@@ -76,7 +78,7 @@ body::after{
 }
 
 nav{
-    width: 10rem;
+    width: 13rem;
     height: 100%;
 
     background: var(--main-bg);
@@ -96,6 +98,7 @@ nav{
     padding: 0;
 
     max-height: 40vh;
+    max-width: calc(100vw - 1rem) ;
 
     box-sizing: border-box;
     padding: .5rem;
@@ -114,13 +117,15 @@ nav{
     scrollbar-width: none;
 
     overflow-x: scroll !important;
-    max-width: calc(100vw - 1rem);
 
 }nav > ul::-webkit-scrollbar {
     display: none;
 }nav > ul > li{
-    padding: 0;
+    box-sizing: border-box;
     margin: 0;
+
+
+    position: relative;
 
     border-radius: var(--border-radius-inner);
 
@@ -129,38 +134,72 @@ nav{
     flex-direction: row;
     align-items: center;
 
+    width:100%; height: 3rem;
+    min-width: 8rem;
     user-select: none;
 
-}nav > ul > li.leader{
-    background: var(--vibrant-yellow);
 }nav > ul > li.active{
     background: var(--vibrant-green);
 }nav > ul > li.active > p{
     color: black;
-}nav > ul > li > img{
-    height: 2.5rem;
-}nav > ul > li > p{
-    color: rgb(191, 191, 191);
-    font-size: 0.7rem
-}nav > ul > li > .kick-button{
-    display: block;
-    color: red;
+}
+nav > ul > li > div.pfp{
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+nav > ul > li > .pfp > img{
+    height: 50%;
+    background-color: rgb(134, 164, 246);
+    border-radius: 50%;
 
-    transform: rotate(45deg);
+    box-sizing: border-box;
+    margin: .5rem;
+    
+    position: relative;
+}nav > ul > li.leader > .pfp:before{
+    content: "";
 
-    font-size: 1.4rem;
-    font-weight: 300;
-
-    cursor: pointer;
     position: absolute;
-    transition: transform .05s ease;
+    left: 0;
+    top: 0;
+    
+    width: 10rem;
+    height: 10rem;
+    
+    background: url(https://artur.red/icons/crown.svg); */
+    /* background-size: contain;
+}
+nav > ul > li > .info{
+    margin-right: .5rem;
+    box-sizing: border-box;
 
-    left: 7rem;
-}nav > ul > li > .kick-button:hover{
-    transform: scale(1.3) rotate(45deg);
-    color: rgb(212, 0, 0);
-}nav > ul > li.leader > p{
-    color: black;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    position: relative;
+
+}nav > ul > li > .info .kick-button{
+    height: 1.3rem;
+    padding-left: .2rem;
+    user-select: none;
+    cursor: pointer;
+    transition: transform .5s cubic-bezier(.57,1.95,.81,.88);
+
+}nav > ul > li > .info .kick-button:hover{
+    transform: scale(1.2);
+}nav > ul > li > .info p{
+    flex: 1 0 auto;
+    color: var(--text-color);
+    width: 2rem;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }nav > .logo{
     position: absolute;
     bottom: -1rem;
@@ -192,6 +231,10 @@ nav::after{
 	mask-repeat: no-repeat, no-repeat;
 }
 
+
+
+/*GLobal Operations*/
+
 *{
     font-family: 'Poppins', sans-serif;
 
@@ -200,6 +243,15 @@ nav::after{
     -ms-overflow-style: none;
 }*::-webkit-scrollbar {
     display: none;
+}input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .width{
@@ -212,10 +264,6 @@ nav::after{
     width: 80%;
 }.column > textarea{
     height: 20rem;
-}.leader{
-    background: var(--vibrant-yellow) !important;
-}.leader > *{
-    color: black;
 }
 
 .center{
@@ -247,7 +295,7 @@ h5,
 h6,
 p{
     margin: 0;
-    color: white;
+    color: var(--text-color);
 }
 
 p{
@@ -351,8 +399,6 @@ p{
     max-height: calc(100% - 2rem - 8rem);
     display: flex;
 
-    background: var(--main-bg);
-
     border-radius: var(--border-radius);
     border: var(--border);
 
@@ -360,6 +406,12 @@ p{
     box-sizing: border-box;
 
     overflow: hidden;
+    position: relative;
+
+    background-color: var(--main-bg) !important;
+    /* background: url(https://artur.red/images/pattern-03.svg); */
+    background-size: 15rem 15rem;
+
 }.container > div.config{
     display: flex;
     justify-content: center;
@@ -367,7 +419,12 @@ p{
 
     height: 100%;
     width: 100%;
+}.container > div.config > p{
+    height: min-content;
+    width: max-content;
 
+    display: block;
+    margin: auto;
 }.container > div.config > .column{
     width: min-content;
     height: min-content;
@@ -404,7 +461,7 @@ textarea{
     padding: 1rem;
 
     background: var(--main-color);
-    color: white;
+    color: var(--text-color);
     
     resize: none;
 }
@@ -422,7 +479,7 @@ button{
     border-radius: var(--border-radius);
 
     background: var(--main-color);
-    color: white;
+    color: var(--text-color);
 
     box-sizing: border-box;
     padding: 1rem;
@@ -482,6 +539,32 @@ input[type="checkbox"]{
 	border: 0.1rem solid var(--border-color);
 	color: black;
 	border-radius: 10rem;
+}
+
+select{
+    
+    width: 4.8rem;
+	height: 2.4rem;
+	box-sizing: border-box;
+	border: .1rem solid var(--border-color);
+	
+	border-radius: 10rem;
+	position: relative;
+	cursor: pointer;
+	transition: background .2s ease;
+
+	background: var(--nav-bg);
+    color: var(--text-color);
+
+    padding: 0rem 1rem;
+    border-radius: var(--border-radius);
+    
+    resize: none;
+}select > option{
+    all: unset;
+    
+    background: var(--main-color);
+    color: var(--text-color);
 }
 
 
@@ -584,6 +667,12 @@ input[type="checkbox"]{
     .container{
         border-radius: 0;
         border: none;
+    }
+
+    .chat-container{
+        display: none !important;
+    }button.open-chat{
+        display: none !important;
     }
 }
 
@@ -704,7 +793,7 @@ button.open-chat{
 	min-width: 10vmax;
 	height: 3vmax;
 	background: var(--main-color);
-	color: white;
+	color: var(--text-color);
 
 	padding: 0 2vmax;
 
@@ -788,7 +877,7 @@ button.open-chat{
     width: 100%;
     height: 2rem;
 
-    color: white;
+    color: var(--text-color);
 
     background: rgba(255, 255, 255, 0);
 
@@ -905,6 +994,7 @@ span.player-result{
 
     box-sizing: border-box;
     padding: 1rem;
+    padding-bottom: 0%;
     overflow-y: scroll;
 }.snippet-input > div{
     width: 100%;
@@ -943,4 +1033,10 @@ span.player-result{
 }span.snippet:active{
     background: var(--vibrant-green);
     color: black;
+}
+
+
+.highlighted{
+    background: var(--vibrant-yellow) !important;
+    color: black !important;
 }

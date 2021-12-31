@@ -18,8 +18,10 @@ let sentences = [];
 let current_question_index = -1;//-1 because it adds up to 0 when it's the first question
 let current_snippets = [];
 let has_voted = false;
-
+let is_leader = false;
 let current_total_votes = {};
+
+const VOTING_TIME_IN_MS = 20000;
 
 //it cycles through all the questions and
 //all the player items using this variable
@@ -28,8 +30,10 @@ let current_voting_index = 0;
 //mini functions
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.done?"active":""}">
-        <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="profile image">
-        <p>${player_obj.player}</p>
+        <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
+        <div class="info">
+            <p>${player_obj.player}</p>
+        </div>
     </li>
 `).join("");
 const filter_xss = (str) => str.replace(/</g, "&lt;")
@@ -58,9 +62,10 @@ const filter_xss = (str) => str.replace(/</g, "&lt;")
         //Get the questions
         questions = room_data_json.game.current_questions;
         console.log(questions);
+
+        is_leader = room_data_json.game.leader === getCookie("usnm");
     }catch(err){
         console.log("error");
-
     }
 })();
 
@@ -147,8 +152,9 @@ const display_question_view = (current_snippets) => {
             <div class="snippet-input" id="snippet-input">
                 <div>
                     ${
-                        current_snippets.map(word => `
-                            <span onclick="add_word('${filter_xss(word)}')" class="snippet">${word}</span>
+                        //randomly sort the snippets
+                        current_snippets.sort(() => Math.random() - 0.5).map(word => `
+                            <span onclick="add_word('${filter_xss(word)}')" class="snippet clickable">${word}</span>
                         `).join(" ")
                     }
                 </div>
@@ -192,36 +198,19 @@ socket.on(`game:submit-sentences:${room_id}`, (data) => {
 
     //render the voting view if all players have submitted their sentences
     if(data.all_done) {
-        start_voting_interval(current_player_answers);
+        next_voting(current_player_answers);
     }
 })
 
 
 // -------------------------------------------------- DISPLAY VOTING -------------------------------------------------- //
 
-const start_voting_interval = (current_player_answers) => {
-    current_voting_index = 0;
+const next_voting = (current_player_answers) => {
 
-    const try_render_voting_view = () => {
-        if(current_voting_index >= questions.length){
-            clearInterval(voting_interval);
-            display_results();
-            return;
-        }
+    //render the voting view
+    text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
+    current_voting_index++;
 
-        //render the voting view
-        text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
-        current_voting_index++;
-    }
-
-    try_render_voting_view();
-    //∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆//
-    //So we set this interval so it switches between all the questions
-    //and answers, however there is a duplicate function above here as
-    //you probably can see. It's because setInterval is a function that
-    //calls the function first AFTER the interval time has passed.
-    //Otherwise it would be X seconds of nothingness.
-    voting_interval = setInterval(try_render_voting_view, 10000);
 }
 
 const display_voting_view = (current_player_answers, index) => {
@@ -280,14 +269,24 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     const total_votes = data.total_votes;
     const players = data.players;
     const all_done = data.all_done;
+    const current_player_answers = data.current_player_answers;
 
     //update the player list
     player_list.innerHTML = display_players(players);
 
     current_total_votes = total_votes;
+
+    console.log(current_total_votes);
+
+
+    if(all_done){
+        if(current_voting_index >= questions.length){
+            display_results();
+            return;
+        }
+        next_voting(current_player_answers);
+    }
 });
-
-
 const display_results = () => {
     text_input_area.innerHTML = `
         <div class="center column">
@@ -306,3 +305,136 @@ const display_results = () => {
         </div>   
     `;
 }
+
+/* -------------------------------------------------- PLAYER CLEARING -------------------------------------------------- */
+
+socket.on(`game:clear-player-done:${room_id}`, (data) => {
+    const players = data.players;
+
+    //update the player list
+    player_list.innerHTML = display_players(players);
+
+});
+
+/* -------------------------------------------------- WORD FINDING -------------------------------------------------- */
+
+//Okay so when the player starts typing something on the keyboard, we want to search the whole page for that word. and then we want to highlight it with a yellow background.
+//and the word that is being build should be reset every 3 seconds. however if you start typing again, that timer should be reset.
+let word = "";
+document.addEventListener("keyup", (e) => {
+    if(e.key == "Backspace"){
+        //if the player has backspaced, we want to remove the last character from the word they are typing.
+        word = word.slice(0, -1);
+    }if (e.key == "Enter" || e.key === " " || e.key === "Spacebar"){
+        
+        //click on the first word that matches the word they are typing.
+        //so basically to explain to my future self, lets say you search
+        //for "i", and there are many words that contain "i" in them.
+        // like "i" and "I" and "I'm" and "I'm not" and "I'm not a robot"
+        //and this code beneath will make sure that if you type "i" it will
+        //click on the one that matches exactly the word "i", if not, then
+        //it will click on another word that contains "i" in it.
+        let found_exact_word = false
+        document.querySelectorAll("span.snippet.clickable").forEach(word_span => {
+            if(word_span.innerHTML.toLowerCase() == word.toLowerCase()){
+                word_span.click();
+                found_exact_word = true;
+            }
+        });
+        if(!found_exact_word){
+            let word_count = 0;
+            document.querySelectorAll("span.snippet.clickable").forEach(word_span => {
+                
+                if (word_count > 0) return;
+                
+                if(word_span.innerHTML.toLowerCase().includes(word.toLowerCase())){
+                    word_span.click();
+                    word_count++;
+                }
+                
+            });
+        }
+
+        word = "";
+    }else{
+        //if the player has typed something, we want to add it to the word they are typing.
+        word += e.key;
+    }
+
+    //if the word is empty, we want to remove the yellow background from the word.
+    if(word == ""){
+        document.querySelectorAll(".highlighted").forEach(highlighted => {
+            highlighted.classList.remove("highlighted");
+        });
+    }
+    else{
+        //get all the words on the page and select only the one that matches the word.
+        document.querySelectorAll("span.snippet.clickable").forEach(span_word => {
+            if(span_word.innerHTML){
+                //if the word matches, we want to add the yellow background to it.
+                if(span_word.innerHTML.toLowerCase().includes(word.toLowerCase())){
+                    span_word.classList.add("highlighted");
+                }
+                //if the word does not match the regex, we want to remove the yellow background from it.
+                else{
+                    span_word.classList.remove("highlighted");
+                }
+            }
+        });
+
+        //check if nothing matches
+        if(document.querySelectorAll(".highlighted").length == 0){
+            word = e.key;
+
+            //try again
+            document.querySelectorAll("span.snippet.clickable").forEach(span_word => {
+                if(span_word.innerHTML){
+                    //if the word matches, we want to add the yellow background to it.
+                    if(span_word.innerHTML.toLowerCase().includes(word.toLowerCase())){
+                        span_word.classList.add("highlighted");
+                    }
+                    //if the word does not match the regex, we want to remove the yellow background from it.
+                    else{
+                        span_word.classList.remove("highlighted");
+                    }
+                }
+            });
+        }
+    }
+
+    //reset the word every 3 seconds.
+    // setTimeout(() => {
+    //     word = "";
+    //     document.querySelectorAll(".highlighted").forEach(highlighted => {
+    //         highlighted.classList.remove("highlighted");
+    //     });
+    // }, 3000);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// document.addEventListener("keyup", (e) => {
+//     const word = e.key.toLowerCase();
+//     const all_words = document.querySelectorAll("span");
+
+//     all_words.forEach(word_element => {
+//         const word_text = word_element.innerText.toLowerCase();
+//         if(word_text.includes(word)) {
+//             word_element.classList.add("highlighted");
+//         } else {
+//             word_element.classList.remove("highlighted");
+//         }
+//     });
+// });

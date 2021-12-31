@@ -13,115 +13,106 @@
 
 </head>
 
-<body class="dark">
-    <main>
-        <nav>
+<body class="dark" data-new-gr-c-s-check-loaded="8.892.0" data-gr-ext-installed="" cz-shortcut-listen="true">
+		<main id="main">
+			<nav>
 
-            <ul id="player-list">
-                <li class="player active">
-                    <img src="https://artur.red/faces/1.svg" alt="profile image">
-                    <p>Balleman</p>
-                </li>
+				<ul id="player-list">
 
-                <li class="player active">
-                    <img src="https://artur.red/faces/2.svg" alt="profile image">
-                    <p>adsasdasd</p>
-                </li>
-                <li class="player active">
-                    <img src="https://artur.red/faces/3.svg" alt="profile image">
-                    <p>Balleman</p>
-                </li>
+                    <li class="player">
+                        <div class="pfp">
+                            <img src="https://artur.red/faces/3.svg" alt="Player profile image">
 
-                <li class="player active">
-                    <img src="https://artur.red/faces/4.svg" alt="profile image">
-                    <p>adsasdasd</p>
-                </li>
-                <li class="player active">
-                    <img src="https://artur.red/faces/5.svg" alt="profile image">
-                    <p>Balleman</p>
-                </li>
+                        </div>
+                        <div class="info">
+                            <p>I promise i am not a child pedo</p>
+                            <!-- <img class="kick-button" onclick="kick-player" src="https://artur.red/icons/xmark.svg" alt="xmark"> -->
+                        </div>
+                    </li>
+                    <li class="player">
+                        <img src="https://artur.red/faces/3.svg" alt="Player profile image">
+                        <div class="info">
+                            <p>I promise i am not a child pedo</p>
+                            <!-- <img class="kick-button" onclick="kick-player" src="https://artur.red/icons/xmark.svg" alt="xmark"> -->
+                        </div>
 
-                <li class="player active">
-                    <img src="https://artur.red/faces/6.svg" alt="profile image">
-                    <p>adsasdasd</p>
-                </li>
-                <li class="player active">
-                    <img src="https://artur.red/faces/7.svg" alt="profile image">
-                    <p>Balleman</p>
-                </li>
+                    </li>
+                    <li class="player">
+                        <img src="https://artur.red/faces/3.svg" alt="Player profile image">
+                        <div class="info">
+                            <p>I promise i am not a child pedo</p>
+                            <!-- <img class="kick-button" onclick="kick-player" src="https://artur.red/icons/xmark.svg" alt="xmark"> -->
+                        </div>
 
-                <li class="player active">
-                    <img src="https://artur.red/faces/8.svg" alt="profile image">
-                    <p>adsasdasd</p>
-                </li>
-                <li class="player active">
-                    <img src="https://artur.red/faces/9.svg" alt="profile image">
-                    <p>Balleman</p>
-                </li>
+                    </li>
+                    <li class="player">
+                        <img src="https://artur.red/faces/3.svg" alt="Player profile image">
+                        <div class="info">
+                            <p>I promise i am not a child pedo</p>
+                            <!-- <img class="kick-button" onclick="kick-player" src="https://artur.red/icons/xmark.svg" alt="xmark"> -->
+                        </div>
 
-                <li class="player active">
-                    <img src="https://artur.red/faces/10.svg" alt="profile image">
-                    <p>adsasdasd</p>
-                </li>
+                    </li>
+                    <li class="player">
+                        <img src="https://artur.red/faces/3.svg" alt="Player profile image">
+                        <div class="info">
+                            <p>I promise i am not a child pedo</p>
+                            <!-- <img class="kick-button" onclick="kick-player" src="https://artur.red/icons/xmark.svg" alt="xmark"> -->
+                        </div>
+
+                    </li>
+				</ul>
+				<p id="player-count">0/16</p>
+
+			</nav>
+
+			<div class="main-room-section">
+				<div class="room-section-header">
+					<h1 id="lobby-short-id" class="lobby-short-id">
+					</h1>
+				</div>
+				<div>
+					<div class="container">
+						<div class="config" id="config-area">
+							<div class="column">
+								<div class="block">
+									<input id="mature" type="checkbox">
+									<label for="mature"></label>
+									<span>Mature</span>
+								</div>
+								<div class="block">
+									<input id="public" type="checkbox">
+									<label for="public"></label>
+									<span>Public</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<button id="start-button" class="bottom" style="display: none;">Start game!</button>
+				</div>
+
+			</div>
+
+			<div class="chat-container" id="chat-container">
+				<div class="top">
+					<div id="close-chat" class="blob" style="background: rgb(243, 106, 94); cursor: pointer;"></div>
+					<div class="blob" style="background: rgb(249, 189, 80);"></div>
+					<div class="blob" style="background: rgb(90, 195, 85);"></div>
+
+					<p>&lt;- LOBBY CHAT -&gt;</p>
+				</div>
+				
+				<div id="chat-output" class="chat-output"></div>
+				<form id="chat-form" action="">
+					<input class="width" type="text" id="chat-input" placeholder="Chat...">
+				</form>
+			</div>
+		</main>
+
+		<button class="open-chat" id="open-chat"></button>
+	
 
 
-            </ul>
-            <p id="player-count">0/16</p>
-
-        </nav>
-
-        <div class="main-room-section" id="text-input-area">
-
-            <div class="center">
-                <h1>I thought I'd never see a ________ again, but here we are.</h1>
-            </div>
-            <div class="center player-answer-container">
-
-                <div class="player-answer disabled" onclick="vote_for('Balleman')">
-                    <p>and some black mcDonalds</p>
-                    <div class="bottom"></div>
-                    <img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
-                    <p class="score">+250</p>
-
-                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
-                </div>
-                <div class="player-answer vote disabled" onclick="vote_for('nibba')">
-                    <p>snippa</p>
-                    <div class="bottom"></div>
-                    <img src="https://artur.red/images/cross-numbers/2.svg" class="card-number" alt="card-number">
-                    <p class="score">+250</p>
-                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
-                </div>
-
-                <div class="player-answer" onclick="vote_for('Balleman')">
-                    <p>and some black mcDonalds</p>
-                    <div class="bottom"></div>
-                    <img src="https://artur.red/images/cross-numbers/3.svg" class="card-number" alt="card-number">
-                    <p class="score">+250</p>
-                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
-                </div>
-                <div class="player-answer" onclick="vote_for('nibba')">
-                    <p>snippa</p>
-                    <div class="bottom"></div>
-                    <img src="https://artur.red/images/cross-numbers/4.svg" class="card-number" alt="card-number">
-                    <p class="score">+250</p>
-                    <img src="https://artur.red/images/checkmark.svg" class="checkmark" alt="checkmark">
-                </div>
-
-                <div class="player-answer" onclick="vote_for('Balleman')">
-                    <p>and some black mcDonalds</p>
-                    <div class="bottom"></div>
-                    <img src="https://artur.red/images/cross-numbers/5.svg" class="card-number" alt="card-number">
-                    <p class="score">+250</p>
-                </div>
-                <div class="player-answer" onclick="vote_for('nibba')">
-                    <p>snippa</p>
-                    <div class="bottom"></div>
-                    <img src="https://artur.red/images/cross-numbers/6.svg" class="card-number" alt="card-number">
-                    <p class="score">+250</p>
-                </div>
-            </div>
-        </div>
-    </main>
 </body>
 </html>

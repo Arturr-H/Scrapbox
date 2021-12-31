@@ -48,10 +48,12 @@ Backend:
 
 
   NEW SESH:
-     - Fix buggy player done thing 
+     - Fix buggy player done thing ∆
      - fix name can't join thing ∆
-     - maybe remove chat and replace it with a floating box yk
+     - maybe remove chat and replace it with a floating box yk ∆
      - fix background svg inconsistency ∆
      - Code hover indication ∆
      - word check for user input
-     - search feature when searching for snippets
+     - search feature when searching for snippets ∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆∆ ÄANTLIGEN
+     - Margin thing on snippet container ∆
+     - Snippets are random for every player (scrambled) ∆
