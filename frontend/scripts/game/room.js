@@ -14,23 +14,32 @@ const chat_container = document.getElementById("chat-container");
 const open_chat = document.getElementById("open-chat");
 const close_chat = document.getElementById("close-chat");
 
-const toggle_mature = document.getElementById("mature");
+const question_type = document.getElementById("mature");
 const toggle_public = document.getElementById("public");
 const question_count = document.getElementById("question-count");
+
+let is_leader = false;
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.leader?'leader':''}">
         <div class="pfp">
-            <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
+            <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Profile Picture">
         </div>
         <div class="info">
             <p>${player_obj.player}</p>
-            <img class="kick-button" onclick="kick_user('${player_obj.player}')" src="https://artur.red/icons/xmark.svg" alt="xmark">
+            ${
+                //if the player is a leader, hide the kick button
+                player_obj.leader
+                ? ''
+                : is_leader
+                ? '<img class="kick-button" onclick="kick_user(`' + player_obj.player + '`)" src="https://artur.red/icons/xmark.svg" alt="xmark"></img>'
+                : ''
+            }
         </div>
     </li>
 `).join("");
-const display_player_count = (players) => player_count.innerHTML = `<h4>${players.length}/16</h4>`;
+const display_player_count = (players) => player_count.innerHTML = `${players.length}/16`;
 
 
 lobby_short_id.addEventListener("click", () => {
@@ -82,14 +91,16 @@ socket.on(`player-join:${room_id}`, (data) => {
         const room_data_json = await room_data.json();
         const players = room_data_json.game.players;
 
+        is_leader = room_data_json.game.leader == getCookie("usnm");
+
         player_list.innerHTML = display_players(players);
         display_player_count(players);
 
         //display the lobby ID (short one)
-        lobby_short_id.innerHTML = room_data_json.small_code;
+        lobby_short_id.innerHTML = room_data_json.small_code.toString().replace(/\d{4}(?=.)/g, '$& &nbsp; ');
 
         //set the game config
-        toggle_mature.checked = room_data_json.game.config.mature;
+        question_type.value = room_data_json.game.config.question_type;
         toggle_public.checked = room_data_json.game.config.public;
         question_count.value = room_data_json.game.config.question_count;
 
@@ -142,12 +153,12 @@ socket.on(`return-message:${room_id}`, (message) => {
 // > > CONFIG HANDLER > >
 
 
-toggle_mature.addEventListener("click", () => {
+question_type.addEventListener("click", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: getCookie("usnm"),
-        new_value: toggle_mature.checked,
-        setting: "mature"
+        new_value: question_type.value,
+        setting: "question_type"
     })
 });
 
@@ -175,7 +186,7 @@ socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
 
     //set the checkbox to the new value
     if (new_data.setting == "mature") {
-        toggle_mature.checked = new_data.new_value;
+        question_type.checked = new_data.new_value;
     }
     if (new_data.setting == "public") {
         toggle_public.checked = new_data.new_value;

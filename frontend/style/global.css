@@ -1,5 +1,7 @@
 /* import the poppins font with weights: 300 and 500 */
-@import url(https://fonts.googleapis.com/css2?family=Poppins:wght@200;500&display=swap);
+ @import url('https://fonts.googleapis.com/css2?family=Heebo&family=Lato:wght@700&display=swap');
+ 
+ 
 
 /* FREQUENTLY USED STYLES */
 /* -----------------------*/
@@ -9,33 +11,51 @@
     --border: 1px solid rgba(255, 255, 255, 0.173);
     --border-color: rgba(0, 0, 0, 0.5);
 
-
-
-    --main-bg: hsl(250, 22%, 10%);
-
-    --main-color: hsl(250, 26%, 15%);
-    --main-color-hover: #232933;
-    --main-color-active: #22262d;
+    --main-bg: hsla(216, 43%, 15%, .95); /*This bascially does so the main bg color gives the color of #243651 if you didnt know*/
+    --main-color: #111E31; /*Actually the main background*/
+    --main-color-hover: hsl(216, 38%, 20%);
+    --main-color-active: hsl(216, 38%, 25%);
 
     --text-color: rgb(255, 255, 255);
 
-    --vibrant-green: #57cb57;
-    --vibrant-yellow: #dfc925;
+    --vibrant-green: #57cb57; /*This is the color of the green button*/
+    --vibrant-yellow: #dfc925; /*This is the color of the yellow button */
+    --vibrant-red: #e05252; /*This is the color of the red button*/
 
-    --main-bg-image: url(https://artur.red/images/pattern-02.svg);
+    --main-bg-image: url(https://artur.red/images/backgrounds/1.svg);
     --main-bg-image-color: blue;
 
     --grass-visibility: none;
 }
+
+/*GLobal Operations*/
+
+*{
+    font-family: 'Heebo', sans-serif;
+
+    /* hide scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}*::-webkit-scrollbar {
+    display: none;
+}input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
 body,
 html{
     padding: 0; margin: 0;
 
     height: 100vh;
-    /* background: var(--main-bg-image); */
+    background-image: var(--main-bg-image);
     background-color: var(--main-color);
-    background-size: 10rem 10rem;
-
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    object-fit: cover;
 }div.floating{
     width: 95vw;
     height: 95vh;
@@ -158,18 +178,19 @@ nav > ul > li > .pfp > img{
     margin: .5rem;
     
     position: relative;
-}nav > ul > li.leader > .pfp:before{
+}nav > ul > li.leader > .pfp:after{
     content: "";
 
     position: absolute;
     left: 0;
-    top: 0;
+    top: -.75rem;
     
-    width: 10rem;
-    height: 10rem;
+    height: 100%; width: 100%;
+
+    transform: rotateZ(-10deg) translateX(-.15rem);
     
-    background: url(https://artur.red/icons/crown.svg); */
-    /* background-size: contain;
+    background: url(https://artur.red/icons/crown.svg);
+    background-size: contain;
 }
 nav > ul > li > .info{
     margin-right: .5rem;
@@ -209,8 +230,15 @@ nav > ul > li > .info{
     margin-left: -1rem;
 }
 
+.player-count{
+    text-align: center;
+    font-size: 1.2rem;
+    font-family: "Lato", sans-serif;
+    font-weight: bold;
+}
 
-nav::after{
+
+/* nav::after{
     content: "";
     position: absolute;
     width: 100%;
@@ -230,24 +258,9 @@ nav::after{
 	mask-position: 0 0, 100% 0;
 	mask-repeat: no-repeat, no-repeat;
 }
+ */
 
 
-
-/*GLobal Operations*/
-
-*{
-    font-family: 'Poppins', sans-serif;
-
-    /* hide scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}*::-webkit-scrollbar {
-    display: none;
-}input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
 
 /* Firefox */
 input[type=number] {
@@ -301,6 +314,11 @@ p{
 p{
     font-size: 0.9rem;
     font-weight: 300;
+}
+
+hr{
+    border: none;
+    border-top: var(--border);
 }
 
 /* GRID CONTAINERS */
@@ -375,8 +393,9 @@ p{
 }
 
 .lobby-short-id{
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 800;
+    font-family: "Lato", sans-serif;
 
     cursor: pointer;
     user-select: none;
@@ -413,9 +432,12 @@ p{
     background-size: 15rem 15rem;
 
 }.container > div.config{
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-content: center;
+    align-content: center; */
+
+    padding: 2rem;
+    box-sizing: border-box;
 
     height: 100%;
     width: 100%;
@@ -426,10 +448,10 @@ p{
     display: block;
     margin: auto;
 }.container > div.config > .column{
-    width: min-content;
-    height: min-content;
 
-    margin: auto;
+    display: flex;
+    flex-direction: column;
+
 }
 
 .big-container{
@@ -469,7 +491,7 @@ input:hover,
 textarea:hover{
     background: var(--main-color-hover);
 }
-input:hover,
+input:active,
 textarea:active{
     background: var(--main-color-active);
 }
@@ -499,7 +521,7 @@ input[type="checkbox"]{
 }input[type="checkbox"]:checked + label:before{
     left: calc(100% - 2rem);
 }.block{
-	width: min-content;
+    width: min-content;
 	position: relative;
 
 	display: flex;
@@ -543,7 +565,7 @@ input[type="checkbox"]{
 
 select{
     
-    width: 4.8rem;
+    width: 10rem;
 	height: 2.4rem;
 	box-sizing: border-box;
 	border: .1rem solid var(--border-color);
@@ -596,7 +618,7 @@ select{
         display: none;
     }
 }
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 950px) {
     .player-answer-container{
         grid-template-columns: 1fr !important;
     }
@@ -955,6 +977,7 @@ button.open-chat{
 span.player-result{
     width: 100%;
     height: 3rem;
+    position: relative;
 
     background: var(--main-bg);
     border-radius: var(--border-radius);
@@ -972,7 +995,23 @@ span.player-result{
     animation: fade-in;
     animation-fill-mode: forwards;
     animation-timing-function: ease-in-out;
+}.player-result .player-info{
+    position: relative;
+    height: 100%;
+    width: max-content;
+
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+
 }
+.player-result.winner{
+    box-shadow: 0 0 15px var(--vibrant-yellow);
+}.player-result.winner .crown{
+    height: 100%;
+}
+
 @keyframes fade-in{
     from {opacity: 0}
     to   {opacity: 1}
@@ -1033,7 +1072,13 @@ span.player-result{
 }span.snippet:active{
     background: var(--vibrant-green);
     color: black;
+}span.snippet.removable:hover{
+    border-color: var(--vibrant-red) !important
+}span.snippet.removable:active{
+    background: var(--vibrant-red) !important;
+    color: black;
 }
+
 
 
 .highlighted{

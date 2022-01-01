@@ -23,6 +23,10 @@ let current_total_votes = {};
 
 const VOTING_TIME_IN_MS = 20000;
 
+const get_unique_id = () => {
+    return Math.random().toString(36);
+}
+
 //it cycles through all the questions and
 //all the player items using this variable
 let current_voting_index = 0;
@@ -30,7 +34,9 @@ let current_voting_index = 0;
 //mini functions
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.done?"active":""}">
-        <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
+        <div class="pfp">
+            <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
+        </div>
         <div class="info">
             <p>${player_obj.player}</p>
         </div>
@@ -166,13 +172,23 @@ const display_question_view = (current_snippets) => {
 // -------------------------------------------------- SNIPPET INPUT -------------------------------------------------- //
 
 const add_word = (word) => {
-    sentences[current_question_index].sentence.push(filter_xss(word));
+    sentences[current_question_index].sentence.push({
+        word: filter_xss(word).toLowerCase(),
+        id: get_unique_id()
+    });
 
     snippet_output = document.getElementById("snippet-output");
     snippet_output.innerHTML = sentences[current_question_index].sentence.map(word => `
-        <span class="snippet">${word}</span>
+        <span id="word_${word.id}" class="snippet removable" onclick="remove_word('${word.id}')">${word.word.toLowerCase()}</span>
     `).join("");
 }
+    
+const remove_word = (word_id) => {
+    document.getElementById(`word_${word_id}`).remove();
+
+    sentences[current_question_index].sentence = sentences[current_question_index].sentence.filter(word => word.id !== word_id);
+}
+
 const submit_sentence = () => {
 
     text_input_area.innerHTML = display_question_view(current_snippets);
@@ -215,6 +231,8 @@ const next_voting = (current_player_answers) => {
 
 const display_voting_view = (current_player_answers, index) => {
 
+    console.log(current_player_answers);
+
     return `
         <div class="center">
             <h1>${questions[current_voting_index]}</h1>
@@ -223,15 +241,15 @@ const display_voting_view = (current_player_answers, index) => {
             ${
 
                 current_player_answers.map((player, player_idx) => `
-                    <div id="card_${player.player}" class="player-answer ${player == getCookie("usnm")?'disabled':''}" onclick="${
+                    <div id="card_${player.player}" class="player-answer ${player.player == getCookie("usnm")?'disabled':''}" onclick="${
                         
                         //if its the own players card they should not be able to vote for themself.
-                        player == getCookie("usnm")?'':`vote_for('${player.player}')`
+                        player.player == getCookie("usnm")?'':`vote_for('${player.player}')`
 
                     }">
                         
                         <p>${
-                            player.sentences[index].sentence.join(" ")
+                            player.sentences[index].sentence.map(word => word.word).join(" ")
                         }</p>
                         <div class="bottom"></div>
                         <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
@@ -279,7 +297,7 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     console.log(current_total_votes);
 
 
-    if(all_done){
+    if (all_done) {
         if(current_voting_index >= questions.length){
             display_results();
             return;
@@ -296,8 +314,11 @@ const display_results = () => {
                 //current_total_votes looks something like this: {player1: 250, player2: 150, player3: 500}
                 //sort current_total_votes by the value of the object
                 Object.keys(current_total_votes).sort((a, b) => current_total_votes[b] - current_total_votes[a]).map((player, player_idx) => `
-                    <span class="player-result ${player_idx == 0?'leader':''}" style="animation-delay: ${(Object.keys(current_total_votes).length - player_idx) * 3}s">
-                        <p>${player_idx+1}: ${player}</p>
+                    <span class="player-result ${player_idx == 0?'winner':''}" style="animation-delay: ${(Object.keys(current_total_votes).length - player_idx) * 3}s">
+                        <div class=player-info>
+                            <p>${player_idx+1}: ${player}</p>
+                            ${player_idx == 0?`<img src="https://artur.red/icons/crown.svg" class="crown" alt="crown">`:''}
+                        </div>
                         <p>${current_total_votes[player]*50}</p>
                     </span>
                 `).join("")
@@ -336,7 +357,7 @@ document.addEventListener("keyup", (e) => {
         //it will click on another word that contains "i" in it.
         let found_exact_word = false
         document.querySelectorAll("span.snippet.clickable").forEach(word_span => {
-            if(word_span.innerHTML.toLowerCase() == word.toLowerCase()){
+            if(word_span.innerHTML.toLowerCase() == word.toLowerCase() && !found_exact_word){
                 word_span.click();
                 found_exact_word = true;
             }

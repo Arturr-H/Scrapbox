@@ -42,12 +42,9 @@
 	<body class="dark">
 		<main id="main">
 			<nav>
-
-				<ul id="player-list">
-
-				</ul>
-				<p id="player-count">0/16</p>
-
+				<p id="player-count" class="player-count">0/16</p>
+				<ul id="player-list"></ul>
+				<hr>
 			</nav>
 
 			<div class="main-room-section">
@@ -59,10 +56,15 @@
 					<div class="container">
 						<div class="config" id="config-area">
 							<div class="column">
+
 								<div class="block">
-									<input id="mature" type="checkbox" />
-									<label for="mature"></label>
-									<span>Mature</span>
+									<select id="mature" name="mature">
+										<option value="regular" selected="selected">Regular</option>
+										<option value="mature">Mature</option>
+										<option value="mature-only">Mature only</option>
+										
+									</select>
+									<span>Question type</span>
 								</div>
 								<div class="block">
 									<input id="public" type="checkbox" />

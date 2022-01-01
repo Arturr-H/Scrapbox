@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 8081
 
-CMD ["./node_modules/nodemon/bin/nodemon.js"]
+CMD ["node", "server.js"]

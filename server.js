@@ -149,7 +149,7 @@ app.get("/api/create-room", (req, res) => {
             leader: leader,
             started: false,
             config: {
-                mature: false,
+                question_type: "regular",
                 public: false,
                 question_count: QUESTION_COUNT,
             },
@@ -296,7 +296,7 @@ app.get("/game/:gameID?", (req, res) => {
                 rooms[game_id].game.current_questions = get_questions(
                     rooms[game_id].game.config.question_count,
                     players_in_room,
-                    rooms[game_id].game.config.mature?"mature":"normal"
+                    rooms[game_id].game.config.question_type
                 );
             }
             res.sendFile(default_paths.game_room);
@@ -448,25 +448,30 @@ io.on("connection", (socket) => {
             //if the user manages to reconnect, the timeout will be cancelled.
             setTimeout(() => {
 
-                //if the user is still not online after 5 seconds, remove them from the room
-                if(!rooms[room_id].game.players.find(x => x.uid === user_id).online){
-                    
-                    //remove the player from the room
-                    rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.uid !== user_id);
-
-                    //Make the next player the leader, if there
-                    //are no more players, delete the room. 
-                    if(rooms[room_id].game.players.length == 0){
-                        delete rooms[room_id];
-                    }else{
-                        rooms[room_id].game.leader = rooms[room_id].game.players[0].player;
-                        rooms[room_id].game.players[0].leader = true;
-
-                        //emit the players currently in the room
-                        io.emit(`player-leave:${room_id}`, {
-                            new_player_list: rooms[room_id].game.players,
-                        });
+                try{
+                    //if the user is still not online after 5 seconds, remove them from the room
+                    if(!rooms[room_id].game.players.find(x => x.uid === user_id).online){
+                        
+                        //remove the player from the room
+                        rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.uid !== user_id);
+                        
+                        //Make the next player the leader, if there
+                        //are no more players, delete the room. 
+                        if(rooms[room_id].game.players.length == 0){
+                            delete rooms[room_id];
+                        }else{
+                            rooms[room_id].game.leader = rooms[room_id].game.players[0].player;
+                            rooms[room_id].game.players[0].leader = true;
+                            
+                            //emit the players currently in the room
+                            io.emit(`player-leave:${room_id}`, {
+                                new_player_list: rooms[room_id].game.players,
+                            });
+                        }
                     }
+                }catch{
+                    if (DEBUG) console.log(err);
+                    return false;
                 }
             }, 5000);
             
@@ -552,15 +557,25 @@ io.on("connection", (socket) => {
                 const words = text.split(" ");
                 const random_words = words.sort(() => Math.random() - 0.5);
 
+
                 //randomly concat the random_words to the current_snippets array
                 rooms[room_id].game.current_snippets = [
                     ...rooms[room_id].game.current_snippets,
                     ...random_words
                 ];
-                //randomly sort the array, and then remove any duplicates
+                //randomly sort the array
                 rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.sort(() => Math.random() - 0.5);
-                rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.filter((v, i, a) => a.indexOf(v) === i);
-
+                //remove duplicates
+                rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.reduce((result, element) => {
+                    var normalize = x => typeof x === 'string' ? x.toLowerCase() : x;
+                
+                    var normalizedElement = normalize(element);
+                    if (result.every(otherElement => normalize(otherElement) !== normalizedElement))
+                    result.push(element);
+                
+                    return result;
+                }, []);
+                
                 //Make the player that sent in the text to done
                 rooms[room_id].game.players.find(x => x.player === player).done = true;
 

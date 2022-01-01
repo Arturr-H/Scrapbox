@@ -13,7 +13,7 @@ submit_name.addEventListener('click', () => {
         return;
     }
     //check if name doesn't contain special characters
-    else if(!name_input.value.match(/^[a-zA-Z0-9]+$/)){
+    else if(!name_input.value.match(/^[a-zA-Z0-9 _]+$/)){
         alert('Name can only contain a-z 0-9');
         return;
     }
