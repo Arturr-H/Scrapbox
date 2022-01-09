@@ -32,11 +32,15 @@ const os = require("os");
 //disk reading and writing
 const fs = require("fs");
 
+//game room QR codes
+const qr_code = require("qrcode");
+
+
 //get free disk space in GB
 const get_free_space = () => {
     const disk = os.freemem();
     const free_space = disk / 1000000000;
-    return free_space + " GB USED";
+    return free_space + " GB used";
 }
 
 //Crypto for room code generation
@@ -94,11 +98,17 @@ const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
 
 const DEBUG = false;
 
+const PROTOCOL = "https";
+const BASE_URL = "artur.red";
+
 //Express static folders
 app.use("/", express.static(path.join(__dirname, "resources")));
 app.use("/script", express.static(path.join(__dirname, "frontend/scripts")));
 app.use("/style", express.static(path.join(__dirname, "frontend/style")));
 app.use("/page", express.static(path.join(__dirname, "frontend/html")));
+
+
+app.get("/9777099", (req, res) => res.send("Fuck you aaron du klikcade försent"))
 
 //Express Routes    || STATIC PAGES ONLY ||
 app.get("/", (req, res) => {
@@ -115,9 +125,9 @@ app.get("/api/send-idea", (req, res) => {
         });
         res.sendStatus(200);
     }
-})
+});
 //room creation
-app.get("/api/create-room", (req, res) => {
+app.get("/api/create-room", async (req, res) => {
 
     //generate room code
     const roomcode = generate_roomcode();
@@ -126,6 +136,9 @@ app.get("/api/create-room", (req, res) => {
     const leader = req.cookies["usnm"];
     const pfp = req.cookies["pfp"];
     const uid = req.cookies["uid"];
+
+    const qr = await qr_code.toDataURL(`${PROTOCOL}://${BASE_URL}/${small_code}`, {color: {dark: "#000", light: "#00000000"}}).then(async (data) => await data);
+
 
     const leader_obj = {
         player: leader,
@@ -140,7 +153,7 @@ app.get("/api/create-room", (req, res) => {
     rooms[roomcode] = {
         roomcode: roomcode,
         small_code: small_code,
-
+        qr: qr,
         cleanup: new Date().getTime() + ROOM_CLEANUP_TIME,
 
         game: {
@@ -152,13 +165,22 @@ app.get("/api/create-room", (req, res) => {
                 question_type: "regular",
                 public: false,
                 question_count: QUESTION_COUNT,
+                self_voting: false,
             },
             current_snippets: [],
             current_questions: [],
             current_player_answers: [],
+            //looks something like this:
+            // [
+            //     { player: 'shit man', sentences: [ [Object], [Object] ] },
+            //     { player: 'Aaron', sentences: [ [Object], [Object] ] }
+            // ]
+
             current_player_votes: {
                 [leader]: 0,
             },
+            //looks something like this:
+            // { 'shit man': 1, Aaron: 1 }
         }
     };
 
@@ -452,8 +474,12 @@ io.on("connection", (socket) => {
                     //if the user is still not online after 5 seconds, remove them from the room
                     if(!rooms[room_id].game.players.find(x => x.uid === user_id).online){
                         
-                        //remove the player from the room
+                        //remove the player from the room and from current player votes and current player answers
                         rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.uid !== user_id);
+                        rooms[room_id].game.current_player_answers = rooms[room_id].game.current_player_answers.filter(x => x != user);
+                        rooms[room_id].game.current_player_votes = rooms[room_id].game.current_player_votes.filter(x => x != user);
+
+                        console.log(rooms[room_id].game.players)
                         
                         //Make the next player the leader, if there
                         //are no more players, delete the room. 
@@ -527,6 +553,8 @@ io.on("connection", (socket) => {
                     rooms[room_id].game.players.findIndex(x => x.player === kick_request),
                     1
                 );
+                rooms[room_id].game.current_player_answers = rooms[room_id].game.current_player_answers.filter(x => x != kick_request);
+                delete rooms[room_id].game.current_player_votes[kick_request];
 
                 //add the kicked player to the kicked list
                 rooms[room_id].game.kicked_players.push(kick_request);
@@ -537,7 +565,8 @@ io.on("connection", (socket) => {
                     new_player_list: rooms[room_id].game.players
                 });
             }
-        }catch{
+        }catch(err){
+            if (DEBUG) console.log(err);
             return false;
         }
             
@@ -651,10 +680,15 @@ io.on("connection", (socket) => {
             if (rooms[room_id].game.players.find(x => x.player === voter)){
 
                 //add the vote to the list of votes if
-                //the player is not voting for themselves
-                if(voter != voted_for){
+                //the player is not voting for themselves, but
+                //only if the room has self_voting disabled.
+                if (!rooms[room_id].game.config.self_voting){//if self voting is disabled
+                    if (voter != voted_for){//if the voter is not voting for themselves
+                        rooms[room_id].game.current_player_votes[voted_for] += 1;
+                    }else return;
+                }else if (rooms[room_id].game.config.self_voting){//if self voting is enabled
                     rooms[room_id].game.current_player_votes[voted_for] += 1;
-                }else return;
+                }
 
 
                 //set the player to done

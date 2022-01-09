@@ -20,6 +20,7 @@ let current_snippets = [];
 let has_voted = false;
 let is_leader = false;
 let current_total_votes = {};
+let self_voting = false;
 
 const VOTING_TIME_IN_MS = 20000;
 
@@ -70,6 +71,7 @@ const filter_xss = (str) => str.replace(/</g, "&lt;")
         console.log(questions);
 
         is_leader = room_data_json.game.leader === getCookie("usnm");
+        self_voting = room_data_json.game.config.self_voting;
     }catch(err){
         console.log("error");
     }
@@ -149,6 +151,9 @@ const display_question_view = (current_snippets) => {
             <div class="big-container">
                 <div class="snippet-output" id="snippet-output">
                 
+                </div>
+                <div class="mini-keyboard-toggle" id="mini-keyboard-toggle" onclick="toggle_keyboard()">
+                    <p>...</p>
                 </div>
             </div>
             <button onclick="submit_sentence()" style="width: 30%;">Submit</button>
@@ -231,7 +236,7 @@ const next_voting = (current_player_answers) => {
 
 const display_voting_view = (current_player_answers, index) => {
 
-    console.log(current_player_answers);
+    console.log(self_voting, "SEELELLELELLELELLELEL");
 
     return `
         <div class="center">
@@ -241,10 +246,17 @@ const display_voting_view = (current_player_answers, index) => {
             ${
 
                 current_player_answers.map((player, player_idx) => `
-                    <div id="card_${player.player}" class="player-answer ${player.player == getCookie("usnm")?'disabled':''}" onclick="${
+                    <div id="card_${player.player}" class="player-answer ${
+                        self_voting
+                        ? ""
+                        : player.player == getCookie("usnm")?'disabled':''
+                    }" onclick="${
                         
                         //if its the own players card they should not be able to vote for themself.
-                        player.player == getCookie("usnm")?'':`vote_for('${player.player}')`
+                        //however if self_voting is enabled, they can vote for themselves
+                        self_voting
+                        ? `vote_for('${player.player}')`
+                        : player.player == getCookie("usnm")?'':`vote_for('${player.player}')`
 
                     }">
                         
@@ -267,7 +279,7 @@ const display_voting_view = (current_player_answers, index) => {
 
 const vote_for = (player) => {
 
-    if(!has_voted && player != getCookie("usnm")){
+    if(!has_voted){
         socket.emit("game:vote-for", {
             room_id: room_id,
             voter: getCookie("usnm"),
@@ -339,8 +351,9 @@ socket.on(`game:clear-player-done:${room_id}`, (data) => {
 
 /* -------------------------------------------------- WORD FINDING -------------------------------------------------- */
 
-//Okay so when the player starts typing something on the keyboard, we want to search the whole page for that word. and then we want to highlight it with a yellow background.
-//and the word that is being build should be reset every 3 seconds. however if you start typing again, that timer should be reset.
+//Okay so when the player starts typing something on the keyboard,
+//we want to search the whole page for that word. and then we want
+//to highlight it with a background.
 let word = "";
 document.addEventListener("keyup", (e) => {
     if(e.key == "Backspace"){
@@ -437,25 +450,44 @@ document.addEventListener("keyup", (e) => {
 
 
 
+/* -------------------------------------------------- KEYBOARDS -------------------------------------------------- */
 
+let state = 1;
 
+const new_snippets_set = (input_str) => {
+    if (typeof input_str === "string") {
+        return [...input_str].map(element => `<span onclick="add_word('${element}')" class="snippet clickable">${element}</span>`).join("");
+    }else{
+        return input_str.map(element => `<span onclick="add_word('${element}')" class="snippet clickable">${element}</span>`).join("");
+    }
+}
+const set_keyboard_state = (state) => {
+    document.getElementById("mini-keyboard-toggle").innerHTML = `<span style='color: white'>${state}</span>`;
+}
+const toggle_keyboard = () => {
+    state++;
+    switch (state) {
+        case 1:
+            set_keyboard_state("⌘");
+            
+            document.getElementById("snippet-input").innerHTML = new_snippets_set(current_snippets);
+            break;
 
+        case 2:
+            set_keyboard_state("X");
 
+            document.getElementById("snippet-input").innerHTML = new_snippets_set("🤩👍😎😂👎👀🔥🥳");
+            break;
+             
+        case 3:
+            set_keyboard_state("Y");
 
+            document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?");
+            state = 0;
+            break;
 
-
-
-
-// document.addEventListener("keyup", (e) => {
-//     const word = e.key.toLowerCase();
-//     const all_words = document.querySelectorAll("span");
-
-//     all_words.forEach(word_element => {
-//         const word_text = word_element.innerText.toLowerCase();
-//         if(word_text.includes(word)) {
-//             word_element.classList.add("highlighted");
-//         } else {
-//             word_element.classList.remove("highlighted");
-//         }
-//     });
-// });
+        default:
+            state = 0;
+            break;
+    }
+}

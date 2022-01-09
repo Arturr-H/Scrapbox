@@ -42,36 +42,40 @@
 	<body class="dark">
 		<main id="main">
 			<nav>
-				<p id="player-count" class="player-count">0/16</p>
-				<ul id="player-list"></ul>
+				<p id="player-count" class="player-count">1/16</p>
+				<ul id="player-list">
+				</ul>
 				<hr>
+				<div class="volume">
+					<img id="volume-image" src="https://artur.red/images/audio-levels/1.svg" alt="">
+					<input type="range" id="volume-slider" min="0" max="100" value="50">
+				</div>
 			</nav>
 
 			<div class="main-room-section">
 				<div class="room-section-header">
-					<h1 id="lobby-short-id" class="lobby-short-id">
-					</h1>
+					<h1 id="lobby-short-id" class="lobby-short-id"></h1>
+					<img id="room-qr" class="qr-code"></img>
 				</div>
 				<div>
 					<div class="container">
 						<div class="config" id="config-area">
-							<div class="column">
-
-								<div class="block">
+							<div class="setting-row">
+								<div class="setting">
 									<select id="mature" name="mature">
 										<option value="regular" selected="selected">Regular</option>
 										<option value="mature">Mature</option>
 										<option value="mature-only">Mature only</option>
-										
 									</select>
-									<span>Question type</span>
 								</div>
-								<div class="block">
-									<input id="public" type="checkbox" />
-									<label for="public"></label>
-									<span>Public</span>
+
+								<div class="setting-text">
+									<p>Question type</p>
 								</div>
-								<div class="block">
+							</div>
+
+							<div class="setting-row">
+								<div class="setting">
 									<select id="question-count" name="question-count">
 										<option value="1">1</option>
 										<option value="2" selected="selected">2</option>
@@ -81,16 +85,59 @@
 										<option value="6">6</option>
 										<option value="7">7</option>
 										<option value="8">8</option>
-										<option value="9">9</option>
-										<option value="10">10</option>
 									</select>
-									<span>Questions</span>
 								</div>
+
+								<div class="setting-text">
+									<p>Question Amount</p>
+								</div>
+							</div>
+
+							<div class="setting-row">
+								<div class="setting">
+									<label class="switch">
+										<input type="checkbox" id="public">
+										<span class="slider"></span>
+									</label>
+								</div>
+
+								<div class="setting-text">
+									<p>Public</p>
+								</div>
+							</div>
+
+							<div class="setting-row">
+								<div class="setting">
+									<label class="switch">
+										<input type="checkbox" id="self-voting">
+										<span class="slider"></span>
+									</label>
+								</div>
+
+								<div class="setting-text">
+									<p>Self-voting</p>
+								</div>
+							</div>
+
+							<hr>
+
+							<div class="instructions">
+								<h1>How to play</h1>
+								<p>
+									The aim of the game is to form sentences and answers to questions using words that the players in the game
+									have written before the game starts.
+								</p>
+								<p>
+									The game starts with everyone writing a short story - this is where all the words come from when playing the
+									game. All the words are shuffled together and you have to answer the following questions in the game with
+									the words. Voting takes place after everyone has answered their questions. Then you have to vote for the
+									card with the funniest sentence, the one with the most votes at the end of the game wins.
+								</p>
 							</div>
 						</div>
 					</div>
 
-					<button id="start-button" class="bottom" style="display: none;">Start game!</button>
+					<button id="start-button" class="bottom" style="display: block;">Start game!</button>
 				</div>
 
 			</div>
@@ -103,7 +150,7 @@
 
 					<p>&lt;- LOBBY CHAT -&gt;</p>
 				</div>
-				
+
 				<div id="chat-output" class="chat-output"></div>
 				<form id="chat-form" action="">
 					<input class="width" type="text" id="chat-input" placeholder="Chat...">
@@ -112,24 +159,10 @@
 		</main>
 
 		<button class="open-chat" id="open-chat"></button>
+		
+		<audio autoplay loop id="audio">
+			<source src="https://artur.red/audio/song.mp3" type="audio/mp3">
+			Your browser does not support the audio element.
+		</audio>
 	</body>
 </html>
-<!-- 
-<div class="grid-2x2-2">
-	<div class="border-bottom border-right header" style="grid-area: Header-1;">
-		<h1>Settings</h1>
-	</div>
-	<div class="border-bottom header" style="grid-area: Header-2;">
-		<h1>Chat</h1>
-	</div>
-
-	
-	
-	<div class="border-bottom chat-container" style="grid-area: Content-2;">
-
-
-	</div>
-	
-	<div style="grid-area: Footer;">
-	</div>
-</div> -->
