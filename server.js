@@ -93,6 +93,7 @@ const MAX_PLAYERS_PER_ROOM = 16;
 const MIN_PLAYERS_PER_ROOM = 2;
 
 const QUESTION_COUNT = 2;
+const WORD_CONTRIBUTION_AWARD = 10;
 const ROOM_CLEANUP_TIME = 1000 * 60 * 60; //1 hour
 const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
 
@@ -107,8 +108,6 @@ app.use("/script", express.static(path.join(__dirname, "frontend/scripts")));
 app.use("/style", express.static(path.join(__dirname, "frontend/style")));
 app.use("/page", express.static(path.join(__dirname, "frontend/html")));
 
-
-app.get("/9777099", (req, res) => res.send("Fuck you aaron du klikcade försent"))
 
 //Express Routes    || STATIC PAGES ONLY ||
 app.get("/", (req, res) => {
@@ -170,6 +169,7 @@ app.get("/api/create-room", async (req, res) => {
             current_snippets: [],
             current_questions: [],
             current_player_answers: [],
+            word_contributors: {},
             //looks something like this:
             // [
             //     { player: 'shit man', sentences: [ [Object], [Object] ] },
@@ -495,7 +495,7 @@ io.on("connection", (socket) => {
                             });
                         }
                     }
-                }catch{
+                }catch(err){
                     if (DEBUG) console.log(err);
                     return false;
                 }
@@ -579,12 +579,13 @@ io.on("connection", (socket) => {
             const player = data.player;
             const text = data.text;
 
+            console.log(text)
+
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
                 //split the text into an array of words, and randomize it using Math.random
-                const words = text.split(" ");
-                const random_words = words.sort(() => Math.random() - 0.5);
+                const random_words = text.sort(() => Math.random() - 0.5);
 
 
                 //randomly concat the random_words to the current_snippets array
@@ -594,16 +595,17 @@ io.on("connection", (socket) => {
                 ];
                 //randomly sort the array
                 rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.sort(() => Math.random() - 0.5);
-                //remove duplicates
-                rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.reduce((result, element) => {
-                    var normalize = x => typeof x === 'string' ? x.toLowerCase() : x;
-                
-                    var normalizedElement = normalize(element);
-                    if (result.every(otherElement => normalize(otherElement) !== normalizedElement))
-                    result.push(element);
-                
-                    return result;
-                }, []);
+
+                //rooms[room_id].game.current_snippets looks something like this:
+                //[
+                //{word: "word1", owner: "player1"},
+                //{word: "word2", owner: "player2"},
+                //{word: "word3", owner: "player3"},
+                //{word: "word4", owner: "player4"},
+                //
+                //]
+                //remove duplicates from the array of objects
+                rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.filter((x, i, a) => a.findIndex(y => y.word === x.word) === i);
                 
                 //Make the player that sent in the text to done
                 rooms[room_id].game.players.find(x => x.player === player).done = true;
@@ -638,10 +640,83 @@ io.on("connection", (socket) => {
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
+                if (DEBUG) console.log(sentences)
+
+                //make a new object of all the owners of the words in the sentences
+                //should look something like this: {player1: 2, player2: 1, player3: 5, player4: 6}
+                //the key is the player, and the value is the number of words they submitted
+                //sentences looks something like this:
+                // [
+                //     {
+                //       question_id: 0,
+                //       sentence: [
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object]
+                //       ],
+                //       player: 'Bajs'
+                //     },
+                //     {
+                //       question_id: 1,
+                //       sentence: [
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object], [Object],
+                //         [Object]
+                //       ],
+                //       player: 'Bajs'
+                //     }
+                //  
+                // ]
+                //and the [Object]s look something like this:
+                // {word: "word1", owner: "player1"}
+                let owners = {};
+                sentences.forEach(x => {
+
+                    if (DEBUG) console.log(x);
+
+                    x.sentence.forEach(word_obj => {
+
+                        if (DEBUG) console.log(word_obj)
+
+                        if (!owners[word_obj.owner]){
+                            owners[word_obj.owner] = WORD_CONTRIBUTION_AWARD;
+                        }else{
+                            if (owners[word_obj.owner] != undefined){
+                                owners[word_obj.owner] += WORD_CONTRIBUTION_AWARD;
+                            }
+                        }
+                    });
+
+                    if (DEBUG) console.log(owners);
+                    x.owners = owners;
+
+                    const sumObjectsByKey = (...objs) => {
+                        return objs.reduce((a, b) => {
+                        for (let k in b) {
+                            if (b.hasOwnProperty(k))
+                            a[k] = (a[k] || 0) + b[k];
+                        }
+                        return a;
+                        }, {});
+                    }
+
+                    rooms[room_id].game.word_contributors = sumObjectsByKey(rooms[room_id].game.word_contributors, x.owners);
+                    console.log(rooms[room_id].game.word_contributors);
+
+                    owners = {};
+                });
+
+
                 //add the sentences to the list of submitted sentences
                 rooms[room_id].game.current_player_answers.push({
                     player: player,
-                    sentences: sentences
+                    sentences: sentences,
                 });
 
                 //set the player to done
@@ -663,7 +738,8 @@ io.on("connection", (socket) => {
                 });
 
             }
-        }catch{
+        }catch(err){
+            if (DEBUG) console.log(err);
             return false;
         }
     })
@@ -706,7 +782,8 @@ io.on("connection", (socket) => {
                     players: rooms[room_id].game.players,
                     total_votes: rooms[room_id].game.current_player_votes,
                     all_done: all_done,
-                    current_player_answers: rooms[room_id].game.current_player_answers
+                    current_player_answers: rooms[room_id].game.current_player_answers,
+                    word_contributors: rooms[room_id].game.word_contributors
                 });
 
             }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+
+	<link rel="stylesheet" href="https://artur.red/style/global.css">
+	<script src="https://artur.red/script/cookies.js" defer></script>
+	<script src="https://artur.red/script/global.js" defer></script>
+
+</head>
+
+<body class="dark">
+	<main>
+		<nav>
+
+			<ul id="player-list">
+				<li class="player ">
+					<div class="pfp">
+						<img src="https://artur.red/faces/11.svg" alt="Player profile image">
+					</div>
+					<div class="info">
+						<p>Pennis</p>
+					</div>
+				</li>
+
+				<li class="player ">
+					<div class="pfp">
+						<img src="https://artur.red/faces/9.svg" alt="Player profile image">
+					</div>
+					<div class="info">
+						<p>Aaron</p>
+					</div>
+				</li>
+			</ul>
+
+		</nav>
+
+		<div class="main-room-section" id="text-input-area">
+			<div class="center">
+				<h1>Spice up your sex life by bringing ________ into the bedroom.</h1>
+			</div>
+			<div class="center column">
+				<div class="big-container">
+					<div class="snippet-output" id="snippet-output">
+
+					</div>
+					<div class="mini-keyboard-toggle" id="mini-keyboard-toggle" onclick="toggle_keyboard()">
+						<p>...</p>
+					</div>
+				</div>
+				<button onclick="submit_sentence()" style="width: 30%;">Submit</button>
+			</div>
+
+			<div class="center">
+				<div class="snippet-input" id="snippet-input">
+					<div>
+
+						<span onclick="add_word('penis')" class="snippet clickable">penis</span>
+
+						<span onclick="add_word('humor')" class="snippet clickable">humor</span>
+
+						<span onclick="add_word('cock')" class="snippet clickable">cock</span>
+
+						<span onclick="add_word('balls')" class="snippet clickable">balls</span>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="screen-overlay" id="screen-overlay">
+			<h1 id="screen-overlay-text">How many balls can you fit in your jaw?</h1>
+		</div>
+	</main>
+
+
+</body>
+
+</html>
+
+
+<!-- Alla ska ha röstat -> visa vems ord whatever -> screenoverlay -> visa nästa fråga -> gå vidare -->
+<!-- Alla ska ha röstat -> gå vidare -->

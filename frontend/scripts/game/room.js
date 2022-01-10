@@ -325,7 +325,8 @@ const volume_slider = document.getElementById("volume-slider");
 const volume_image = document.getElementById("volume-image");
 const audio = document.getElementById("audio");
 let audio_volume = 0;
-audio.volume = getCookie("audio_percentage");
+audio.volume = getCookie("audio_percentage")*0.5;
+volume_slider.value = getCookie("audio_percentage")*100*2;
 
 const set_audio_image = (value) => volume_image.src = `https://artur.red/images/audio-levels/${value}.svg`;
 
@@ -340,8 +341,8 @@ const on_volume_change = () => {
 
     if(audio_volume_percentage == 0) set_audio_image(1);
     if(audio_volume_percentage > 0) set_audio_image(2);
-    if(audio_volume_percentage > 0.33) set_audio_image(3);
-    if(audio_volume_percentage > 0.66) set_audio_image(4);
+    if(audio_volume_percentage > 0.2) set_audio_image(3);
+    if(audio_volume_percentage > 0.4) set_audio_image(4);
 }
 
 volume_slider.addEventListener("mousemove", on_volume_change);

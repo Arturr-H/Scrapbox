@@ -11,7 +11,7 @@ const text_input_area = document.getElementById("text-input-area");
 const snippet_input = document.getElementById("snippet-input");
 
 let snippet_output;
-
+let DELETEME;
 //all the questions
 let questions;
 let sentences = [];
@@ -21,6 +21,7 @@ let has_voted = false;
 let is_leader = false;
 let current_total_votes = {};
 let self_voting = false;
+let display_card_owner_percentage_index = 0;
 
 const VOTING_TIME_IN_MS = 20000;
 
@@ -43,12 +44,31 @@ const display_players = (players) => players.map(player_obj => `
         </div>
     </li>
 `).join("");
-const filter_xss = (str) => str.replace(/</g, "&lt;")
+const filter_xss = (word) => word.toString()
+                                .replace(/</g, "&lt;")
                                 .replace(/>/g, "&gt;")
                                 .replace(/\n/g, "")
                                 .replace(/\r/g, "")
                                 .replace(/\'/g, "&#39;")
                                 .replace(/\"/g, "&quot;");
+const map_obj_to_percentage = (obj) => {
+    let total = 0;
+    Object.values(obj).forEach(value => total += value);
+    return Object.keys(obj).map(key => {
+        return {
+            [key]: Math.round((obj[key] / total) * 100)
+        }
+    });
+}
+const sumObjectsByKey = (...objs) => {
+    return objs.reduce((a, b) => {
+    for (let k in b) {
+        if (b.hasOwnProperty(k))
+        a[k] = (a[k] || 0) + b[k];
+    }
+    return a;
+    }, {});
+}
 
 //Start by fetching all the players
 (async () => {
@@ -68,7 +88,6 @@ const filter_xss = (str) => str.replace(/</g, "&lt;")
 
         //Get the questions
         questions = room_data_json.game.current_questions;
-        console.log(questions);
 
         is_leader = room_data_json.game.leader === getCookie("usnm");
         self_voting = room_data_json.game.config.self_voting;
@@ -82,15 +101,19 @@ const filter_xss = (str) => str.replace(/</g, "&lt;")
 text_submit.addEventListener("click", async () => {
     const text = text_input.value;
     const xss_filtered_text = filter_xss(text);
+    const mapped_text = xss_filtered_text.split(" ").map(word => {
+        return {
+            word: word,
+            owner: getCookie("usnm")
+        }
+    });
 
-
-    console.log(xss_filtered_text);
 
     //send the text to the server if it's not empty
-    if(xss_filtered_text.length > 0){
+    if(mapped_text.length > 0){
         socket.emit("game:text", {
             room_id: room_id,
-            text: xss_filtered_text,
+            text: mapped_text,
             player: getCookie("usnm")
         });
 
@@ -106,8 +129,6 @@ text_submit.addEventListener("click", async () => {
 socket.on(`game:text:${room_id}`, (data) => {
     current_snippets = data.current_snippets;
     const players = data.players;
-
-    console.log(data);
 
     //update the player list
     player_list.innerHTML = display_players(players);
@@ -137,6 +158,9 @@ const display_question_view = (current_snippets) => {
         `;
     }
 
+    //transition with the text as the current question
+    transition(questions[current_question_index]);
+
     sentences.push({
         question_id: current_question_index,
         sentence: [],
@@ -144,7 +168,7 @@ const display_question_view = (current_snippets) => {
     });
 
     return `
-        <div class="center">
+        <div class="center fade-in-view">
             <h1>${questions[current_question_index]}</h1>
         </div>
         <div class="center column">
@@ -164,21 +188,24 @@ const display_question_view = (current_snippets) => {
                 <div>
                     ${
                         //randomly sort the snippets
-                        current_snippets.sort(() => Math.random() - 0.5).map(word => `
-                            <span onclick="add_word('${filter_xss(word)}')" class="snippet clickable">${word}</span>
-                        `).join(" ")
+                        current_snippets.sort(() => Math.random() - 0.5).map(word => {
+                            return `
+                                <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable">${word.word}</span>
+                        `}).join(" ")
                     }
                 </div>
             </div>
         </div>
     `;
+
 }
 
 // -------------------------------------------------- SNIPPET INPUT -------------------------------------------------- //
 
-const add_word = (word) => {
+const add_word = (word, owner) => {
     sentences[current_question_index].sentence.push({
         word: filter_xss(word).toLowerCase(),
+        owner: owner,
         id: get_unique_id()
     });
 
@@ -191,7 +218,7 @@ const add_word = (word) => {
 const remove_word = (word_id) => {
     document.getElementById(`word_${word_id}`).remove();
 
-    sentences[current_question_index].sentence = sentences[current_question_index].sentence.filter(word => word.id !== word_id);
+    sentences[current_question_index].sentence = sentences[current_question_index].sentence.filter(word_obj => word_obj.id !== word_id);
 }
 
 const submit_sentence = () => {
@@ -200,7 +227,6 @@ const submit_sentence = () => {
 
 }
 
-
 const send_sentences = () => {
     socket.emit("game:submit-sentences", {
         room_id: room_id,
@@ -208,35 +234,37 @@ const send_sentences = () => {
         player: getCookie("usnm")
     });
 }
+
 socket.on(`game:submit-sentences:${room_id}`, (data) => {
     const players = data.players;
     const current_player_answers = data.current_player_answers;
-
-    console.log(data);
 
     //update the player list
     player_list.innerHTML = display_players(players);
 
     //render the voting view if all players have submitted their sentences
     if(data.all_done) {
-        next_voting(current_player_answers);
+        next_voting(current_player_answers, players);
     }
 })
 
 
 // -------------------------------------------------- DISPLAY VOTING -------------------------------------------------- //
 
-const next_voting = (current_player_answers) => {
+const next_voting = (current_player_answers, players) => {
+
+    transition(questions[display_card_owner_percentage_index]);
 
     //render the voting view
-    text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
-    current_voting_index++;
+    setTimeout(() => {
+        text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
+        current_voting_index++;
+    }, 2000);
 
+    //The card percentage things is now moved to the other next_voting function...
 }
 
 const display_voting_view = (current_player_answers, index) => {
-
-    console.log(self_voting, "SEELELLELELLELELLELEL");
 
     return `
         <div class="center">
@@ -295,43 +323,77 @@ const vote_for = (player) => {
         });
     }
 }
+
+const display_card_owner_percentage = (current_player_answers, players) => {
+
+    const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
+    const voting_index_answers_percentage = voting_index_answers.map(map_obj_to_percentage);
+
+    voting_index_answers_percentage.map((contributors, index) => {
+
+        const player_card = document.getElementById(`card_${players[index].player}`);
+        const player_card_content = player_card.querySelector(".bottom");
+
+        contributors.map(contributor => {
+            const percentage = Object.values(contributor)[0];
+            const name = Object.keys(contributor)[0];
+            const color = getColor();
+
+            player_card_content.innerHTML += `<div class="percentage" style="width: ${percentage}%; background: ${color}">${name} - ${percentage}%</div>`;
+        });
+    });
+
+    display_card_owner_percentage_index++;
+}
+
+
+
 socket.on(`game:vote-for:${room_id}`, (data) => {
     const total_votes = data.total_votes;
     const players = data.players;
     const all_done = data.all_done;
     const current_player_answers = data.current_player_answers;
+    const word_contributors = data.word_contributors;
 
     //update the player list
     player_list.innerHTML = display_players(players);
-
     current_total_votes = total_votes;
-
-    console.log(current_total_votes);
-
 
     if (all_done) {
         if(current_voting_index >= questions.length){
-            display_results();
+            display_card_owner_percentage(current_player_answers, players);
+            setTimeout(() => display_results(word_contributors), 2000);
             return;
         }
-        next_voting(current_player_answers);
+
+        display_card_owner_percentage(current_player_answers, players);
+        setTimeout(() => next_voting(current_player_answers, players), 2000);
+
     }
 });
-const display_results = () => {
+const display_results = (word_contributors) => {
     text_input_area.innerHTML = `
         <div class="center column">
             <h1>Results</h1>
 
             ${
+                console.log(current_total_votes, word_contributors),
+
+                //make every value in current_total_votes 50 times bigger
+                Object.keys(current_total_votes).map(key => {
+                    return current_total_votes[key] *= 50;
+                }),
+
+
                 //current_total_votes looks something like this: {player1: 250, player2: 150, player3: 500}
                 //sort current_total_votes by the value of the object
-                Object.keys(current_total_votes).sort((a, b) => current_total_votes[b] - current_total_votes[a]).map((player, player_idx) => `
+                Object.keys(sumObjectsByKey(current_total_votes, word_contributors)).sort((a, b) => current_total_votes[b] - current_total_votes[a]).map((player, player_idx) => `
                     <span class="player-result ${player_idx == 0?'winner':''}" style="animation-delay: ${(Object.keys(current_total_votes).length - player_idx) * 3}s">
                         <div class=player-info>
                             <p>${player_idx+1}: ${player}</p>
                             ${player_idx == 0?`<img src="https://artur.red/icons/crown.svg" class="crown" alt="crown">`:''}
                         </div>
-                        <p>${current_total_votes[player]*50}</p>
+                        <p>${current_total_votes[player] + word_contributors[player]}</p>
                     </span>
                 `).join("")
             }
@@ -490,4 +552,23 @@ const toggle_keyboard = () => {
             state = 0;
             break;
     }
+}
+
+
+/* TRANSITION OVERLAY */
+
+const transition = (text) => {
+    if(document.getElementById("transition-container").innerHTML != ""){
+        document.getElementById("transition-container").innerHTML = "";
+    }
+    document.getElementById("transition-container").innerHTML += `
+        <div class="screen-overlay" id="screen-overlay">
+            <h1 id="screen-overlay-text">${text}</h1>
+        </div>
+    `
+    const screen_overlay = document.getElementById("screen-overlay");
+
+    setTimeout(() => {
+        screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
+    }, 3000 + text.length*50);
 }
