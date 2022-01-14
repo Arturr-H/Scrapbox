@@ -11,6 +11,7 @@
 	<script src="https://artur.red/script/cookies.js" defer></script>
 	<script src="https://artur.red/script/global.js" defer></script>
 
+
 </head>
 
 <body class="dark">
@@ -73,11 +74,27 @@
 		</div>
 
 
-		<div class="screen-overlay" id="screen-overlay">
+		<div class="screen-overlay" id="transition-container">
 			<h1 id="screen-overlay-text">How many balls can you fit in your jaw?</h1>
 		</div>
 	</main>
+	<script
+		defer>
+		    if(document.getElementById("transition-container").innerHTML != ""){
+        		document.getElementById("transition-container").innerHTML = "";
+			}
+			document.getElementById("transition-container").innerHTML += `
+				<div class="screen-overlay" id="screen-overlay">
+					<p class="transition-title-text">Voting</p>
+					<h1 id="screen-overlay-text">shhawdb awhdiu hawduioh aiuwdhi ahwdi haiwduahwdi uhawhdi uahwdiu haiwudhiu ahwdih aiwhdu ut+???</h1>
+				</div>
+			`
+			const screen_overlay = document.getElementById("screen-overlay");
 
+			setTimeout(() => {
+				screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
+			}, 3000 + text.length*50);
+	</script>
 
 </body>
 

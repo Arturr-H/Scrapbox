@@ -60,17 +60,18 @@ module.exports = {
             `White people be like: ${Blank()}.`,
             `What ended my last relationship?`,
             `Trending on Twitter: #stop${Blank()}`,
+            `Trending on Twitter: #${Blank()}`,
             `Hi, Welcome to McDonalds. what can I get for you?`,
             `Top ten reasons to keep going. Nr 15: ${Blank()}.`,
             `${Blank()} is what makes life worth living.`,
 
             `How would you hide a dead body?`,
-            `Tonight, gentlemen, I will for the first time ${Blank()}.`,
+            `Tonight, gentlemen, I will - for the first time ${Blank()}.`,
             `Help!! My son is ${Blank()}!`,
             `Girl, I wanna invite you back to my place and show you ${Blank()}.`,
             `Soo... What's the matter with all the screams coming from the basement?`,
             `What's the best thing about being a ${Blank()}?`,
-            `Since when is it illegal to ${Blank()}?`,
+            `Since when was it illegal to ${Blank()}?`,
 
             `I have a dream that one day this nation will rise up and live out the true meaning of its creed: ${Blank()}.`,
             `I thought I'd never see ${Blank()} again, yet here we are.`,
@@ -96,13 +97,15 @@ module.exports = {
             `Hmm, ${r(pronouns.first)} texted me ”lol”, how do I respond?`,
 
             `If you got to live as a five year old for a day, what would you do first?`,
-            `How do you tell that you've run out of invisible ink?`,
             `What would you engrave on your tombstone?`,
             `${Blank()}, underrated and should be celebrated.`,
         ];
 
         let multipleChoiceQuestions = [
             `Come on, I'm not a ${Blank()}, I'm a ${Blank()}!`,
+            `I'm not a ${Blank()}, I'm a ${Blank()}!`,
+            `I'm not a ${Blank()}, I'm a ${Blank()}!`,
+            `I'm not a ${Blank()}, I'm a ${Blank()}!`,
         ]
 
         let matureQuestions = [

@@ -35,7 +35,6 @@ const fs = require("fs");
 //game room QR codes
 const qr_code = require("qrcode");
 
-
 //get free disk space in GB
 const get_free_space = () => {
     const disk = os.freemem();
@@ -60,7 +59,6 @@ const get_questions = (questionCount, players, type) => {
     }
     return questionsArray;
 }
-
 
 //default file paths
 const default_paths = {
@@ -89,15 +87,27 @@ const custom_message = (message) => {
 let rooms = {};
 
 //Constant variables
+const DEBUG = false;
+
 const MAX_PLAYERS_PER_ROOM = 16;
-const MIN_PLAYERS_PER_ROOM = 2;
+const MIN_PLAYERS_PER_ROOM = DEBUG ? 1 : 1;
 
 const QUESTION_COUNT = 2;
-const WORD_CONTRIBUTION_AWARD = 10;
+const WORD_CONTRIBUTION_MULTIPLIER = 4;
 const ROOM_CLEANUP_TIME = 1000 * 60 * 60; //1 hour
 const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
 
-const DEBUG = false;
+const map_obj_to_percentage = (obj) => {
+    //return an object with the original object's  values as percentages
+    let total = 0;
+    for (let key in obj) {  
+        total += obj[key];
+    }
+    for (let key in obj) {
+        obj[key] = parseInt(obj[key] / total * 100);
+    }
+    return obj;
+}
 
 const PROTOCOL = "https";
 const BASE_URL = "artur.red";
@@ -274,7 +284,7 @@ app.get("/room/:roomID", (req, res) => {
             return res.sendFile(default_paths.illegal_game);
         }
     }catch(err){
-        if (DEBUG) console.log(err);
+        // if (DEBUG) console.log(err);
         res.sendStatus(404);
     }
 });
@@ -640,39 +650,9 @@ io.on("connection", (socket) => {
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
-                if (DEBUG) console.log(sentences)
-
                 //make a new object of all the owners of the words in the sentences
                 //should look something like this: {player1: 2, player2: 1, player3: 5, player4: 6}
                 //the key is the player, and the value is the number of words they submitted
-                //sentences looks something like this:
-                // [
-                //     {
-                //       question_id: 0,
-                //       sentence: [
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object]
-                //       ],
-                //       player: 'Bajs'
-                //     },
-                //     {
-                //       question_id: 1,
-                //       sentence: [
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object], [Object],
-                //         [Object]
-                //       ],
-                //       player: 'Bajs'
-                //     }
-                //  
-                // ]
                 //and the [Object]s look something like this:
                 // {word: "word1", owner: "player1"}
                 let owners = {};
@@ -680,20 +660,24 @@ io.on("connection", (socket) => {
 
                     if (DEBUG) console.log(x);
 
+                    console.log("sentence: ", x.sentence)
+
                     x.sentence.forEach(word_obj => {
 
                         if (DEBUG) console.log(word_obj)
 
                         if (!owners[word_obj.owner]){
-                            owners[word_obj.owner] = WORD_CONTRIBUTION_AWARD;
+                            owners[word_obj.owner] = 1;
                         }else{
                             if (owners[word_obj.owner] != undefined){
-                                owners[word_obj.owner] += WORD_CONTRIBUTION_AWARD;
+                                owners[word_obj.owner] += 1;
                             }
                         }
                     });
 
-                    if (DEBUG) console.log(owners);
+                    //remove undefined keys
+                    delete owners[undefined];
+                    owners = map_obj_to_percentage(owners);
                     x.owners = owners;
 
                     const sumObjectsByKey = (...objs) => {
@@ -707,7 +691,6 @@ io.on("connection", (socket) => {
                     }
 
                     rooms[room_id].game.word_contributors = sumObjectsByKey(rooms[room_id].game.word_contributors, x.owners);
-                    console.log(rooms[room_id].game.word_contributors);
 
                     owners = {};
                 });

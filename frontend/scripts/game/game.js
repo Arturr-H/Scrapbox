@@ -69,6 +69,12 @@ const sumObjectsByKey = (...objs) => {
     return a;
     }, {});
 }
+const multiply_values_in_object = (obj, factor) => {
+    return Object.keys(obj).reduce((acc, key) => {
+        acc[key] = obj[key] * factor;
+        return acc;
+    }, {});
+}
 
 //Start by fetching all the players
 (async () => {
@@ -159,7 +165,7 @@ const display_question_view = (current_snippets) => {
     }
 
     //transition with the text as the current question
-    transition(questions[current_question_index]);
+    transition(questions[current_question_index], false);
 
     sentences.push({
         question_id: current_question_index,
@@ -168,36 +174,35 @@ const display_question_view = (current_snippets) => {
     });
 
     return `
-        <div class="center fade-in-view">
+
+        <div class="question fade-in-view">
             <h1>${questions[current_question_index]}</h1>
         </div>
-        <div class="center column">
-            <div class="big-container">
-                <div class="snippet-output" id="snippet-output">
-                
-                </div>
-                <div class="mini-keyboard-toggle" id="mini-keyboard-toggle" onclick="toggle_keyboard()">
-                    <p>...</p>
-                </div>
-            </div>
-            <button onclick="submit_sentence()" style="width: 30%;">Submit</button>
-        </div>
+        <div class="question-answer">
+            <div class="snippet-output" id="snippet-output">
 
-        <div class="center">
+            </div>
             <div class="snippet-input" id="snippet-input">
-                <div>
-                    ${
-                        //randomly sort the snippets
-                        current_snippets.sort(() => Math.random() - 0.5).map(word => {
-                            return `
-                                <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable">${word.word}</span>
-                        `}).join(" ")
-                    }
+                ${
+                    //randomly sort the snippets
+                    current_snippets.sort(() => Math.random() - 0.5).map(word => {
+                        return `
+                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable">${word.word}</span>
+                    `}).join(" ")
+                }
+            </div>
+            
+            <div class="keyboard-controls" draggable="false">
+
+                <div draggable="false" class="shuffle" onclick="shuffle_snippets()"><img draggable="false" src="https://artur.red/icons/shuffle.svg" alt="Shuffle" ></div>
+                <div draggable="false" id="mini-keyboard-toggle" onclick="toggle_keyboard()">
+                    😂
                 </div>
             </div>
         </div>
+        
+        <button onclick="submit_sentence()" class="submit">Submit</button>
     `;
-
 }
 
 // -------------------------------------------------- SNIPPET INPUT -------------------------------------------------- //
@@ -219,6 +224,14 @@ const remove_word = (word_id) => {
     document.getElementById(`word_${word_id}`).remove();
 
     sentences[current_question_index].sentence = sentences[current_question_index].sentence.filter(word_obj => word_obj.id !== word_id);
+}
+
+const shuffle_snippets = () => {
+    document.getElementById("snippet-input").innerHTML = current_snippets.sort(() => Math.random() - 0.5).map(word => {
+        return `
+            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable">${word.word}</span>
+        `
+    }).join(" ");
 }
 
 const submit_sentence = () => {
@@ -253,7 +266,7 @@ socket.on(`game:submit-sentences:${room_id}`, (data) => {
 
 const next_voting = (current_player_answers, players) => {
 
-    transition(questions[display_card_owner_percentage_index]);
+    transition(questions[display_card_owner_percentage_index], true);
 
     //render the voting view
     setTimeout(() => {
@@ -267,7 +280,7 @@ const next_voting = (current_player_answers, players) => {
 const display_voting_view = (current_player_answers, index) => {
 
     return `
-        <div class="center">
+        <div class="question">
             <h1>${questions[current_voting_index]}</h1>
         </div>
         <div class="center player-answer-container">
@@ -302,6 +315,7 @@ const display_voting_view = (current_player_answers, index) => {
         </div>
     `;
 }
+
 
 // -------------------------------------------------- HANDLE VOTING -------------------------------------------------- //
 
@@ -372,28 +386,24 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     }
 });
 const display_results = (word_contributors) => {
+
+    let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 1));
+
     text_input_area.innerHTML = `
         <div class="center column">
             <h1>Results</h1>
 
             ${
-                console.log(current_total_votes, word_contributors),
-
-                //make every value in current_total_votes 50 times bigger
-                Object.keys(current_total_votes).map(key => {
-                    return current_total_votes[key] *= 50;
-                }),
-
 
                 //current_total_votes looks something like this: {player1: 250, player2: 150, player3: 500}
                 //sort current_total_votes by the value of the object
-                Object.keys(sumObjectsByKey(current_total_votes, word_contributors)).sort((a, b) => current_total_votes[b] - current_total_votes[a]).map((player, player_idx) => `
-                    <span class="player-result ${player_idx == 0?'winner':''}" style="animation-delay: ${(Object.keys(current_total_votes).length - player_idx) * 3}s">
+                Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]).map((player, player_idx) => `
+                    <span class="player-result ${player_idx == 0?'winner':''}" style="animation-delay: ${(Object.keys(summed_results).length - player_idx) * 3}s">
                         <div class=player-info>
                             <p>${player_idx+1}: ${player}</p>
                             ${player_idx == 0?`<img src="https://artur.red/icons/crown.svg" class="crown" alt="crown">`:''}
                         </div>
-                        <p>${current_total_votes[player] + word_contributors[player]}</p>
+                        <p>${summed_results[player]}</p>
                     </span>
                 `).join("")
             }
@@ -515,34 +525,43 @@ document.addEventListener("keyup", (e) => {
 /* -------------------------------------------------- KEYBOARDS -------------------------------------------------- */
 
 let state = 1;
+let total_states = 0;
+let time_out = null;
 
 const new_snippets_set = (input_str) => {
     if (typeof input_str === "string") {
         return [...input_str].map(element => `<span onclick="add_word('${element}')" class="snippet clickable">${element}</span>`).join("");
     }else{
-        return input_str.map(element => `<span onclick="add_word('${element}')" class="snippet clickable">${element}</span>`).join("");
+        return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
     }
 }
 const set_keyboard_state = (state) => {
     document.getElementById("mini-keyboard-toggle").innerHTML = `<span style='color: white'>${state}</span>`;
 }
 const toggle_keyboard = () => {
+    total_states++;
     state++;
+
+    clearTimeout(time_out);
+    time_out = setTimeout(() => {
+        total_states = 0;
+    }, 3000);
+
     switch (state) {
         case 1:
-            set_keyboard_state("⌘");
+            set_keyboard_state("😂");
             
             document.getElementById("snippet-input").innerHTML = new_snippets_set(current_snippets);
             break;
 
         case 2:
-            set_keyboard_state("X");
+            set_keyboard_state("&");
 
             document.getElementById("snippet-input").innerHTML = new_snippets_set("🤩👍😎😂👎👀🔥🥳");
             break;
              
         case 3:
-            set_keyboard_state("Y");
+            set_keyboard_state("🔤");
 
             document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?");
             state = 0;
@@ -552,17 +571,26 @@ const toggle_keyboard = () => {
             state = 0;
             break;
     }
+
+    if (total_states > 30) {
+        //                      this is very seaky right....?
+        document.getElementById("uhh-nothing" + "-to-see-here").innerHTML += '<img src="https://c.tenor.com/-QwFtBLal2kAAAAd/matthew-santoro-you-take-some-lobster.gif" alt="funny man indeed" class="funny-man">';
+        setTimeout(() => {
+            document.getElementById("uhh-nothing" + "-to-see-here").remove();
+        }, 2000);
+    }
 }
 
 
 /* TRANSITION OVERLAY */
 
-const transition = (text) => {
+const transition = (text, is_voting) => {
     if(document.getElementById("transition-container").innerHTML != ""){
         document.getElementById("transition-container").innerHTML = "";
     }
     document.getElementById("transition-container").innerHTML += `
         <div class="screen-overlay" id="screen-overlay">
+            <p class="transition-title-text">${(is_voting)?"Voting":""}</p>
             <h1 id="screen-overlay-text">${text}</h1>
         </div>
     `

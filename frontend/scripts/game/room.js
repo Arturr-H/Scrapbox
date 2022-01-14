@@ -324,6 +324,13 @@ window.addEventListener("resize", () => {
 const volume_slider = document.getElementById("volume-slider");
 const volume_image = document.getElementById("volume-image");
 const audio = document.getElementById("audio");
+
+const source_element = document.createElement("source");
+source_element.setAttribute("src", "https://artur.red/audio/song.mp3");
+source_element.setAttribute("type", "audio/mp3");
+source_element.setAttribute("volume", 0);
+audio.appendChild(source_element);
+
 let audio_volume = 0;
 audio.volume = getCookie("audio_percentage")*0.5;
 volume_slider.value = getCookie("audio_percentage")*100*2;

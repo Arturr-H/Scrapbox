@@ -1,81 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Document</title>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
 
-		<link rel="stylesheet" href="https://artur.red/style/global.css">
-		<script src="https://artur.red/script/cookies.js" defer></script>
-		<script src="https://artur.red/script/global.js" defer></script>
+	<link rel="stylesheet" href="https://artur.red/style/global.css">
+	<script src="https://artur.red/script/cookies.js" defer></script>
+	<script src="https://artur.red/script/global.js" defer></script>
 
-	</head>
+</head>
 
-	<body class="dark">
-		<main>
-			<nav>
+<body class="dark">
 
-				<ul id="player-list">
-					<li class="player ">
-						<div class="pfp">
-							<img src="https://artur.red/faces/7.svg" alt="Player profile image">
-						</div>
-						<div class="info">
-							<p>Bajs</p>
-						</div>
-					</li>
+	<div class="sunburst-container">
+		<div class="sunburst"></div>
+	</div>
 
-					<li class="player ">
-						<div class="pfp">
-							<img src="https://artur.red/faces/13.svg" alt="Player profile image">
-						</div>
-						<div class="info">
-							<p>Artur</p>
-						</div>
-					</li>
-				</ul>
+	<canvas id="winner-confetti"></canvas>
 
-			</nav>
+	<div class="main-room-section" id="text-input-area">
+		<div class="question">
+			<h1>The cops are on to me, luckily I brought with me ________.</h1>
+		</div>
+		<div class="center player-answer-container-TEST">
 
-			<div class="main-room-section" id="text-input-area">
-				<div class="center">
-					<h1>The cops are on to me, luckily I brought with me ________.</h1>
-				</div>
-				<div class="center player-answer-container">
+			<div id="p-1" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
 
-					<div id="card_Artur" class="player-answer disabled" onclick="">
-
-						<p>asdsa asdsa asdsa bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb
-							bbbbb bbbbb bbbbb asadas asadas asadas bbeebebbb bbeebebbb bbeebebbb bbeebebbb</p>
-						<div class="bottom"></div>
-						<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
-						<p class="score">[object Object],[object Object]</p>
-
-						<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
-					</div>
-
-					<div id="card_Bajs" class="player-answer " onclick="vote_for('Bajs')">
-
-						<p>bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb bbbbb asdsa</p>
-						<img src="https://artur.red/images/cross-numbers/2.svg" class="card-number" alt="card-number">
-						<p class="score">[object Object],[object Object]</p>
-						
-						<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
-						<div class="bottom">
-							<div class="percentage" style="width: 33%; background: blue;">artur</div>
-							<div class="percentage" style="width: 23%; background: red;">man</div>
-							<div class="percentage" style="width: 10%; background: yellow;">kildawdawle</div>
-							<div class="percentage" style="width: 34%; background: rgb(182, 74, 74);">bertil</div>
-						</div>
-					</div>
-
-				</div>
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
 			</div>
-		</main>
+			<div id="p-2" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
 
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
+			</div>
+			<div id="p-3" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
 
-	</body>
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
+			</div>
+			<div id="p-4" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
+
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
+			</div>
+			<div id="p-5" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
+
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
+			</div>
+			<div id="p-6" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
+
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
+			</div>
+			<div id="p-7" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
+
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
+			</div>
+			<div id="p-8" class="player-answer" onclick="">
+				<p>Me when the funny man is here ! ! !</p>
+				<div class="bottom"></div>
+				<img src="https://artur.red/images/cross-numbers/1.svg" class="card-number" alt="card-number">
+				<p class="score"></p>
+
+				<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
+			</div>
+
+		</div>
+	</div>
+
+	<script>
+		const next_card_delay = 100;
+		const card_animation_duration = "1s"
+		const card_amount = 8;
+		for(let i = 1; i < card_amount+1; i++){
+			const card = document.getElementById(`p-${i}`);
+			const r_amount = (Math.random() * 20)-20/2;
+			card.style.transform = `rotate(${r_amount}deg)`
+			card.style.zIndex = card_amount+1-i;
+
+			setTimeout(() => {
+				
+				const angle = (i / card_amount) * 2 * Math.PI;
+				const x = Math.cos(angle) * 600;
+				const y = Math.sin(angle) * 300;
+				card.style.transition = `transform ${card_animation_duration} cubic-bezier(.18,.97,.86,1.02) 1s, width .05s ease-in-out, height .05s ease-in-out`;
+				card.style.transform = `translate(${x}px, ${y}px) rotate(${r_amount}deg)`;
+			}, next_card_delay*i);
+		}
+
+	</script>
+
+	<!-- <script src="https://artur.red/style/confetti.js"></script>
+	<script>
+		const confettiSettings = {"target":"winner-confetti","max":"100","size":"1.2","animate":true,"props":["circle","square"],"colors":[[165,104,246],[230,61,135],[0,199,228],[253,214,126]],"clock":"20","rotate":false,"start_from_edge":false,"respawn":true};
+		const confetti = new ConfettiGenerator(confettiSettings);
+		confetti.render();
+	</script> -->
+</body>
 
 </html>
