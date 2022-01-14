@@ -87,15 +87,21 @@ const custom_message = (message) => {
 let rooms = {};
 
 //Constant variables
-const DEBUG = false;
+const DEBUG = true;
 
-const MAX_PLAYERS_PER_ROOM = 16;
+const MAX_PLAYERS_PER_ROOM = 8;
 const MIN_PLAYERS_PER_ROOM = DEBUG ? 1 : 1;
 
 const QUESTION_COUNT = 2;
 const WORD_CONTRIBUTION_MULTIPLIER = 4;
 const ROOM_CLEANUP_TIME = 1000 * 60 * 60; //1 hour
 const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
+
+const PROTOCOL = "https";
+const BASE_URL = "artur.red";
+
+//arturs fina palette: "#32021F", "#1446a0", "#1A5E63", "#DB3069", "#F71735", "#FFD400", "#7EE081", "#FFECD1"
+const ROOM_COLORS = ["#e6194B", "#f58231", "#ffe119", "#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4"];
 
 const map_obj_to_percentage = (obj) => {
     //return an object with the original object's  values as percentages
@@ -108,9 +114,12 @@ const map_obj_to_percentage = (obj) => {
     }
     return obj;
 }
-
-const PROTOCOL = "https";
-const BASE_URL = "artur.red";
+const get_most_voted = object => {
+    return Object.keys(object).filter(x => {
+         return object[x] == Math.max.apply(null, 
+         Object.values(object));
+   });
+};
 
 //Express static folders
 app.use("/", express.static(path.join(__dirname, "resources")));
@@ -146,6 +155,8 @@ app.get("/api/create-room", async (req, res) => {
     const pfp = req.cookies["pfp"];
     const uid = req.cookies["uid"];
 
+    const room_colors = ROOM_COLORS.sort(() => Math.random() - 0.5)
+
     const qr = await qr_code.toDataURL(`${PROTOCOL}://${BASE_URL}/${small_code}`, {color: {dark: "#000", light: "#00000000"}}).then(async (data) => await data);
 
 
@@ -155,7 +166,8 @@ app.get("/api/create-room", async (req, res) => {
         pfp: pfp,
         done: false, //Done means that the player has finished their selection / text input
         leader: true,
-        online: true
+        online: true,
+        player_color: room_colors[0],
     }
 
     //Create the room
@@ -164,6 +176,8 @@ app.get("/api/create-room", async (req, res) => {
         small_code: small_code,
         qr: qr,
         cleanup: new Date().getTime() + ROOM_CLEANUP_TIME,
+
+        room_colors: room_colors,
 
         game: {
             players: [leader_obj],
@@ -489,8 +503,6 @@ io.on("connection", (socket) => {
                         rooms[room_id].game.current_player_answers = rooms[room_id].game.current_player_answers.filter(x => x != user);
                         rooms[room_id].game.current_player_votes = rooms[room_id].game.current_player_votes.filter(x => x != user);
 
-                        console.log(rooms[room_id].game.players)
-                        
                         //Make the next player the leader, if there
                         //are no more players, delete the room. 
                         if(rooms[room_id].game.players.length == 0){
@@ -589,8 +601,6 @@ io.on("connection", (socket) => {
             const player = data.player;
             const text = data.text;
 
-            console.log(text)
-
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
 
@@ -659,8 +669,6 @@ io.on("connection", (socket) => {
                 sentences.forEach(x => {
 
                     if (DEBUG) console.log(x);
-
-                    console.log("sentence: ", x.sentence)
 
                     x.sentence.forEach(word_obj => {
 
@@ -766,8 +774,13 @@ io.on("connection", (socket) => {
                     total_votes: rooms[room_id].game.current_player_votes,
                     all_done: all_done,
                     current_player_answers: rooms[room_id].game.current_player_answers,
-                    word_contributors: rooms[room_id].game.word_contributors
+                    word_contributors: rooms[room_id].game.word_contributors,
+
+                    //get the people who have the most votes
+                    most_voted_for: all_done ? get_most_voted(rooms[room_id].game.current_player_votes) : null,
                 });
+                console.log(rooms[room_id].game.current_player_votes)
+                console.log(get_most_voted(rooms[room_id].game.current_player_votes))
 
             }
         }catch(err){
@@ -860,7 +873,8 @@ app.get("/:small_code?", (req, res) => {
             pfp: pfp,
             done: false,
             leader: (rooms[room_id].game.leader == player),
-            online: true
+            online: true,
+            player_color: rooms[room_id].room_colors[rooms[room_id].game.players.length]
         }
         
         let found_room = false;

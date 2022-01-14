@@ -37,7 +37,7 @@ let current_voting_index = 0;
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.done?"active":""}">
         <div class="pfp">
-            <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
+            <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
         </div>
         <div class="info">
             <p>${player_obj.player}</p>
@@ -94,6 +94,7 @@ const multiply_values_in_object = (obj, factor) => {
 
         //Get the questions
         questions = room_data_json.game.current_questions;
+        console.log(questions)
 
         is_leader = room_data_json.game.leader === getCookie("usnm");
         self_voting = room_data_json.game.config.self_voting;
@@ -165,7 +166,7 @@ const display_question_view = (current_snippets) => {
     }
 
     //transition with the text as the current question
-    transition(questions[current_question_index], false);
+    transition(questions[current_question_index].question, false);
 
     sentences.push({
         question_id: current_question_index,
@@ -176,9 +177,9 @@ const display_question_view = (current_snippets) => {
     return `
 
         <div class="question fade-in-view">
-            <h1>${questions[current_question_index]}</h1>
+            <h1>${questions[current_question_index].question}</h1>
         </div>
-        <div class="question-answer">
+        <div class="question-answer fade-in-view">
             <div class="snippet-output" id="snippet-output">
 
             </div>
@@ -266,11 +267,24 @@ socket.on(`game:submit-sentences:${room_id}`, (data) => {
 
 const next_voting = (current_player_answers, players) => {
 
-    transition(questions[display_card_owner_percentage_index], true);
+    transition(questions[display_card_owner_percentage_index].question, true, () => {
+        //pull the voting card animation.
+        show_voting_cards()
+    });
 
     //render the voting view
     setTimeout(() => {
         text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
+
+        //remove the navbar becuase it's useless in the voting scene
+        document.getElementById("nav").remove();
+
+        //just remove the main container but not its innerHTML because
+        //main gets some weird grid things when we remove the navbar.
+        const main = document.querySelector("main")
+        main.outerHTML = main.innerHTML
+
+        //next voting index :O
         current_voting_index++;
     }, 2000);
 
@@ -279,15 +293,17 @@ const next_voting = (current_player_answers, players) => {
 
 const display_voting_view = (current_player_answers, index) => {
 
+    document.getElementById("sunburst").style.display = "flex";
+
     return `
         <div class="question">
-            <h1>${questions[current_voting_index]}</h1>
+            <h1>${questions[current_voting_index].question}</h1>
         </div>
-        <div class="center player-answer-container">
+        <div class="center player-answer-container-TEST">
             ${
 
                 current_player_answers.map((player, player_idx) => `
-                    <div id="card_${player.player}" class="player-answer ${
+                    <div id="card_${player.player}" class="player-answer voting-card-selector ${
                         self_voting
                         ? ""
                         : player.player == getCookie("usnm")?'disabled':''
@@ -302,7 +318,7 @@ const display_voting_view = (current_player_answers, index) => {
                     }">
                         
                         <p>${
-                            player.sentences[index].sentence.map(word => word.word).join(" ")
+                            player.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}</span>`).join(" ")// THIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THIS
                         }</p>
                         <div class="bottom"></div>
                         <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
@@ -337,54 +353,71 @@ const vote_for = (player) => {
         });
     }
 }
-
-const display_card_owner_percentage = (current_player_answers, players) => {
-
-    const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
-    const voting_index_answers_percentage = voting_index_answers.map(map_obj_to_percentage);
-
-    voting_index_answers_percentage.map((contributors, index) => {
-
-        const player_card = document.getElementById(`card_${players[index].player}`);
-        const player_card_content = player_card.querySelector(".bottom");
-
-        contributors.map(contributor => {
-            const percentage = Object.values(contributor)[0];
-            const name = Object.keys(contributor)[0];
-            const color = getColor();
-
-            player_card_content.innerHTML += `<div class="percentage" style="width: ${percentage}%; background: ${color}">${name} - ${percentage}%</div>`;
-        });
-    });
-
-    display_card_owner_percentage_index++;
-}
-
-
-
 socket.on(`game:vote-for:${room_id}`, (data) => {
     const total_votes = data.total_votes;
     const players = data.players;
     const all_done = data.all_done;
     const current_player_answers = data.current_player_answers;
     const word_contributors = data.word_contributors;
-
+    const most_voted_for = data.most_voted_for;
     //update the player list
     player_list.innerHTML = display_players(players);
     current_total_votes = total_votes;
 
+    console.log(most_voted_for, all_done)
+
     if (all_done) {
+
         if(current_voting_index >= questions.length){
-            display_card_owner_percentage(current_player_answers, players);
+            display_card_owner_percentage(current_player_answers, players, most_voted_for);
             setTimeout(() => display_results(word_contributors), 2000);
             return;
         }
 
-        display_card_owner_percentage(current_player_answers, players);
+        display_card_owner_percentage(current_player_answers, players, most_voted_for);
         setTimeout(() => next_voting(current_player_answers, players), 2000);
 
     }
 });
+//displays the percentage at the bottom of
+//cards + colors all the snippets in the card
+//based on the player's player_color
+const display_card_owner_percentage = (current_player_answers, players, most_voted_for) => {
+
+    const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
+    const voting_index_answers_percentage = voting_index_answers.map(map_obj_to_percentage);
+
+    most_voted_for.map(player => {
+        const player_card = document.getElementById(`card_${player}`);
+        // const player_card_content = player_card.querySelector(".bottom");
+        player_card.classList.add("winning-card");
+
+        const current_player_owned_snippets = document.querySelectorAll(`#card_${player} .owner`);
+
+        console.log(players)
+
+        //all players have a player_color, so color all the current_player's snippets with their color
+        current_player_owned_snippets.forEach(snippet => {
+            console.log(snippet.classList[1].split("-")[2])
+            snippet.style.background = players.find(this_player => this_player.player == snippet.classList[1].split("-")[2]).player_color;
+        });
+
+
+        // voting_index_answers_percentage.map((contributors, index) => {
+
+            // contributors.map(contributor => {
+            //     const percentage = Object.values(contributor)[0];
+            //     const name = Object.keys(contributor)[0];
+            //     const color = getColor();
+
+            //     // player_card_content.innerHTML += `<div class="percentage" style="width: ${percentage}%; background: ${color}">${name} - ${percentage}%</div>`;
+            // });
+        // });
+    });
+
+    display_card_owner_percentage_index++;
+}
+
 const display_results = (word_contributors) => {
 
     let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 1));
@@ -576,15 +609,19 @@ const toggle_keyboard = () => {
         //                      this is very seaky right....?
         document.getElementById("uhh-nothing" + "-to-see-here").innerHTML += '<img src="https://c.tenor.com/-QwFtBLal2kAAAAd/matthew-santoro-you-take-some-lobster.gif" alt="funny man indeed" class="funny-man">';
         setTimeout(() => {
-            document.getElementById("uhh-nothing" + "-to-see-here").remove();
+            try{
+                document.getElementById("uhh-nothing" + "-to-see-here").remove();
+            }catch{
+                return;
+            }
         }, 2000);
     }
 }
 
+/* -------------------------------------------------- ANIMATIONS -------------------------------------------------- */
 
 /* TRANSITION OVERLAY */
-
-const transition = (text, is_voting) => {
+const transition = (text, is_voting, function_callback) => {
     if(document.getElementById("transition-container").innerHTML != ""){
         document.getElementById("transition-container").innerHTML = "";
     }
@@ -598,5 +635,34 @@ const transition = (text, is_voting) => {
 
     setTimeout(() => {
         screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
+
+        setTimeout(() => {
+            if(typeof function_callback === "function") function_callback();
+            else return;
+        }, 500);
+        
     }, 3000 + text.length*50);
 }
+
+/* Voting cards show animation */
+const show_voting_cards = () => {
+    const cards = document.querySelectorAll(".voting-card-selector");
+    const card_amount = cards.length;
+    const next_card_delay = 100;
+    const card_animation_duration = "1s"
+
+    cards.forEach((card, i) => {
+        const r_amount = (Math.random() * 10)-10/2;
+        card.style.transform = `rotate(${r_amount}deg)`
+        card.style.zIndex = card_amount+1-i;
+
+        setTimeout(() => {
+            
+            const angle = (i / card_amount) * 2 * Math.PI;
+            const x = Math.cos(angle) * 600;
+            const y = Math.sin(angle) * 300;
+            card.style.transition = `transform ${card_animation_duration} cubic-bezier(.18,.97,.86,1.02) 1s, width .05s ease-in-out, height .05s ease-in-out`;
+            card.style.transform = `translate(${x}px, ${y}px) rotate(${r_amount}deg)`;
+        }, next_card_delay*i);
+    });
+};

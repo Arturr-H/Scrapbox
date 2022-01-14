@@ -242,8 +242,6 @@ nav>form>input[type="text"] {
 	white-space: nowrap;
 }
 
-nav .logo {
-}
 
 .player-count {
 	text-align: center;
@@ -277,6 +275,7 @@ input[type=number] {
 .center {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	text-align: center;
 	height: 100%;
 	width: 100%;
@@ -1245,6 +1244,19 @@ span.player-result {
 	height: 100%;
 }
 
+
+.winning-card::after {
+	display: none !important;
+}.winning-card > img {
+	display: none !important;
+}.winning-card{
+	border: 3px solid var(--vibrant-yellow);
+}.winning-card .owner{
+	color: black;
+}
+
+
+
 @keyframes fade-in {
 	from {
 		opacity: 0
@@ -1363,14 +1375,11 @@ span.snippet:active {
 	padding-top: 2rem;
 	padding-bottom: 2rem;
 
-	z-index: 1;
+	z-index: 0;
 	font-size: 1.2rem;
 	font-family: "Roboto", sans-serif !important;
 	font-weight: 300;
 
-}.question h1{
-	-webkit-text-stroke: 12px black;
-	paint-order: stroke;
 }
 
 
@@ -1503,6 +1512,8 @@ span.snippet:active {
 	/* animation-delay: 1s; */
 	transform: translateX(120vw) skewX(-30deg);
 	overflow-x: hidden;
+
+	z-index: 25;
 }
 
 .screen-overlay h1 {
@@ -1610,7 +1621,7 @@ span.snippet:active {
 	}
 }
 
-/* .fade-in-view {
+.fade-in-view {
 	animation: fade-in-view 1s step-end forwards;
 	animation-delay: 1s;
 	opacity: 0;
@@ -1624,7 +1635,7 @@ span.snippet:active {
 	to {
 		opacity: 1;
 	}
-} */
+}
 
 
 
@@ -1706,7 +1717,9 @@ span.snippet:active {
 	justify-content: center;
 		align-items: center;
 	
-		overflow: hidden;
+	overflow: hidden;
+	
+	display: none;
 }
 .sunburst{
 	position: relative;
@@ -1714,7 +1727,7 @@ span.snippet:active {
 	aspect-ratio: 1;
 	left: 0%; top: 0%;
 	background: url(https://artur.red/images/sunburst.svg) no-repeat;
-	background-color: rgb(14, 84, 235);
+	background-color: rgb(120, 147, 204);
 	background-size: cover;
 	background-position: center center;
 
@@ -1750,4 +1763,35 @@ span.snippet:active {
 	transform: translate(-50%, -50%);
 
 	z-index: 40;
+}
+
+.cardboard-box-container{
+	display: flex;
+	justify-content: center;
+	align-content: center;
+
+	width: 60vmin;
+
+	position: absolute;
+	left: 50%;
+	top: 50%;
+
+	transform: translate(-50%, -50%);
+}
+
+
+
+.additional-words{
+	position: absolute;
+	width: 100%; height: 100%;
+	left: 0; top: 0;
+
+	/* display: flex;
+	justify-content: center;
+	align-content: center; */
+	z-index: 5;
+
+	background: rgba(0, 0, 0, 0.2)
+}.additional-words .snippet{
+	position: absolute !important;
 }

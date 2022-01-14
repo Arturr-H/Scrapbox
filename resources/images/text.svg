@@ -1,0 +1,9 @@
+<svg viewbox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+	<style>
+		.question-svg{
+			fill: black;
+		}
+	</style>
+
+	<text class="question-svg"> HYAHHAHAHA </text>
+</svg>
