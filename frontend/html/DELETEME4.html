@@ -112,6 +112,11 @@
 			const add_snippets = document.querySelectorAll("#additional-snippet")
 			const time_between = 800; //ms
 
+			if (document.getElementById("additional-words") != undefined) return;
+			
+			document.getElementById("transition-container").innerHTML = "ONG";
+				
+
 			for (let i = 0; i < add_snippets.length; i++) {
 				setTimeout(() => {
 					

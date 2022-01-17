@@ -22,6 +22,7 @@ let is_leader = false;
 let current_total_votes = {};
 let self_voting = false;
 let display_card_owner_percentage_index = 0;
+let all_players = [];
 
 const VOTING_TIME_IN_MS = 20000;
 
@@ -98,6 +99,8 @@ const multiply_values_in_object = (obj, factor) => {
 
         is_leader = room_data_json.game.leader === getCookie("usnm");
         self_voting = room_data_json.game.config.self_voting;
+
+        all_players = players;
     }catch(err){
         console.log("error");
     }
@@ -166,7 +169,11 @@ const display_question_view = (current_snippets) => {
     }
 
     //transition with the text as the current question
-    transition(questions[current_question_index].question, false);
+    transition(questions[current_question_index].question, false, () => {
+        if (questions[current_question_index].additional_snippets != null) {
+            additional_words(questions[current_question_index].additional_snippets);
+        }
+    });
 
     sentences.push({
         question_id: current_question_index,
@@ -196,7 +203,7 @@ const display_question_view = (current_snippets) => {
             <div class="keyboard-controls" draggable="false">
 
                 <div draggable="false" class="shuffle" onclick="shuffle_snippets()"><img draggable="false" src="https://artur.red/icons/shuffle.svg" alt="Shuffle" ></div>
-                <div draggable="false" id="mini-keyboard-toggle" onclick="toggle_keyboard()">
+                <div draggable="false" id="mini-keyboard-toggle" onclick="toggle_keyboard('${questions[current_question_index].additional_snippets}')">
                     😂
                 </div>
             </div>
@@ -205,7 +212,95 @@ const display_question_view = (current_snippets) => {
         <button onclick="submit_sentence()" class="submit">Submit</button>
     `;
 }
+const additional_words = (word_array) => {
 
+    document.body.innerHTML += `
+        <div id="full-container" style="position: absolute; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.923); left: 0; top: 0;">
+            <div class="top-text-notice">
+                <h1>Additional Snippets!</h1>
+            <p>This question gives you some extra-snippets to use in you sentences!</p>
+            </div>
+            <div class="mini-sunburst-container">
+
+                <div class="mini-sunburst"></div>
+            </div>
+            <div id="cardboard-box-container" class="cardboard-box" style="display: none;">
+                
+                <img src="https://artur.red/images/cardboard-box.svg" class="svg-container">
+                <div class="svg-container">
+                    <svg width="100%" height="100%" viewBox="0 0 2100 2100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2; z-index: 100;">
+                        <g class="flap-lower">
+                            <g transform="matrix(1,0,0,1,111.355,-78.7402)">
+                                <path d="M1211.39,620.36L1628.97,325.085L1837.36,472.441L1419.78,767.717L1211.39,620.36Z" style="fill:rgb(188,145,111);"/>
+                            </g>
+                            <path d="M1322.64,546.57L1322.74,541.62L1531.14,688.976L1531.03,693.926L1322.64,546.57Z" style="fill:rgb(172,129,91);"/>
+                            <path d="M1531.03,693.926L1531.14,688.976L1948.72,393.701L1948.61,398.65L1531.03,693.926Z" style="fill:rgb(181,134,94);"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="svg-container">
+                    <svg width="100%" height="100%" viewBox="0 0 2100 2100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2; z-index: 100;">
+                        <g class="flap-upper">
+                            <g transform="matrix(1,0,0,1,111.355,-78.7402)">
+                                <path d="M1210.99,620.079L1628.57,324.803L1836.9,472.111L1419.31,767.386L1210.99,620.079Z" style="fill:rgb(188,145,111);"/>
+                            </g>
+                            <path d="M1322.28,546.319L1322.35,541.339L1530.67,688.646L1530.61,693.627L1322.28,546.319Z" style="fill:rgb(172,129,92);"/>
+                            <g transform="matrix(1,0,0,1,-0.467035,-0.330244)">
+                                <path d="M1531.08,693.957L1531.14,688.976L1948.72,393.701L1948.66,398.681L1531.08,693.957Z" style="fill:rgb(155,109,71);"/>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="additional-words">
+                ${word_array.map(word => {
+                return `<span class="snippet" id="additional-snippet" style="opacity: 0;">${word}</span>`
+            }).join('')
+                }
+            </div>
+        </div>
+    `;
+
+    //open the box
+    document.getElementById("cardboard-box-container").classList.add("cardboard-box-container");
+    document.getElementById("cardboard-box-container").style.display = "flex";
+    const add_snippets = document.querySelectorAll("#additional-snippet")
+    const time_between = 800; //ms
+
+    setTimeout(() => {
+
+        if (document.getElementById("additional-words") != undefined) return;
+
+        for (let i = 0; i < add_snippets.length; i++) {
+            setTimeout(() => {
+
+                const percentage = i / add_snippets.length * (window.innerWidth)
+                const center = window.innerWidth / 2 - (percentage + (1 / add_snippets.length * (window.innerWidth)) / 2)
+
+                add_snippets[i].style.transform = `translate(calc(0px - 50%), calc(0px - 50%))`
+                add_snippets[i].style.opacity = 0;
+                setTimeout(() => {
+                    add_snippets[i].style.transform = `translate(calc(${center}px - 50%), -35vh)`
+                    add_snippets[i].style.opacity = 1;
+                }, 100);
+
+            }, i * time_between);
+        }
+
+        //on end
+        setTimeout(() => {
+
+            document.getElementById("cardboard-box-container").style.transformOrigin = "center center";
+
+            document.getElementById("cardboard-box-container").style.animation = "cardboard-box-roll-out 2s ease-in-out forwards";
+
+            setTimeout(() => {
+                document.getElementById("full-container").remove();
+            }, 1000);
+        }, add_snippets.length*time_between+500);
+    }, 2000);
+};
 // -------------------------------------------------- SNIPPET INPUT -------------------------------------------------- //
 
 const add_word = (word, owner) => {
@@ -268,25 +363,24 @@ socket.on(`game:submit-sentences:${room_id}`, (data) => {
 const next_voting = (current_player_answers, players) => {
 
     transition(questions[display_card_owner_percentage_index].question, true, () => {
-        //pull the voting card animation.
-        show_voting_cards()
-    });
 
-    //render the voting view
-    setTimeout(() => {
+        try{
+            //remove the "main" html object, but keep its children
+            document.querySelector("nav").remove();
+        }catch{}
+        try{
+            document.getElementsByTagName("main")[0].style.all = "unset"
+        }catch{}
+
         text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
-
-        //remove the navbar becuase it's useless in the voting scene
-        document.getElementById("nav").remove();
-
-        //just remove the main container but not its innerHTML because
-        //main gets some weird grid things when we remove the navbar.
-        const main = document.querySelector("main")
-        main.outerHTML = main.innerHTML
 
         //next voting index :O
         current_voting_index++;
-    }, 2000);
+        
+        //pull the voting card animation.
+
+        show_voting_cards()
+    });
 
     //The card percentage things is now moved to the other next_voting function...
 }
@@ -318,7 +412,7 @@ const display_voting_view = (current_player_answers, index) => {
                     }">
                         
                         <p>${
-                            player.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}</span>`).join(" ")// THIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THIS
+                            player.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner}</span></span>`).join(" ")// THIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THIS
                         }</p>
                         <div class="bottom"></div>
                         <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
@@ -370,13 +464,14 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
 
         if(current_voting_index >= questions.length){
             display_card_owner_percentage(current_player_answers, players, most_voted_for);
-            setTimeout(() => display_results(word_contributors), 2000);
+            setTimeout(() => document.body.innerHTML = display_results(word_contributors), 4000);
+            console.log("54 IF")
             return;
+        }else{
+            console.log("54 ELSE")
+            display_card_owner_percentage(current_player_answers, players, most_voted_for);
+            setTimeout(() => next_voting(current_player_answers, players), 4000);
         }
-
-        display_card_owner_percentage(current_player_answers, players, most_voted_for);
-        setTimeout(() => next_voting(current_player_answers, players), 2000);
-
     }
 });
 //displays the percentage at the bottom of
@@ -394,12 +489,12 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
 
         const current_player_owned_snippets = document.querySelectorAll(`#card_${player} .owner`);
 
-        console.log(players)
-
         //all players have a player_color, so color all the current_player's snippets with their color
         current_player_owned_snippets.forEach(snippet => {
-            console.log(snippet.classList[1].split("-")[2])
-            snippet.style.background = players.find(this_player => this_player.player == snippet.classList[1].split("-")[2]).player_color;
+            try{
+                snippet.style.background = players.find(this_player => this_player.player == snippet.classList[1].split("-")[2]).player_color;
+                snippet.classList.add("tooltip");
+            }catch{}
         });
 
 
@@ -421,27 +516,100 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
 const display_results = (word_contributors) => {
 
     let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 1));
+    const winner = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a])[0];
+    const second_place = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a])[1]??null;
+    const third_place = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a])[2]??null;
 
-    text_input_area.innerHTML = `
-        <div class="center column">
-            <h1>Results</h1>
+    const winner_score = summed_results[winner];
+    const second_place_score = summed_results[second_place]??"no score";
+    const third_place_score = summed_results[third_place]??"no score";
 
-            ${
+    return `
+		<h1 class="winner-top-text">${winner.toUpperCase()} IS THE WINNER</h1>
 
-                //current_total_votes looks something like this: {player1: 250, player2: 150, player3: 500}
-                //sort current_total_votes by the value of the object
-                Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]).map((player, player_idx) => `
-                    <span class="player-result ${player_idx == 0?'winner':''}" style="animation-delay: ${(Object.keys(summed_results).length - player_idx) * 3}s">
-                        <div class=player-info>
-                            <p>${player_idx+1}: ${player}</p>
-                            ${player_idx == 0?`<img src="https://artur.red/icons/crown.svg" class="crown" alt="crown">`:''}
-                        </div>
-                        <p>${summed_results[player]}</p>
-                    </span>
-                `).join("")
-            }
-        </div>   
-    `;
+		<div class="blob-container">
+			<div class="blob-1"></div>
+			<div class="blob-2"></div>
+			<div class="blob-3"></div>
+		</div>
+		<div class="rank-container">
+			${
+                second_place == null 
+                ? ""
+                : `<div class="rank">
+				<div class="player ">
+					<div class="pfp">
+						<img style="background: ${
+                            all_players.find(player => player.player == second_place).player_color??"#fff"
+                        }" src="https://artur.red/faces/${
+                            all_players.find(player => player.player == second_place).pfp??"1"
+                        }.svg" alt="Player profile image">
+					</div>
+					<div class="info">
+						<p>${second_place}</p>
+						<span class="total-points">${second_place_score}</span>
+					</div>
+				</div>
+				<div class="rank-2">2</div>
+			</div>`}
+			<div class="rank">
+				<div class="player ">
+					<div class="pfp">
+                        <img style="background: ${
+                            all_players.find(player => player.player == winner).player_color??"#fff"
+                        }" src="https://artur.red/faces/${
+                            all_players.find(player => player.player == winner).pfp??"2"
+                        }.svg" alt="Player profile image">
+					</div>
+					<div class="info">
+						<p>${winner}</p>
+						<span class="total-points">${winner_score}</span>
+					</div>
+				</div>
+				<div class="rank-1">1</div>
+			</div>
+			${
+                third_place == null
+                ? ""
+                : `<div class="rank">
+				<div class="player ">
+					<div class="pfp">
+                        <img style="background: ${
+                            all_players.find(player => player.player == third_place).player_color??"#fff"
+                        }" src="https://artur.red/faces/${
+                            all_players.find(player => player.player == third_place).pfp??"3"
+                        }.svg" alt="Player profile image">
+                    </div>
+					<div class="info">
+						<p>${third_place}</p>
+						<span class="total-points">${third_place_score}</span>
+					</div>
+				</div>
+				<div class="rank-3">3</div>
+			</div>`}
+		</div>
+    `
+
+
+    // return `
+    //     <div class="center column">
+    //         <h1>Results</h1>
+
+    //         ${
+    //             //current_total_votes looks something like this: {player1: 250, player2: 150, player3: 500}
+    //             //sort current_total_votes by the value of the object
+    //             Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]).map((player, player_idx) => `
+    //                 <span class="player-result ${player_idx == 0?'winner':''}" style="animation-delay: ${(Object.keys(summed_results).length - player_idx) * 3}s">
+    //                     <div class=player-info>
+    //                         <p>${player_idx+1}: ${player}</p>
+    //                         ${player_idx == 0?`<img src="https://artur.red/icons/crown.svg" class="crown" alt="crown">`:''}
+    //                     </div>
+    //                     <p>${summed_results[player]}</p>
+    //                 </span>
+    //             `).join("")
+    //         }
+    //     </div>   
+    // `;
 }
 
 /* -------------------------------------------------- PLAYER CLEARING -------------------------------------------------- */
@@ -561,9 +729,17 @@ let state = 1;
 let total_states = 0;
 let time_out = null;
 
-const new_snippets_set = (input_str) => {
+const new_snippets_set = (input_str, prebuilt_keyboard_words) => {
+
+    //prebuilt_keyboard_words is just used because there are two types of word arrays.
+    //nr1: [{word: "some_word", owner: "some_owner"}, {word: "some_word", owner: "some_owner"}]
+    //nr2: ["some_word", "some_word"]
+    //and they need diffrent mapping methods.
+
     if (typeof input_str === "string") {
         return [...input_str].map(element => `<span onclick="add_word('${element}')" class="snippet clickable">${element}</span>`).join("");
+    }else if(prebuilt_keyboard_words){
+        return input_str.map(word => `<span onclick="add_word('${filter_xss(word)}', '${undefined}')" class="snippet clickable">${filter_xss(word)}</span>`).join("");
     }else{
         return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
     }
@@ -571,7 +747,7 @@ const new_snippets_set = (input_str) => {
 const set_keyboard_state = (state) => {
     document.getElementById("mini-keyboard-toggle").innerHTML = `<span style='color: white'>${state}</span>`;
 }
-const toggle_keyboard = () => {
+const toggle_keyboard = (additional_snippets) => {
     total_states++;
     state++;
 
@@ -584,21 +760,31 @@ const toggle_keyboard = () => {
         case 1:
             set_keyboard_state("😂");
             
-            document.getElementById("snippet-input").innerHTML = new_snippets_set(current_snippets);
+            document.getElementById("snippet-input").innerHTML = new_snippets_set(current_snippets, false);
             break;
 
         case 2:
             set_keyboard_state("&");
 
-            document.getElementById("snippet-input").innerHTML = new_snippets_set("🤩👍😎😂👎👀🔥🥳");
+            document.getElementById("snippet-input").innerHTML = new_snippets_set("🤩👍😎😂👎👀🔥🥳", false);
             break;
              
         case 3:
-            set_keyboard_state("🔤");
+            if(additional_snippets == null) state = 0;
+            if(additional_snippets != null) set_keyboard_state("🎁")
+            else set_keyboard_state("🔤");
 
-            document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?");
-            state = 0;
+            document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?", false);
             break;
+        
+        case 4:
+            if(additional_snippets != null){
+                set_keyboard_state("🔤")
+                document.getElementById("snippet-input").innerHTML = new_snippets_set(additional_snippets.split(","), true);
+            }else{
+                state = 0;
+                break;
+            }
 
         default:
             state = 0;

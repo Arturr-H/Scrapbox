@@ -87,7 +87,7 @@ const custom_message = (message) => {
 let rooms = {};
 
 //Constant variables
-const DEBUG = true;
+const DEBUG = false;
 
 const MAX_PLAYERS_PER_ROOM = 8;
 const MIN_PLAYERS_PER_ROOM = DEBUG ? 1 : 1;
@@ -147,6 +147,14 @@ app.get("/api/send-idea", (req, res) => {
 //room creation
 app.get("/api/create-room", async (req, res) => {
 
+    //Check if user has a name, then redirect to the
+    //name selection page with the created room code
+    //so they automatically rejoin after selecting their name.
+    if( !req.cookies.usnm
+        || req.cookies.usnm == null
+        || req.cookies.usnm.length <= 2
+    ) return res.redirect(`/name/game-queue/CREATE_ROOM_QUEUE`);
+
     //generate room code
     const roomcode = generate_roomcode();
     const small_code = generate_small_code();
@@ -156,9 +164,7 @@ app.get("/api/create-room", async (req, res) => {
     const uid = req.cookies["uid"];
 
     const room_colors = ROOM_COLORS.sort(() => Math.random() - 0.5)
-
     const qr = await qr_code.toDataURL(`${PROTOCOL}://${BASE_URL}/${small_code}`, {color: {dark: "#000", light: "#00000000"}}).then(async (data) => await data);
-
 
     const leader_obj = {
         player: leader,
@@ -208,25 +214,17 @@ app.get("/api/create-room", async (req, res) => {
         }
     };
 
-    //Check if user has a name, then redirect to the
-    //name selection page with the created room code
-    //so they automatically rejoin after selecting their name.
-    if( !req.cookies.usnm
-        || req.cookies.usnm == null
-        || req.cookies.usnm.length <= 2
-    ) return res.redirect(`/name/game-queue/${small_code}`);
-
     //send the user to the newly created room if they have a name.
     return res.redirect(`/room/${roomcode}`);
 });
 //Room selection page.
 app.get("/room", (req, res) => {
     res.sendFile(default_paths.room_select);
-})
+});
 //Browse games page
 app.get("/browse", (req, res) => {
     res.sendFile(default_paths.browse_rooms);
-})
+});
 //Browse games functionality (API)
 app.get("/api/browse", (req, res) => {
     //only send the rooms that are public
@@ -238,19 +236,21 @@ app.get("/api/browse", (req, res) => {
         }
     }
     res.send(rooms_to_send);
-})
+});
 //Looby / room page.
 app.get("/room/:roomID", (req, res) => {
 
     const roomID = req.params.roomID;
 
-    //Check if user has a name
-    if( !req.cookies.usnm
-        || req.cookies.usnm == null
-        || req.cookies.usnm.length <= 2
-    ) return res.redirect(`/name/game-queue/${roomID}`); //I used to have room_small_code here, however
-    //this means that if an user does not have a name, they will be redirected to the game, even if they
-    //are not invited to the room.
+    console.log(`${req.cookies.usnm} is joining room ${roomID}`);
+
+    // //Check if user has a name
+    // if( !req.cookies.usnm
+    //     || req.cookies.usnm == null
+    //     || req.cookies.usnm.length <= 2
+    // ) return res.redirect(`/name/game-queue/${roomID}`); //I used to have room_small_code here, however
+    // //this means that if an user does not have a name, they will be redirected to the game, even if they
+    // //are not invited to the room.
 
     
     try{
@@ -373,19 +373,20 @@ app.get("/api/get-room-data", (req, res) => {
 //they have selected their name.
 app.get("/name/game-queue/:id?", (req, res) => {
 
-    
     try{
-        const room_id = req.params.id;
-        
-        //get the room small code using the room id
-        const room_small_code = rooms[room_id].small_code;
-        
+
+        const short_code = req.params.id;
+        console.log(short_code);
+        console.log(req.cookies.usnm, ": USNM");
+
         //Check if user has a name
-        if( req.cookies.usnm
-            || req.cookies.usnm != null
-            ) return res.redirect(`/${room_small_code}`);
-            
-        res.render(default_paths.name_select, {
+        if( req.cookies.usnm.length >= 3 ) {
+            if (req.params.id != "CREATE_ROOM_QUEUE") return res.redirect(`/${short_code}`);
+            else return res.redirect("/api/create-room");
+        };
+
+
+        res.status(200).render(default_paths.name_select, {
             room: req.params.id
         });
     }catch(err){
@@ -668,11 +669,7 @@ io.on("connection", (socket) => {
                 let owners = {};
                 sentences.forEach(x => {
 
-                    if (DEBUG) console.log(x);
-
                     x.sentence.forEach(word_obj => {
-
-                        if (DEBUG) console.log(word_obj)
 
                         if (!owners[word_obj.owner]){
                             owners[word_obj.owner] = 1;
@@ -779,8 +776,6 @@ io.on("connection", (socket) => {
                     //get the people who have the most votes
                     most_voted_for: all_done ? get_most_voted(rooms[room_id].game.current_player_votes) : null,
                 });
-                console.log(rooms[room_id].game.current_player_votes)
-                console.log(get_most_voted(rooms[room_id].game.current_player_votes))
 
             }
         }catch(err){
@@ -846,6 +841,14 @@ io.on("connection", (socket) => {
 });
 
 
+//Shhhhhhhhhhhhh
+app.get("/balls", (req, res) => {res.send("<img src='https://c.tenor.com/S48-9VW_zekAAAAd/cat.gif' />")});
+app.get("/artur", (req, res) => {res.send("<img src='https://c.tenor.com/RFD6Dsb16OIAAAAd/spin.gif' />")});
+app.get("/aaron", (req, res) => {res.send("<img src='https://c.tenor.com/tCPGyy8fUiUAAAAC/punt-kick.gif' />")});
+app.get("/AAAAAAA", (req, res) => {res.send("<img src='https://c.tenor.com/mbTPJ5K06FwAAAAS/cat-cute-cat.gif' />")});
+app.get("/favicon.ico", (req, res) => {res.sendFile(path.resolve("resources/images/logo.svg"))});
+
+
 
 app.get("/:small_code?", (req, res) => {
 
@@ -872,7 +875,7 @@ app.get("/:small_code?", (req, res) => {
             uid: uid,
             pfp: pfp,
             done: false,
-            leader: (rooms[room_id].game.leader == player),
+            leader: (rooms[room_id].game.leader == player)??"",
             online: true,
             player_color: rooms[room_id].room_colors[rooms[room_id].game.players.length]
         }
@@ -904,7 +907,7 @@ app.get("/:small_code?", (req, res) => {
                     ];
                 }
                 
-                return res.redirect(`/room/${room.roomcode}`);
+                return res.status(200).redirect(`/room/${room.roomcode}`);
             }
         })
         
@@ -939,4 +942,4 @@ server.listen(PORT, () => {
 
 
     console.log("up and running");
-})
+})// ONE DARK PRO FLAT

@@ -1,105 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Document</title>
 
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+		<link rel="stylesheet" href="https://artur.red/style/global.css">
+		<script src="https://artur.red/script/cookies.js" defer></script>
+		<script src="https://artur.red/script/global.js" defer></script>
+	</head>
 
-	<link rel="stylesheet" href="https://artur.red/style/global.css">
-	<script src="https://artur.red/script/cookies.js" defer></script>
-	<script src="https://artur.red/script/global.js" defer></script>
+	<body class="dark">
+		
+		<h1 class="winner-top-text">ARTUR IS THE WINNER</h1>
 
-
-</head>
-
-<body class="dark">
-	<main>
-		<nav>
-
-			<ul id="player-list">
-				<li class="player ">
+		<div class="blob-container">
+			<div class="blob-1"></div>
+			<div class="blob-2"></div>
+			<div class="blob-3"></div>
+		</div>
+		<div class="rank-container">
+			<div class="rank">
+				<div class="player ">
 					<div class="pfp">
-						<img src="https://artur.red/faces/11.svg" alt="Player profile image">
+						<img style="background: #19c7e6" src="https://artur.red/faces/4.svg" alt="Player profile image">
 					</div>
 					<div class="info">
-						<p>Pennis</p>
+						<p>Shitman</p>
+						<span class="total-points">420</span>
 					</div>
-				</li>
-
-				<li class="player ">
+				</div>
+				<div class="rank-2">2</div>
+			</div>
+			<div class="rank">
+				<div class="player ">
 					<div class="pfp">
-						<img src="https://artur.red/faces/9.svg" alt="Player profile image">
+						<img style="background: #e6df19" src="https://artur.red/faces/3.svg" alt="Player profile image">
+					</div>
+					<div class="info">
+						<p>Artur</p>
+						<span class="total-points">620</span>
+					</div>
+				</div>
+				<div class="rank-1">1</div>
+			</div>
+			<div class="rank">
+				<div class="player ">
+					<div class="pfp">
+						<img style="background: #e6194B" src="https://artur.red/faces/9.svg" alt="Player profile image">
 					</div>
 					<div class="info">
 						<p>Aaron</p>
-					</div>
-				</li>
-			</ul>
-
-		</nav>
-
-		<div class="main-room-section" id="text-input-area">
-			<div class="center">
-				<h1>Spice up your sex life by bringing ________ into the bedroom.</h1>
-			</div>
-			<div class="center column">
-				<div class="big-container">
-					<div class="snippet-output" id="snippet-output">
-
-					</div>
-					<div class="mini-keyboard-toggle" id="mini-keyboard-toggle" onclick="toggle_keyboard()">
-						<p>...</p>
+						<span class="total-points">350</span>
 					</div>
 				</div>
-				<button onclick="submit_sentence()" style="width: 30%;">Submit</button>
-			</div>
-
-			<div class="center">
-				<div class="snippet-input" id="snippet-input">
-					<div>
-
-						<span onclick="add_word('penis')" class="snippet clickable">penis</span>
-
-						<span onclick="add_word('humor')" class="snippet clickable">humor</span>
-
-						<span onclick="add_word('cock')" class="snippet clickable">cock</span>
-
-						<span onclick="add_word('balls')" class="snippet clickable">balls</span>
-
-					</div>
-				</div>
+				<div class="rank-3">3</div>
 			</div>
 		</div>
-
-
-		<div class="screen-overlay" id="transition-container">
-			<h1 id="screen-overlay-text">How many balls can you fit in your jaw?</h1>
-		</div>
-	</main>
-	<script
-		defer>
-		    if(document.getElementById("transition-container").innerHTML != ""){
-        		document.getElementById("transition-container").innerHTML = "";
-			}
-			document.getElementById("transition-container").innerHTML += `
-				<div class="screen-overlay" id="screen-overlay">
-					<p class="transition-title-text">Voting</p>
-					<h1 id="screen-overlay-text">shhawdb awhdiu hawduioh aiuwdhi ahwdi haiwduahwdi uhawhdi uahwdiu haiwudhiu ahwdih aiwhdu ut+???</h1>
-				</div>
-			`
-			const screen_overlay = document.getElementById("screen-overlay");
-
-			setTimeout(() => {
-				screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
-			}, 3000 + text.length*50);
-	</script>
-
-</body>
-
+	</body>
 </html>
-
-
-<!-- Alla ska ha röstat -> visa vems ord whatever -> screenoverlay -> visa nästa fråga -> gå vidare -->
-<!-- Alla ska ha röstat -> gå vidare -->

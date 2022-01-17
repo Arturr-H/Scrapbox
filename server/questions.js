@@ -28,6 +28,10 @@ const rC = (array) => {
     }
 }
 
+const random_int = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 //Fyll i fält...
 const Blank = () => {
     return "________"
@@ -51,7 +55,7 @@ module.exports = {
         let defaultQuestions = [
             {
                 question:`What did you do after the ${r(places)} last night?`,
-                additional_snippets: null
+                additional_snippets: ["i", "went", "to"]
             },
             {
                 question:`What did you do to ${r(pronouns.second)}?`,
@@ -59,7 +63,7 @@ module.exports = {
             },
             {
                 question:`${rC(pronouns.third)} ${r(people)} went missing last night, and many people suspect it's you. What do you have to say?`,
-                additional_snippets: null
+                additional_snippets: ["it's", "not", "me", "because"]
             },
             {
                 question:`I think I have a plan to solve world hunger. It'll begin with ${Blank()}`,
@@ -130,7 +134,6 @@ module.exports = {
                 question:`Since when was it illegal to ${Blank()}?`,
                 additional_snippets: null
             },
-
             {
                 question:`I have a dream that one day this nation will rise up and live out the true meaning of its creed: ${Blank()}.`,
                 additional_snippets: null
@@ -148,14 +151,9 @@ module.exports = {
                 additional_snippets: null
             },
             {
-                question:`Why is ${name} so ${Blank()}?`,
-                additional_snippets: null
-            },
-            {
                 question:`In one sentence, describe ${name}'s whole life.`,
                 additional_snippets: null
             },
-
             {
                 question:`If you could invent a new dish, what ingredients would it have?`,
                 additional_snippets: null
@@ -181,7 +179,10 @@ module.exports = {
                 question:`Every time I see ${name} I ${Blank()}.`,
                 additional_snippets: ["feel", "good", "horrible", "like"]
             },
-
+            {
+                question: `I've watched ${name} ${Blank()} several times. It's unbelievable.`,
+                additional_snippets: null
+            },
             {
                 question:`I am clearly suffering from ${Blank()}.`,
                 additional_snippets: null
@@ -213,18 +214,35 @@ module.exports = {
             },
             {
                 question:`What would you engrave on your tombstone?`,
-                additional_snippets: null
+                additional_snippets: ["a", "big", "text", "saying", "an", "image", "of"]
             },
             {
                 question:`${Blank()}, underrated and should be celebrated.`,
                 additional_snippets: null
             },
+            {
+                question:`Why are you ${Blank()} right now? -"Uhh it's for scientifical purposes"`,
+                additional_snippets: ["doing", "making", "trying", "to"]
+            },
+            {
+                question:`${Blank()} is the best thing since sliced bread.`,
+                additional_snippets: null
+            },
+            {
+                question:`${name}, our hero. Please ${Blank()} immediately.`,
+                additional_snippets: ["stop", "cancel"]
+            },
+            {
+                question:`If you were to host an e-sport competition, what would the prize be?`,
+                additional_snippets: ["a", "bunch", "of", "some"]
+            },
+
         ];
 
         let matureQuestions = [
             {
                 question: `During sex, I like to think about ${Blank()}.`,
-                additional_snippets: ["when", "I", "was"]
+                additional_snippets: ["when", "I", "was", "that"]
             },
             {
                 question: `What will always get you laid?`,
@@ -236,7 +254,7 @@ module.exports = {
             },
             {
                 question: `I don't need drugs to get stoned, I'll just use ${Blank()}.`,
-                additional_snippets: null
+                additional_snippets: ["some", `${random_int(0,4)}-${random_int(5,10)}`, "pieces", "of"]
             },
             {
                 question: `Spice up your sex life by bringing ${Blank()} into the bedroom.`,
@@ -246,14 +264,13 @@ module.exports = {
                 question: `What the fuck is ${name} doing out here with all these ${Blank()}?`,
                 additional_snippets: null
             },
-
             {
                 question: `Shit, I forgot that we have to pay for the ${Blank()}.`,
-                additional_snippets: ["bill"]
+                additional_snippets: ["bill", "subscription"]
             },
             {
                 question: `If I ever see ${name} again, I'm going to kill him with ${Blank()}.`,
-                additional_snippets: null
+                additional_snippets: ["army", "containing"]
             },
             {
                 question: `I just had a massive ${Blank()}.`,
@@ -261,9 +278,8 @@ module.exports = {
             },
             {
                 question: `If you ever want your cock to grow back, you have to eat ${Blank()}.`,
-                additional_snippets: ["A lot"]
+                additional_snippets: ["a", "lot", "of"]
             },
-
             {
                 question: `What's one thing that keeps getting me horny?`,
                 additional_snippets: null
