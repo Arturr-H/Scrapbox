@@ -236,7 +236,34 @@ module.exports = {
                 question:`If you were to host an e-sport competition, what would the prize be?`,
                 additional_snippets: ["a", "bunch", "of", "some"]
             },
-
+            {
+                question:`Selling crack is illegal, but if you could sell crack, what would you do?`,
+                additional_snippets: ["sell", "a", "bunch", "of", "crack"]
+            },
+            {
+                question:`What continues to make me constipated?`,
+                additional_snippets: ["food", "culture"]
+            },
+            {
+                question:`${name} consists of pure ${Blank()}.`,
+                additional_snippets: null
+            },
+            {
+                question:`Breaking news! ${name} has been arrested for ${Blank()}.`,
+                additional_snippets: ["being", "doing", "trying", "to"]
+            },
+            {
+                question:`Omg, Toys R Us has started selling ${Blank()} to children!`,
+                additional_snippets: ["a", "bunch", "some", "of", "toys"]
+            },
+            {
+                question:`Coca Cola X ${Blank()}, the crossover we didn't know we needed.`,
+                additional_snippets: ["soda"]
+            },
+            {
+                question:`McDonalds X ${Blank()}, the crossover we didn't know we needed`,
+                additional_snippets: null
+            },
         ];
 
         let matureQuestions = [

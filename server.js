@@ -51,14 +51,28 @@ const generate_small_code = () => parseInt(Math.random() * (10000000 - 1000000) 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
+const names = require(path.resolve("server/names.js"));
 const questions = require(path.resolve("server/questions.js"));
+
 const get_questions = (questionCount, players, type) => {
     questionsArray = []
-    for (let i = 0; i < questionCount; i++) {
-        questionsArray.push(questions.getQuestion(players, type))
+    let current_index = 0;
+
+    while (current_index < questionCount) {
+        const question = questions.getQuestion(players, type);
+        if (questionsArray.map(x => x.question).includes(question.question)) {
+            continue;
+        }else {
+            questionsArray.push(question);
+            current_index++;
+        }
     }
+
     return questionsArray;
 }
+
+console.log(get_questions(15, ["artur", "bajs", "penis"], "mature"))
+
 
 //default file paths
 const default_paths = {
@@ -99,6 +113,8 @@ const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
 
 const PROTOCOL = "https";
 const BASE_URL = "artur.red";
+
+const PROFILE_PICTURE_COUNT = fs.readdirSync(path.resolve("resources/faces")).length;
 
 //arturs fina palette: "#32021F", "#1446a0", "#1A5E63", "#DB3069", "#F71735", "#FFD400", "#7EE081", "#FFECD1"
 const ROOM_COLORS = ["#e6194B", "#f58231", "#ffe119", "#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4"];
@@ -231,7 +247,7 @@ app.get("/api/browse", (req, res) => {
     const rooms_to_send = {};
     
     for(let room in rooms) {
-        if(rooms[room].game.config.public) {
+        if(rooms[room].game.config.public && !rooms[room].game.started) {
             rooms_to_send[room] = rooms[room];
         }
     }
@@ -241,8 +257,6 @@ app.get("/api/browse", (req, res) => {
 app.get("/room/:roomID", (req, res) => {
 
     const roomID = req.params.roomID;
-
-    console.log(`${req.cookies.usnm} is joining room ${roomID}`);
 
     // //Check if user has a name
     // if( !req.cookies.usnm
@@ -376,11 +390,10 @@ app.get("/name/game-queue/:id?", (req, res) => {
     try{
 
         const short_code = req.params.id;
-        console.log(short_code);
-        console.log(req.cookies.usnm, ": USNM");
+        const username = req.cookies.usnm.toString();
 
         //Check if user has a name
-        if( req.cookies.usnm.length >= 3 ) {
+        if( username.length >= 3 ) {
             if (req.params.id != "CREATE_ROOM_QUEUE") return res.redirect(`/${short_code}`);
             else return res.redirect("/api/create-room");
         };
@@ -502,7 +515,10 @@ io.on("connection", (socket) => {
                         //remove the player from the room and from current player votes and current player answers
                         rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.uid !== user_id);
                         rooms[room_id].game.current_player_answers = rooms[room_id].game.current_player_answers.filter(x => x != user);
-                        rooms[room_id].game.current_player_votes = rooms[room_id].game.current_player_votes.filter(x => x != user);
+
+                        // current player votes looks something like this:
+                        // { 'shit man': 1, Aaron: 1 }
+                        delete rooms[room_id].game.current_player_votes[user]
 
                         //Make the next player the leader, if there
                         //are no more players, delete the room. 
@@ -740,6 +756,8 @@ io.on("connection", (socket) => {
             const voter = data.voter;
             const voted_for = data.voted_for;
 
+            console.log(`voter: ${voter} voted for: ${voted_for}`);
+
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === voter)){
 
@@ -760,7 +778,6 @@ io.on("connection", (socket) => {
 
                 //check if all players have voted
                 const all_done = rooms[room_id].game.players.every(x => x.done);
-                
                 if(all_done){
                     rooms[room_id].game.players.forEach(x => x.done = false);
                 }
@@ -777,9 +794,14 @@ io.on("connection", (socket) => {
                     most_voted_for: all_done ? get_most_voted(rooms[room_id].game.current_player_votes) : null,
                 });
 
+                if(all_done){
+                    const cpv = rooms[room_id].game.current_player_votes
+                    Object.keys(cpv).map(el => cpv[el] = 0);
+                }
+
             }
         }catch(err){
-            if (DEBUG) console.log(err)
+            console.log(err)
             return false;
         }
     });
@@ -855,10 +877,24 @@ app.get("/:small_code?", (req, res) => {
     try{
         
         const small_code = req.params.small_code;
-        const player = req.cookies.usnm;
-        const pfp = req.cookies.pfp;
-        const uid = req.cookies.uid;
 
+        let player = req.cookies.usnm;
+        let pfp = req.cookies.pfp;
+        let uid = req.cookies.uid;
+
+        if(player == undefined || player.length <= 2 ){
+            const new_name = names.generate_name();
+            const new_pfp = names.generate_pfp(PROFILE_PICTURE_COUNT);
+            const new_uid = names.generate_uid();
+
+            res.cookie("usnm", new_name, {maxAge: 1000*60*60*24*30});
+            res.cookie("pfp", new_pfp, {maxAge: 1000*60*60*24*30});
+            res.cookie("uid", new_uid, {maxAge: 1000*60*60*24*30});
+
+            player = new_name;
+            pfp = new_pfp;
+            uid = new_uid;
+        }
         //get the room id from the small code, rooms is an object
         const get_roomcode = () => {
             for (let room in rooms){
@@ -869,7 +905,6 @@ app.get("/:small_code?", (req, res) => {
             return false;
         }
         const room_id = get_roomcode();
-        
         const player_obj = {
             player: player,
             uid: uid,
@@ -881,7 +916,6 @@ app.get("/:small_code?", (req, res) => {
         }
         
         let found_room = false;
-        
         Object.values(rooms).forEach(room => {
             
             if (room.small_code == small_code){
@@ -916,7 +950,7 @@ app.get("/:small_code?", (req, res) => {
         }
     }
     catch(err){
-        if (DEBUG) console.log(err);
+        console.log(err);
         return res.sendStatus(404);
     }
 })

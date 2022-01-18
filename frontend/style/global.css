@@ -1868,6 +1868,22 @@ span.snippet {
 	border-radius: 1000px;
 }
 
+@keyframes pop-up {
+	from{ transform: translateY(100%)}
+	to{ transform: translateY(0)}
+}
+.rank-nr-1, .rank-nr-2, .rank-nr-3{
+	animation: pop-up 1s ease-out forwards;
+	transform: translateY(100%);
+}
+.rank-nr-1{
+	animation-delay: 4s;
+}.rank-nr-2{
+	animation-delay: 2s;
+}.rank-nr-3{
+	animation-delay: 1s;
+}
+
 .winner-top-text{
 	position: absolute;
 
@@ -1924,4 +1940,175 @@ span.snippet {
 
 	position: relative;
 	border-radius: 50%;
+}
+
+.notification::before{
+	/* A small red notification dot at the top left */
+	content: "";
+	width: 1rem;
+	height: 1rem;
+	background: red;
+	border-radius: 50%;
+	position: absolute;
+	top: -.5rem;
+	left: -.5rem;
+}
+
+
+.modal{
+	position: absolute;
+	width: 100%; height: 100%;
+	left: 0; top: 0;
+
+	background: rgba(0, 0, 0, 0.3);
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	pointer-events:none;
+
+	opacity: 0;
+
+	transition: opacity .2s ease-in-out;
+}.modal.open{
+	opacity: 1;
+	pointer-events:all;
+
+}
+.modal-content{
+	background: var(--main-bg);
+	border: var(--border);
+	border-radius: var(--border-radius);
+
+	width: 40rem;
+	height: 20rem;
+
+	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+
+	gap: 1rem;
+}.modal-slide{
+	display: none;
+	flex-direction: column;
+	align-items: center;
+
+	gap: 1rem;
+
+}.modal-slide.active{
+	display: flex;
+}
+
+.arrows{
+	display: flex;
+	align-items: center;
+	width: 100%; height: 100%;
+	left: 0; top: 0;
+	position: absolute;
+
+	pointer-events: none;
+
+}.arrows .arrow{
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	margin: 1rem;
+	box-sizing: content-box;
+
+	/* background: var(--main-color); */
+	/* border-radius: 50%; */
+
+	user-select: none;
+	pointer-events: all;
+	cursor: pointer;
+
+}
+.arrows .arrow:after{
+	border: solid #BABABACC;
+	border-width: 0 2px 2px 0;
+	content: "";
+	display: inline-block;
+	padding: 10px;
+}
+
+.arrows .arrow.left{
+	left: 0;
+	transform: rotate(135deg);
+}.arrows .arrow.right{
+	right: 0;
+	transform: rotate(-45deg);
+
+}
+
+.modal-header{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 30rem;
+	width: 30rem;
+	text-align: center;
+
+
+	gap: 1rem;
+}.modal-body{
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+
+	gap: 1rem;
+}.modal-body .profile-pictures{
+	display: flex;
+	flex-direction: row;
+	gap: 1rem; 
+
+	overflow-x: scroll;
+	width: 35rem;
+	max-width: 40rem;
+
+	box-sizing: border-box;
+
+}.modal-body .profile-pictures button{
+	all: unset;
+	
+	width: 4rem; aspect-ratio: 1;
+	position: relative;
+	border: var(--border);
+	border-radius: var(--border-radius);
+}.modal-body .profile-pictures button img{
+	width: 100%; height: 100%;
+}
+
+
+/*
+Hur låter det om det står såhär istället:
+
+make a choice between our prefabricated artific(********i*********)ally constructed faces with the manpower of computer intelligen(*****C******)e inte "S"
+*/
+
+.modal-footer{
+	justify-content: center;
+	margin-top: 1rem;
+
+}
+/*Dots*/
+.modal-footer .dots{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	gap: .5rem;
+}.dots .dot{
+	width: .5rem;
+	height: .5rem;
+	background: var(--main-color);
+	border-radius: 50%;
+	
+}.dots .dot.active{
+	background: var(--vibrant-green);
 }

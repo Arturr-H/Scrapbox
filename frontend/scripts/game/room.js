@@ -10,10 +10,6 @@ const player_count = document.getElementById("player-count");
 const lobby_short_id = document.getElementById("lobby-short-id");
 const config_area = document.getElementById("config-area");
 
-const chat_container = document.getElementById("chat-container");
-const open_chat = document.getElementById("open-chat");
-const close_chat = document.getElementById("close-chat");
-
 const question_type = document.getElementById("mature");
 const toggle_public = document.getElementById("public");
 const question_count = document.getElementById("question-count");
@@ -28,7 +24,7 @@ let room_short_id = "";
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.leader ? 'leader' : ''}">
         <div class="pfp">
-            <img src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Profile Picture">
+            <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Profile Picture">
         </div>
         <div class="info">
             <p>${player_obj.player}</p>
@@ -257,69 +253,6 @@ socket.on(`player-leave:${room_id}`, (data) => {
 });
 
 
-
-// CHAT CONTAINER
-
-let chat_open = false;
-
-//the chat container should be draggable with the mouse
-chat_container.addEventListener("mousedown", (e) => {
-    chat_container.style.cursor = "grabbing";
-    chat_container.style.userSelect = "none";
-    chat_container.style.transition = "none";
-
-    //get the mouse position
-    const mouse_x = e.clientX;
-    const mouse_y = e.clientY;
-
-    //get the chat container position
-    const chat_container_x = chat_container.getBoundingClientRect().left;
-    const chat_container_y = chat_container.getBoundingClientRect().top;
-
-    //when the mouse is moved
-    const move_chat_container = (e) => {
-        chat_container.style.left = e.clientX - mouse_x + chat_container_x + "px";
-        chat_container.style.top = e.clientY - mouse_y + chat_container_y + "px";
-    }
-
-    //when the mouse is released
-    const release_chat_container = () => {
-        chat_container.style.cursor = "grab";
-        chat_container.style.userSelect = "text";
-        chat_container.style.transition = "all .2s ease";
-
-        window.removeEventListener("mousemove", move_chat_container);
-        window.removeEventListener("mouseup", release_chat_container);
-    }
-
-    window.addEventListener("mousemove", move_chat_container);
-    window.addEventListener("mouseup", release_chat_container);
-
-});
-
-const toggle_chat = () => {
-    if (chat_open) {
-        chat_container.style.display = "none";
-        chat_open = false;
-    } else {
-        chat_container.style.display = "grid";
-        chat_open = true;
-    }
-}
-open_chat.addEventListener("click", toggle_chat);
-close_chat.addEventListener("click", toggle_chat);
-
-//chat container can't be outside the window, and it should go back if it's outside
-window.addEventListener("resize", () => {
-    if (chat_container.getBoundingClientRect().right > window.innerWidth) {
-        chat_container.style.left = window.innerWidth - chat_container.getBoundingClientRect().width + "px";
-    }
-    if (chat_container.getBoundingClientRect().bottom > window.innerHeight) {
-        chat_container.style.top = window.innerHeight - chat_container.getBoundingClientRect().height + "px";
-    }
-});
-
-
 /* AUDIO */
 const volume_slider = document.getElementById("volume-slider");
 const volume_image = document.getElementById("volume-image");
@@ -341,15 +274,15 @@ const on_volume_change = () => {
     if (audio_volume == volume_slider.value) return;
     
     audio_volume = volume_slider.value*0.5;
-    audio.volume = audio_volume / 100;
-    
-    let audio_volume_percentage = audio_volume / 100;
+    let audio_volume_percentage = audio_volume / 500;
+
+    audio.volume = audio_volume_percentage;
     setCookie("audio_percentage", audio_volume_percentage, 30);
 
     if(audio_volume_percentage == 0) set_audio_image(1);
     if(audio_volume_percentage > 0) set_audio_image(2);
-    if(audio_volume_percentage > 0.2) set_audio_image(3);
-    if(audio_volume_percentage > 0.4) set_audio_image(4);
+    if(audio_volume_percentage > 0.05) set_audio_image(3);
+    if(audio_volume_percentage > 0.07) set_audio_image(4);
 }
 
 volume_slider.addEventListener("mousemove", on_volume_change);

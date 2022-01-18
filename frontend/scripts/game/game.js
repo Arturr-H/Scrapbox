@@ -214,7 +214,7 @@ const display_question_view = (current_snippets) => {
 }
 const additional_words = (word_array) => {
 
-    document.body.innerHTML += `
+    document.getElementById("additional-word-container").innerHTML += `
         <div id="full-container" style="position: absolute; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.923); left: 0; top: 0;">
             <div class="top-text-notice">
                 <h1>Additional Snippets!</h1>
@@ -458,17 +458,17 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     player_list.innerHTML = display_players(players);
     current_total_votes = total_votes;
 
-    console.log(most_voted_for, all_done)
+    console.log("MOST VOTED FOR: ", most_voted_for);
 
     if (all_done) {
 
         if(current_voting_index >= questions.length){
             display_card_owner_percentage(current_player_answers, players, most_voted_for);
             setTimeout(() => document.body.innerHTML = display_results(word_contributors), 4000);
-            console.log("54 IF")
+
             return;
         }else{
-            console.log("54 ELSE")
+
             display_card_owner_percentage(current_player_answers, players, most_voted_for);
             setTimeout(() => next_voting(current_player_answers, players), 4000);
         }
@@ -482,7 +482,9 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
     const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
     const voting_index_answers_percentage = voting_index_answers.map(map_obj_to_percentage);
 
+    console.log("MOST VOTED FOR: ", most_voted_for);
     most_voted_for.map(player => {
+        
         const player_card = document.getElementById(`card_${player}`);
         // const player_card_content = player_card.querySelector(".bottom");
         player_card.classList.add("winning-card");
@@ -512,7 +514,6 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
 
     display_card_owner_percentage_index++;
 }
-
 const display_results = (word_contributors) => {
 
     let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 1));
@@ -536,7 +537,7 @@ const display_results = (word_contributors) => {
 			${
                 second_place == null 
                 ? ""
-                : `<div class="rank">
+                : `<div class="rank rank-nr-2">
 				<div class="player ">
 					<div class="pfp">
 						<img style="background: ${
@@ -552,7 +553,7 @@ const display_results = (word_contributors) => {
 				</div>
 				<div class="rank-2">2</div>
 			</div>`}
-			<div class="rank">
+			<div class="rank rank-nr-1">
 				<div class="player ">
 					<div class="pfp">
                         <img style="background: ${
@@ -571,7 +572,7 @@ const display_results = (word_contributors) => {
 			${
                 third_place == null
                 ? ""
-                : `<div class="rank">
+                : `<div class="rank rank-nr-3">
 				<div class="player ">
 					<div class="pfp">
                         <img style="background: ${
@@ -717,11 +718,6 @@ document.addEventListener("keyup", (e) => {
     //     });
     // }, 3000);
 });
-
-
-
-
-
 
 /* -------------------------------------------------- KEYBOARDS -------------------------------------------------- */
 
