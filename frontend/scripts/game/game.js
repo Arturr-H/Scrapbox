@@ -292,10 +292,12 @@ const additional_words = (word_array) => {
         setTimeout(() => {
 
             document.getElementById("cardboard-box-container").style.transformOrigin = "center center";
-
             document.getElementById("cardboard-box-container").style.animation = "cardboard-box-roll-out 2s ease-in-out forwards";
 
             setTimeout(() => {
+                state = 0;
+                toggle_keyboard(word_array.join(","));
+
                 document.getElementById("full-container").remove();
             }, 1000);
         }, add_snippets.length*time_between+500);
@@ -722,19 +724,37 @@ let state = 1;
 let total_states = 0;
 let time_out = null;
 
-const new_snippets_set = (input_str, prebuilt_keyboard_words) => {
+const new_snippets_set = (input_str, additional_snippets) => {
 
     //prebuilt_keyboard_words is just used because there are two types of word arrays.
     //nr1: [{word: "some_word", owner: "some_owner"}, {word: "some_word", owner: "some_owner"}]
     //nr2: ["some_word", "some_word"]
     //and they need diffrent mapping methods.
 
+    const is_additional_snippets = additional_snippets != 0 || additional_snippets != null;
+    console.log(is_additional_snippets)
+    try{console.log(additional_snippets.split(","))}
+    catch{}
+    console.log(typeof additional_snippets)
+
     if (typeof input_str === "string") {
+
         return [...input_str].map(element => `<span onclick="add_word('${element}')" class="snippet clickable">${element}</span>`).join("");
-    }else if(prebuilt_keyboard_words){
-        return input_str.map(word => `<span onclick="add_word('${filter_xss(word)}', '${undefined}')" class="snippet clickable">${filter_xss(word)}</span>`).join("");
+
     }else{
-        return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
+
+        if (is_additional_snippets){
+            try{
+                return additional_snippets.split(",").map(element => `<span onclick="add_word('${filter_xss(element)}', '')" class="snippet clickable golden">${filter_xss(element)}</span>`).concat(
+                    input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`)).join("");
+
+            }catch(err){
+                console.log(err)
+                return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
+            }
+        }else{
+            return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
+        }
     }
 }
 const set_keyboard_state = (state) => {
@@ -753,31 +773,21 @@ const toggle_keyboard = (additional_snippets) => {
         case 1:
             set_keyboard_state("😂");
             
-            document.getElementById("snippet-input").innerHTML = new_snippets_set(current_snippets, false);
+            document.getElementById("snippet-input").innerHTML = new_snippets_set(current_snippets, additional_snippets);
             break;
 
         case 2:
             set_keyboard_state("&");
 
-            document.getElementById("snippet-input").innerHTML = new_snippets_set("🤩👍😎😂👎👀🔥🥳", false);
+            document.getElementById("snippet-input").innerHTML = new_snippets_set("🤩👍😎😂👎👀🔥🥳🤡", 0);
             break;
              
         case 3:
-            if(additional_snippets == null) state = 0;
-            if(additional_snippets != null) set_keyboard_state("🎁")
-            else set_keyboard_state("🔤");
+            set_keyboard_state("🔤");
 
-            document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?", false);
+            document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?", 0);
+            state = 0;
             break;
-        
-        case 4:
-            if(additional_snippets != null){
-                set_keyboard_state("🔤")
-                document.getElementById("snippet-input").innerHTML = new_snippets_set(additional_snippets.split(","), true);
-            }else{
-                state = 0;
-                break;
-            }
 
         default:
             state = 0;
@@ -785,8 +795,8 @@ const toggle_keyboard = (additional_snippets) => {
     }
 
     if (total_states > 30) {
-        //                      this is very seaky right....?
-        document.getElementById("uhh-nothing" + "-to-see-here").innerHTML += '<img src="https://c.tenor.com/-QwFtBLal2kAAAAd/matthew-santoro-you-take-some-lobster.gif" alt="funny man indeed" class="funny-man">';
+        //                      this is very sneaky right....?
+        document.getElementById("uhh-\u006Eothing" + "-to-see-here").innerHTML += '<img src="https://c.tenor.com/-QwFtBLal2kAAAAd/matthew-santoro-you-take-some-lobster.gif" alt="funny man indeed" class="funny-man">';
         setTimeout(() => {
             try{
                 document.getElementById("uhh-nothing" + "-to-see-here").remove();

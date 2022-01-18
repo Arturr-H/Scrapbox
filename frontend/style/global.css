@@ -2089,6 +2089,7 @@ span.snippet {
 Hur låter det om det står såhär istället:
 
 make a choice between our prefabricated artific(********i*********)ally constructed faces with the manpower of computer intelligen(*****C******)e inte "S"
+
 */
 
 .modal-footer{
@@ -2111,4 +2112,10 @@ make a choice between our prefabricated artific(********i*********)ally construc
 	
 }.dots .dot.active{
 	background: var(--vibrant-green);
+}
+
+
+.golden{
+	background: #D3AF37 !important; 
+	color: black !important;
 }

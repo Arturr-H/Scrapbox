@@ -208,10 +208,11 @@ app.get("/api/create-room", async (req, res) => {
             started: false,
             config: {
                 question_type: "regular",
-                public: false,
                 question_count: QUESTION_COUNT,
+                extra_snippets: 1,
+                public: false,
                 self_voting: false,
-                word_contribution: true,
+                word_contribution: true
             },
             current_snippets: [],
             current_questions: [],

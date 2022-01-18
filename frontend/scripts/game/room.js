@@ -15,6 +15,7 @@ const toggle_public = document.getElementById("public");
 const question_count = document.getElementById("question-count");
 const self_voting = document.getElementById("self-voting");
 const word_contribution = document.getElementById("word-contribution");
+const extra_snippets = document.getElementById("extra-snippets");
 
 const room_qr = document.getElementById("room-qr");
 
@@ -102,8 +103,10 @@ socket.on(`player-join:${room_id}`, (data) => {
 
         //set the game config
         question_type.value = room_data_json.game.config.question_type;
-        toggle_public.checked = room_data_json.game.config.public;
         question_count.value = room_data_json.game.config.question_count;
+        extra_snippets.value = room_data_json.game.config.extra_snippets;
+
+        toggle_public.checked = room_data_json.game.config.public;
         self_voting.checked = room_data_json.game.config.self_voting;
         word_contribution.checked = room_data_json.game.config.word_contribution;
 
@@ -161,7 +164,7 @@ socket.on(`return-message:${room_id}`, (message) => {
 // > > CONFIG HANDLER > >
 
 
-question_type.addEventListener("click", () => {
+question_type.addEventListener("change", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: getCookie("usnm"),
@@ -206,6 +209,16 @@ word_contribution.addEventListener("click", () => {
     })
 });
 
+extra_snippets.addEventListener("change", () => {
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: getCookie("usnm"),
+        new_value: extra_snippets.value,
+        setting: "extra_snippets"
+    })
+});
+
+
 socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     notice(`${new_data.player} has changed the ${new_data.setting} setting to ${new_data.new_value}`);
 
@@ -224,6 +237,9 @@ socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     }
     if (new_data.setting == "word_contribution") {
         word_contribution.checked = new_data.new_value;
+    }
+    if (new_data.setting == "extra_snippets") {
+        extra_snippets.value = new_data.new_value;
     }
     
 });
