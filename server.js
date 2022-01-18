@@ -211,6 +211,7 @@ app.get("/api/create-room", async (req, res) => {
                 public: false,
                 question_count: QUESTION_COUNT,
                 self_voting: false,
+                word_contribution: true,
             },
             current_snippets: [],
             current_questions: [],
@@ -711,7 +712,9 @@ io.on("connection", (socket) => {
                         }, {});
                     }
 
-                    rooms[room_id].game.word_contributors = sumObjectsByKey(rooms[room_id].game.word_contributors, x.owners);
+                    if(rooms[room_id].game.config.word_contribution){
+                        rooms[room_id].game.word_contributors = sumObjectsByKey(rooms[room_id].game.word_contributors, x.owners);
+                    }
 
                     owners = {};
                 });
@@ -755,8 +758,6 @@ io.on("connection", (socket) => {
             const room_id = data.room_id;
             const voter = data.voter;
             const voted_for = data.voted_for;
-
-            console.log(`voter: ${voter} voted for: ${voted_for}`);
 
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === voter)){

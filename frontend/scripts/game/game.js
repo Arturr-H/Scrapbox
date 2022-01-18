@@ -458,8 +458,6 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     player_list.innerHTML = display_players(players);
     current_total_votes = total_votes;
 
-    console.log("MOST VOTED FOR: ", most_voted_for);
-
     if (all_done) {
 
         if(current_voting_index >= questions.length){
@@ -482,7 +480,6 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
     const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
     const voting_index_answers_percentage = voting_index_answers.map(map_obj_to_percentage);
 
-    console.log("MOST VOTED FOR: ", most_voted_for);
     most_voted_for.map(player => {
         
         const player_card = document.getElementById(`card_${player}`);

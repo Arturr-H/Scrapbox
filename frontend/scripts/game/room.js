@@ -14,6 +14,7 @@ const question_type = document.getElementById("mature");
 const toggle_public = document.getElementById("public");
 const question_count = document.getElementById("question-count");
 const self_voting = document.getElementById("self-voting");
+const word_contribution = document.getElementById("word-contribution");
 
 const room_qr = document.getElementById("room-qr");
 
@@ -104,6 +105,7 @@ socket.on(`player-join:${room_id}`, (data) => {
         toggle_public.checked = room_data_json.game.config.public;
         question_count.value = room_data_json.game.config.question_count;
         self_voting.checked = room_data_json.game.config.self_voting;
+        word_contribution.checked = room_data_json.game.config.word_contribution;
 
         const qr = room_data_json.qr;
         room_qr.src = qr;
@@ -195,6 +197,14 @@ self_voting.addEventListener("click", () => {
     })
 });
 
+word_contribution.addEventListener("click", () => {
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: getCookie("usnm"),
+        new_value: word_contribution.checked,
+        setting: "word_contribution"
+    })
+});
 
 socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     notice(`${new_data.player} has changed the ${new_data.setting} setting to ${new_data.new_value}`);
@@ -212,6 +222,10 @@ socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     if (new_data.setting == "self_voting") {
         self_voting.checked = new_data.new_value;
     }
+    if (new_data.setting == "word_contribution") {
+        word_contribution.checked = new_data.new_value;
+    }
+    
 });
 
 // maturity
@@ -266,7 +280,7 @@ audio.appendChild(source_element);
 
 let audio_volume = 0;
 audio.volume = getCookie("audio_percentage")*0.5;
-volume_slider.value = getCookie("audio_percentage")*100*2;
+volume_slider.value = getCookie("audio_percentage")*100*5*2;
 
 const set_audio_image = (value) => volume_image.src = `https://artur.red/images/audio-levels/${value}.svg`;
 
@@ -286,4 +300,5 @@ const on_volume_change = () => {
 }
 
 volume_slider.addEventListener("mousemove", on_volume_change);
+volume_slider.addEventListener("click", on_volume_change);
 on_volume_change();
