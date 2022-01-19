@@ -23,6 +23,8 @@ let current_total_votes = {};
 let self_voting = false;
 let display_card_owner_percentage_index = 0;
 let all_players = [];
+let extra_snippets = 0;
+let current_extra_snippets = [];
 
 const VOTING_TIME_IN_MS = 20000;
 
@@ -95,10 +97,10 @@ const multiply_values_in_object = (obj, factor) => {
 
         //Get the questions
         questions = room_data_json.game.current_questions;
-        console.log(questions)
 
         is_leader = room_data_json.game.leader === getCookie("usnm");
         self_voting = room_data_json.game.config.self_voting;
+        extra_snippets = room_data_json.game.config.extra_snippets;
 
         all_players = players;
     }catch(err){
@@ -191,6 +193,12 @@ const display_question_view = (current_snippets) => {
 
             </div>
             <div class="snippet-input" id="snippet-input">
+                ${
+                    current_extra_snippets.map(word => {
+                        return `
+                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable golden">${word.word}</span>
+                    `}).join(" ")
+                }
                 ${
                     //randomly sort the snippets
                     current_snippets.sort(() => Math.random() - 0.5).map(word => {
@@ -732,10 +740,18 @@ const new_snippets_set = (input_str, additional_snippets) => {
     //and they need diffrent mapping methods.
 
     const is_additional_snippets = additional_snippets != 0 || additional_snippets != null;
-    console.log(is_additional_snippets)
-    try{console.log(additional_snippets.split(","))}
-    catch{}
-    console.log(typeof additional_snippets)
+
+
+    let new_additional_snippets = []
+    if(typeof additional_snippets == "string"){
+        if(additional_snippets.includes(",")){
+            new_additional_snippets = additional_snippets.split(",");
+        }else{
+            new_additional_snippets = [additional_snippets];
+        }
+    }else{
+        new_additional_snippets = additional_snippets;
+    }
 
     if (typeof input_str === "string") {
 
@@ -743,9 +759,11 @@ const new_snippets_set = (input_str, additional_snippets) => {
 
     }else{
 
-        if (is_additional_snippets){
+        if (is_additional_snippets && additional_snippets != "null" && additional_snippets != undefined && additional_snippets != "undefined"){
             try{
-                return additional_snippets.split(",").map(element => `<span onclick="add_word('${filter_xss(element)}', '')" class="snippet clickable golden">${filter_xss(element)}</span>`).concat(
+
+                return new_additional_snippets.map(element => `<span onclick="add_word('${filter_xss(element)}', '')" class="snippet clickable golden">${filter_xss(element)}</span>`).concat(
+                    current_extra_snippets.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable golden">${filter_xss(element.word)}</span>`)).concat(
                     input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`)).join("");
 
             }catch(err){
@@ -753,7 +771,7 @@ const new_snippets_set = (input_str, additional_snippets) => {
                 return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
             }
         }else{
-            return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
+            return current_extra_snippets.concat(input_str).map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
         }
     }
 }
@@ -786,6 +804,24 @@ const toggle_keyboard = (additional_snippets) => {
             set_keyboard_state("🔤");
 
             document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?", 0);
+            break;
+
+        case 4:
+            set_keyboard_state("🔙");
+
+            document.getElementById("snippet-input").innerHTML = `
+                <h2 class="center" style="height: min-content !important;">
+                    Here you can create some extra snippets! Use this feauture sparingly.
+                </h2>
+                <div style="flex-direction: row; display: flex; justify-content: center; align-items: center; height: max-content; padding: .2rem;">
+
+                    <input style="width: 14rem;" type="text" id="extra-snippet-input-text" placeholder="Type here...">
+                    <button onclick="add_extra_snippet()" style="display: inline-block;">Add</button>
+
+                </div>
+                <p class="center" style="height: min-content;"><strong id="extra-snippet-count">${extra_snippets}</strong>&nbsp;extra-snippets left.</p>
+            `
+
             state = 0;
             break;
 
@@ -805,6 +841,23 @@ const toggle_keyboard = (additional_snippets) => {
             }
         }, 2000);
     }
+}
+const add_extra_snippet = () => {
+    extra_snippets--;
+    if (extra_snippets < 0) return;
+    const value = document.getElementById("extra-snippet-input-text").value;
+    
+    document.getElementById("extra-snippet-input-text").value = "";
+    document.getElementById("extra-snippet-count").innerHTML = extra_snippets;
+
+    
+    current_extra_snippets.push({
+        word: value,
+        owner: getCookie("usnm")
+    });
+
+    state = 0;
+    toggle_keyboard(questions[current_question_index].additional_snippets);
 }
 
 /* -------------------------------------------------- ANIMATIONS -------------------------------------------------- */

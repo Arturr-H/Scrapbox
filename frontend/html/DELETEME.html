@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Document</title>
+
+		<link rel="stylesheet" href="https://artur.red/style/global.css">
+
+	</head>
+
+	<body class="dark">
+		<div id="additional-word-container"
+			style="z-index: 110; position: absolute; width: 100%; height: 100%; pointer-events: none;"></div>
+		<div class="sunburst-container" id="sunburst">
+			<div class="sunburst"></div>
+		</div>
+		<main>
+			<nav id="nav">
+				<div class="logo">
+					<a href="index.html">
+						<h1>Scrapb<span></span>x</h1>
+					</a>
+				</div>
+				<ul id="player-list">
+					<li class="player ">
+						<div class="pfp">
+							<img style="background: #42d4f4" src="https://artur.red/faces/13.svg"
+								alt="Player profile image">
+						</div>
+						<div class="info">
+							<p>Artur</p>
+						</div>
+					</li>
+				</ul>
+				<a href="https://artur.red" class="leave-button">
+					<button class="removable leave">
+						Leave Game
+					</button>
+				</a>
+			</nav>
+
+			<div class="main-room-section" id="text-input-area">
+
+				<div class="question">
+					<h1>I checked you computer last night. Found ________.</h1>
+				</div>
+				<div class="question-answer">
+					<div class="snippet-output" id="snippet-output">
+
+					</div>
+					<div class="snippet-input" id="snippet-input">
+
+						<h2 class="center" style="height: min-content !important;">
+							Here you can create some extra snippets! Use this feauture sparingly.
+						</h2>
+						<div style="flex-direction: row; display: flex; justify-content: center; align-items: center; height: max-content; padding: .2rem;">	
+							<input style="width: 14rem;" type="text" id="snippet-input-text" placeholder="Type here...">
+							<button id="snippet-input-button" style="display: inline-block;">Add</button>
+						</div>
+						<p class="center" style="height: min-content;"><strong>5</strong>&nbsp;extra-snippets left.</p>
+						<!-- <span onclick="add_word('aowjd', 'Artur')" class="snippet clickable">aowjd</span>
+
+						<span onclick="add_word('ahwd', 'Artur')" class="snippet clickable">ahwd</span>
+
+						<span onclick="add_word('awldij', 'Artur')" class="snippet clickable">awldij</span>
+
+						<span onclick="add_word('aihwdo', 'Artur')" class="snippet clickable">aihwdo</span>
+
+						<span onclick="add_word('ouabwd', 'Artur')" class="snippet clickable">ouabwd</span>
+
+						<span onclick="add_word('jaIOWLjd', 'Artur')" class="snippet clickable">jaIOWLjd</span>
+
+						<span onclick="add_word('iawdh', 'Artur')" class="snippet clickable">iawdh</span> -->
+					</div>
+
+					<div class="keyboard-controls" draggable="false">
+
+						<div draggable="false" class="shuffle" onclick="shuffle_snippets()"><img draggable="false"
+								src="https://artur.red/icons/shuffle.svg" alt="Shuffle"></div>
+						<div draggable="false" id="mini-keyboard-toggle" onclick="toggle_keyboard('null')">
+							😂
+						</div>
+					</div>
+				</div>
+
+				<button onclick="submit_sentence()" class="submit">Submit</button>
+			</div>
+		</main>
+	</body>
+</html>

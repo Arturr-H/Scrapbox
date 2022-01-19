@@ -71,9 +71,6 @@ const get_questions = (questionCount, players, type) => {
     return questionsArray;
 }
 
-console.log(get_questions(15, ["artur", "bajs", "penis"], "mature"))
-
-
 //default file paths
 const default_paths = {
     illegal_game: path.resolve("frontend/html/error-pages/roomError.html"),
