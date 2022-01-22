@@ -24,7 +24,7 @@ module.exports = {
         return `${adjectives[Math.floor(Math.random() * adjectives.length)]}${capitalize(nouns[Math.floor(Math.random() * nouns.length)])}`
     },
     generate_pfp: (len) => {
-        return Math.floor(Math.random() * len)
+        return Math.floor(Math.random() * len - 1) + 1;
     },
     generate_uid: () => {
         return get_random_id()

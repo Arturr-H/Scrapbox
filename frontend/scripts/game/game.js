@@ -524,13 +524,30 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
 const display_results = (word_contributors) => {
 
     let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 1));
-    const winner = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a])[0];
-    const second_place = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a])[1]??null;
-    const third_place = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a])[2]??null;
+    const sorted_results = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]);
 
-    const winner_score = summed_results[winner];
-    const second_place_score = summed_results[second_place]??"no score";
-    const third_place_score = summed_results[third_place]??"no score";
+    const winner = sorted_results[0];
+    const second_place = sorted_results[1]??null;
+    const third_place = sorted_results[2]??null;
+
+    const winner_obj = {
+        score: summed_results[winner],
+        color: players.find(player => player.player == winner).player_color,
+        pfp: players.find(player => player.player == winner).pfp,
+        player: winner,
+    }
+    const second_place_obj = {
+        score: summed_results[second_place],
+        color: players.find(player => player.player == second_place).player_color,
+        pfp: players.find(player => player.player == second_place).pfp,
+        player: second_place,
+    }
+    const third_place_obj = {
+        score: summed_results[third_place],
+        color: players.find(player => player.player == third_place).player_color,
+        pfp: players.find(player => player.player == third_place).pfp,
+        player: third_place,
+    }
 
     return `
 		<h1 class="winner-top-text">${winner.toUpperCase()} IS THE WINNER</h1>
@@ -542,20 +559,16 @@ const display_results = (word_contributors) => {
 		</div>
 		<div class="rank-container">
 			${
-                second_place == null 
+                second_place == null
                 ? ""
                 : `<div class="rank rank-nr-2">
 				<div class="player ">
 					<div class="pfp">
-						<img style="background: ${
-                            all_players.find(player => player.player == second_place).player_color??"#fff"
-                        }" src="https://artur.red/faces/${
-                            all_players.find(player => player.player == second_place).pfp??"1"
-                        }.svg" alt="Player profile image">
+						<img style="background: ${second_place_obj.color}" src="https://artur.red/faces/${second_place_obj.pfp}.svg" alt="Player profile image">
 					</div>
 					<div class="info">
-						<p>${second_place}</p>
-						<span class="total-points">${second_place_score}</span>
+						<p>${second_place_obj.player}</p>
+						<span class="total-points">${second_place_obj.score}</span>
 					</div>
 				</div>
 				<div class="rank-2">2</div>
@@ -563,15 +576,11 @@ const display_results = (word_contributors) => {
 			<div class="rank rank-nr-1">
 				<div class="player ">
 					<div class="pfp">
-                        <img style="background: ${
-                            all_players.find(player => player.player == winner).player_color??"#fff"
-                        }" src="https://artur.red/faces/${
-                            all_players.find(player => player.player == winner).pfp??"2"
-                        }.svg" alt="Player profile image">
+                        <img style="background: ${winner_obj.color}" src="https://artur.red/faces/${winner_obj.pfp}.svg" alt="Player profile image">
 					</div>
 					<div class="info">
-						<p>${winner}</p>
-						<span class="total-points">${winner_score}</span>
+						<p>${winner_obj.player}</p>
+						<span class="total-points">${winner_obj.score}</span>
 					</div>
 				</div>
 				<div class="rank-1">1</div>
@@ -582,15 +591,11 @@ const display_results = (word_contributors) => {
                 : `<div class="rank rank-nr-3">
 				<div class="player ">
 					<div class="pfp">
-                        <img style="background: ${
-                            all_players.find(player => player.player == third_place).player_color??"#fff"
-                        }" src="https://artur.red/faces/${
-                            all_players.find(player => player.player == third_place).pfp??"3"
-                        }.svg" alt="Player profile image">
+                        <img style="background: ${third_place_obj.color}" src="https://artur.red/faces/${third_place_obj.pfp}.svg" alt="Player profile image">
                     </div>
 					<div class="info">
-						<p>${third_place}</p>
-						<span class="total-points">${third_place_score}</span>
+						<p>${third_place_obj.player}</p>
+						<span class="total-points">${third_place_obj.score}</span>
 					</div>
 				</div>
 				<div class="rank-3">3</div>

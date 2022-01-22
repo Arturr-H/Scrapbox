@@ -266,7 +266,12 @@ module.exports = {
             {
                 question:`Mix ${Blank()} together to make the worlds best smoothie.`,
                 additional_snippets: ["and", "a", "bunch", "some", "with"]
-            }
+            },
+            {
+                question:`Someone accuses you of eating all the food left in the fridge. How do you respond?`,
+                additional_snippets: ["eating", "ate"]
+            },
+            
         ];
 
         let matureQuestions = [

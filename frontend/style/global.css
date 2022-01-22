@@ -70,7 +70,7 @@ div.floating {
 	width: 95vw;
 	height: 95vh;
 
-	background: var(--main-bg);
+	background: linear-gradient(-45deg, var(--main-bg), #303441);
 
 	border-radius: var(--border-radius);
 
@@ -582,10 +582,10 @@ button {
 	height: 4rem;
 
 	font-size: 1.1rem;
-}button:hover {
-	background: var(--main-color-hover);
-}button:active {
-	background: var(--main-color-active);
+}button:hover, profile-pictures > button:hover {
+	background: var(--main-color-hover) !important;
+}button:active, profile-pictures > button:active {
+	background: var(--main-color-active) !important;
 }
 
 .switch {
@@ -1771,6 +1771,10 @@ span.snippet {
 	width: 100%; height: 100%;
 	position: absolute;
 	overflow: hidden;
+
+	z-index: 0;
+}.blob-container.blurred > *{
+	filter: blur(35px);
 }.blob-1, .blob-2{
 	width: 50vmax;
 	height: 50vmax;

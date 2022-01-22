@@ -46,6 +46,7 @@
 		<script src="https://artur.red/script/game/room-chat.js" defer></script>
 		<script src="https://artur.red/script/notice.js" defer></script>
 		<script src="https://artur.red/script/global.js" defer></script>
+		<script src="https://artur.red/script/modal.js" defer></script>
 
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/global.css" />
@@ -201,6 +202,123 @@
 				</form>
 			</div>
 		</main>
+
+
+		<div class="modal" id="name-modal">
+			<div class="modal-content"  onclick="javascript:event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();">
+				<div class="modal-slide">
+
+					<div class="modal-header">
+						<h1>Name Change</h1>
+						<p>Your name was randomly chosen. Do you want to change it?</p>
+					</div>
+					<hr>
+		
+					<div class="modal-body">
+						<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
+						<input type="submit" value="Cancel" onclick="toggleModal('name-modal')">
+						<input type="submit" value="Select New" onclick="turnTrack(1)">
+					</div>
+				</div>
+				<div class="modal-slide">
+
+					<div class="modal-header">
+						<h1>Name Change</h1>
+						<p>Choose a public name that other players will see.</p>
+					</div>
+					<hr>
+		
+					<div class="modal-body">
+						<form action="" id="name-form">
+							<input id="name-input" type="text" value="" onfocus="this.select()" placeholder="Name">
+							<input type="submit" value="">
+						</form>
+
+
+						<div class="arrows">
+							<div class="arrow left" onclick="turnTrack(-1)"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-slide">
+
+					<div class="modal-header">
+						<h1>Name Change</h1>
+						<p>Choose one of our faces for your profile</p>
+					</div>
+					<hr>
+		
+					<div class="modal-body">
+						<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
+						<div class="profile-pictures">
+							<button onclick="select_profile(1)">
+								<img src="https://artur.red/faces/1.svg" alt="">
+							</button>
+							<button onclick="select_profile(2)">
+								<img src="https://artur.red/faces/2.svg" alt="">
+							</button>
+							<button onclick="select_profile(3)">
+								<img src="https://artur.red/faces/3.svg" alt="">
+							</button>
+							<button onclick="select_profile(4)">
+								<img src="https://artur.red/faces/4.svg" alt="">
+							</button>
+							<button onclick="select_profile(5)">
+								<img src="https://artur.red/faces/5.svg" alt="">
+							</button>
+							<button onclick="select_profile(6)">
+								<img src="https://artur.red/faces/6.svg" alt="">
+							</button>
+							<button onclick="select_profile(7)">
+								<img src="https://artur.red/faces/7.svg" alt="">
+							</button>
+							<button onclick="select_profile(8)">
+								<img src="https://artur.red/faces/8.svg" alt="">
+							</button>
+							<button onclick="select_profile(9)">
+								<img src="https://artur.red/faces/9.svg" alt="">
+							</button>
+							<button onclick="select_profile(10)">
+								<img src="https://artur.red/faces/10.svg" alt="">
+							</button>
+							<button onclick="select_profile(11)">
+								<img src="https://artur.red/faces/11.svg" alt="">
+							</button>
+						</div>
+						<div class="arrows">
+							<div class="arrow left" onclick="turnTrack(-1)"></div>
+						</div>
+					</div>
+				</div>
+
+	
+				<div class="modal-footer">
+					<div class="dots">
+						<span class="dot active"></span>
+						<span class="dot"></span>
+						<span class="dot"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="qr-modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1>QR-Code</h1>
+					<p>Players can scan this code to enter the game.</p>
+				</div>
+
+				<div class="modal-body">
+					<div class="qr-code">
+						<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Test" alt="Something Went Wrong">
+					</div>
+					<div class="arrows">
+						<div class="arrow left" onclick="turnTrack(-1)"></div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<button class="open-chat" id="open-chat"></button>
 		

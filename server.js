@@ -94,6 +94,15 @@ const custom_message = (message) => {
     `
 }
 
+const bad_words = fs.readFileSync(path.resolve("resources/files/filtered-words.txt"), "utf8").split("\n");
+const filter_bad_words = (text) => {
+    let filtered_text = text;
+    bad_words.forEach(word => {
+        filtered_text = filtered_text.replace(new RegExp(word, "gi"), "*".repeat(word.length));
+    });
+
+    return filtered_text;
+}
 //Mutational variables
 let rooms = {};
 
@@ -160,24 +169,35 @@ app.get("/api/send-idea", (req, res) => {
 //room creation
 app.get("/api/create-room", async (req, res) => {
 
-    //Check if user has a name, then redirect to the
-    //name selection page with the created room code
-    //so they automatically rejoin after selecting their name.
-    if( !req.cookies.usnm
-        || req.cookies.usnm == null
-        || req.cookies.usnm.length <= 2
-    ) return res.redirect(`/name/game-queue/CREATE_ROOM_QUEUE`);
-
     //generate room code
     const roomcode = generate_roomcode();
     const small_code = generate_small_code();
 
-    const leader = req.cookies["usnm"];
-    const pfp = req.cookies["pfp"];
-    const uid = req.cookies["uid"];
+    let leader = req.cookies["usnm"];
+    let pfp = req.cookies["pfp"];
+    let uid = req.cookies["uid"];
 
     const room_colors = ROOM_COLORS.sort(() => Math.random() - 0.5)
     const qr = await qr_code.toDataURL(`${PROTOCOL}://${BASE_URL}/${small_code}`, {color: {dark: "#000", light: "#00000000"}}).then(async (data) => await data);
+
+    //if the user got no name
+    if(!leader){
+        const new_name = names.generate_name();
+        const new_pfp = names.generate_pfp(PROFILE_PICTURE_COUNT);
+        const new_uid = names.generate_uid();
+
+        res.cookie("usnm", new_name, {maxAge: 1000*60*60*24*30});
+        res.cookie("pfp", new_pfp, {maxAge: 1000*60*60*24*30});
+        res.cookie("uid", new_uid, {maxAge: 1000*60*60*24*30});
+        res.cookie("selfselected", "auto", {maxAge: 1000*60*60*24*30});
+        //self selected means if the user made their name themselves
+        //or if it was my backend fucntions. So frontend checks if self selected is
+        //auto, if it is, display a modal that the user can change name / pfp.
+
+        leader = new_name;
+        pfp = new_pfp;
+        uid = new_uid;
+    }
 
     const leader_obj = {
         player: leader,
@@ -229,6 +249,7 @@ app.get("/api/create-room", async (req, res) => {
         }
     };
 
+
     //send the user to the newly created room if they have a name.
     return res.redirect(`/room/${roomcode}`);
 });
@@ -256,15 +277,6 @@ app.get("/api/browse", (req, res) => {
 app.get("/room/:roomID", (req, res) => {
 
     const roomID = req.params.roomID;
-
-    // //Check if user has a name
-    // if( !req.cookies.usnm
-    //     || req.cookies.usnm == null
-    //     || req.cookies.usnm.length <= 2
-    // ) return res.redirect(`/name/game-queue/${roomID}`); //I used to have room_small_code here, however
-    // //this means that if an user does not have a name, they will be redirected to the game, even if they
-    // //are not invited to the room.
-
     
     try{
         const player_obj = {
@@ -545,6 +557,39 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on("name-change", (data) => {
+        const room_id = data.room_id;
+        const old_name = data.old_name;
+        const new_name = data.new_name;
+        const new_pfp = data.new_pfp;
+
+        console.log(`${old_name} changed their name to ${new_name} in room ${room_id}`);
+
+        try{
+            //get the player's object
+            const player_obj = rooms[room_id].game.players.find(x => x.player === old_name);
+
+            //change the player's name
+            player_obj.player = new_name;
+            player_obj.pfp = new_pfp;
+
+            if(rooms[room_id].game.leader == old_name){
+                rooms[room_id].game.leader = new_name;
+            }
+
+            //emit the new player list to the room
+            io.emit(`name-change:${room_id}`, {
+                new_player_list: rooms[room_id].game.players,
+                new_name: new_name,
+                old_name: old_name,
+                leader_name: rooms[room_id].game.leader
+            });
+        }catch(err){
+            console.log(err);   
+            return false;
+        }
+    });
+
 
     //GAME CONFIGURATION -------------------
     socket.on("config:settings-toggle", (data) => {
@@ -818,9 +863,9 @@ io.on("connection", (socket) => {
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
-
-
-
+            
+            //replace bad words with *:s
+            const filtered_message = filter_bad_words(message);
 
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.player === player)){
@@ -828,11 +873,12 @@ io.on("connection", (socket) => {
                 //send the message to the players
                 io.emit(`chat:message:${room_id}`, {
                     player: player,
-                    message: message
+                    message: filtered_message
                 });
 
             }
-        }catch{
+        }catch(err){
+            console.log(err)
             return false;
         }
     });
@@ -877,11 +923,13 @@ app.get("/:small_code?", (req, res) => {
         
         const small_code = req.params.small_code;
 
-        let player = req.cookies.usnm;
+        let player = req.cookies["usnm"];
         let pfp = req.cookies.pfp;
         let uid = req.cookies.uid;
 
-        if(player == undefined || player.length <= 2 ){
+        console.log(player)
+        if(!player){
+            console.log("INSIDE")
             const new_name = names.generate_name();
             const new_pfp = names.generate_pfp(PROFILE_PICTURE_COUNT);
             const new_uid = names.generate_uid();
@@ -889,11 +937,14 @@ app.get("/:small_code?", (req, res) => {
             res.cookie("usnm", new_name, {maxAge: 1000*60*60*24*30});
             res.cookie("pfp", new_pfp, {maxAge: 1000*60*60*24*30});
             res.cookie("uid", new_uid, {maxAge: 1000*60*60*24*30});
+            res.cookie("selfselected", "auto", {maxAge: 1000*60*60*24*30});
 
             player = new_name;
             pfp = new_pfp;
             uid = new_uid;
+            console.log("new", player);
         }
+        console.log("OUT");
         //get the room id from the small code, rooms is an object
         const get_roomcode = () => {
             for (let room in rooms){
@@ -940,11 +991,12 @@ app.get("/:small_code?", (req, res) => {
                     ];
                 }
                 
-                return res.status(200).redirect(`/room/${room.roomcode}`);
+                return res.status(200).redirect(`/room/${room_id}`);
             }
         })
         
         if (!found_room){
+            console.log("NOT FOUND")
             return res.sendStatus(404);
         }
     }
