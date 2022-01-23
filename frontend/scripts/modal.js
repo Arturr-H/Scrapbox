@@ -65,7 +65,8 @@ const select_profile = (nr) => {
         room_id: room_id,
         old_name: old_name,
         new_name: new_name,
-        new_pfp: new_pfp
+        new_pfp: new_pfp,
+        suid: getCookie("suid")
     });
 
     old_name = new_name;

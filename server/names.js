@@ -26,7 +26,7 @@ module.exports = {
     generate_pfp: (len) => {
         return Math.floor(Math.random() * len - 1) + 1;
     },
-    generate_uid: () => {
+    generate_suid: () => {
         return get_random_id()
     }
 }

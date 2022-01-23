@@ -62,8 +62,8 @@ html {
 	padding: 0; margin: 0;
 
 	height: 100%;
-	/* background-image: var(--main-bg-image); */
 	background-color: var(--main-color);
+	overflow-y: hidden;
 }
 
 div.floating {
@@ -1557,7 +1557,7 @@ span.snippet {
 }
 
 .fade-in-view {
-	animation: fade-in-view 1s step-end forwards;
+	animation: fade-in-view 1s step-end forwards !important;
 	animation-delay: 1s;
 	opacity: 0;
 }

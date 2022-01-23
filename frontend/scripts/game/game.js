@@ -43,7 +43,7 @@ const display_players = (players) => players.map(player_obj => `
             <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
         </div>
         <div class="info">
-            <p>${player_obj.player}</p>
+            <p>${player_obj.name}</p>
         </div>
     </li>
 `).join("");
@@ -98,7 +98,7 @@ const multiply_values_in_object = (obj, factor) => {
         //Get the questions
         questions = room_data_json.game.current_questions;
 
-        is_leader = room_data_json.game.leader === getCookie("usnm");
+        is_leader = room_data_json.game.leader.suid === getCookie("suid");
         self_voting = room_data_json.game.config.self_voting;
         extra_snippets = room_data_json.game.config.extra_snippets;
 
@@ -116,7 +116,8 @@ text_submit.addEventListener("click", async () => {
     const mapped_text = xss_filtered_text.split(" ").map(word => {
         return {
             word: word,
-            owner: getCookie("usnm")
+            owner: getCookie("suid"),
+            owner_name: getCookie("usnm"),
         }
     });
 
@@ -126,7 +127,10 @@ text_submit.addEventListener("click", async () => {
         socket.emit("game:text", {
             room_id: room_id,
             text: mapped_text,
-            player: getCookie("usnm")
+            player: {
+                name: getCookie("usnm"),
+                suid: getCookie("suid"),
+            }
         });
 
         //clear the game area's children
@@ -196,14 +200,14 @@ const display_question_view = (current_snippets) => {
                 ${
                     current_extra_snippets.map(word => {
                         return `
-                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable golden">${word.word}</span>
+                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}', '${word.suid}')" class="snippet clickable golden">${word.word}</span>
                     `}).join(" ")
                 }
                 ${
                     //randomly sort the snippets
                     current_snippets.sort(() => Math.random() - 0.5).map(word => {
                         return `
-                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable">${word.word}</span>
+                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}', '${word.suid}')" class="snippet clickable">${word.word}</span>
                     `}).join(" ")
                 }
             </div>
@@ -313,16 +317,17 @@ const additional_words = (word_array) => {
 };
 // -------------------------------------------------- SNIPPET INPUT -------------------------------------------------- //
 
-const add_word = (word, owner) => {
+const add_word = (word, owner, suid) => {
     sentences[current_question_index].sentence.push({
         word: filter_xss(word).toLowerCase(),
         owner: owner,
-        id: get_unique_id()
+        suid: suid,
+        id: get_unique_id(),
     });
 
     snippet_output = document.getElementById("snippet-output");
     snippet_output.innerHTML = sentences[current_question_index].sentence.map(word => `
-        <span id="word_${word.id}" class="snippet removable" onclick="remove_word('${word.id}')">${word.word.toLowerCase()}</span>
+        <span id="word_${word.id}" class="snippet removable" onclick="remove_word('${word.id}')">${word.word}</span>
     `).join("");
 }
     
@@ -335,7 +340,7 @@ const remove_word = (word_id) => {
 const shuffle_snippets = () => {
     document.getElementById("snippet-input").innerHTML = current_snippets.sort(() => Math.random() - 0.5).map(word => {
         return `
-            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}')" class="snippet clickable">${word.word}</span>
+            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}', '${word.suid}')" class="snippet clickable">${word.word}</span>
         `
     }).join(" ");
 }
@@ -350,7 +355,10 @@ const send_sentences = () => {
     socket.emit("game:submit-sentences", {
         room_id: room_id,
         sentences: sentences,
-        player: getCookie("usnm")
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        }
     });
 }
 
@@ -363,14 +371,14 @@ socket.on(`game:submit-sentences:${room_id}`, (data) => {
 
     //render the voting view if all players have submitted their sentences
     if(data.all_done) {
-        next_voting(current_player_answers, players);
+        next_voting(current_player_answers);
     }
 })
 
 
 // -------------------------------------------------- DISPLAY VOTING -------------------------------------------------- //
 
-const next_voting = (current_player_answers, players) => {
+const next_voting = (current_player_answers) => {
 
     transition(questions[display_card_owner_percentage_index].question, true, () => {
 
@@ -388,7 +396,6 @@ const next_voting = (current_player_answers, players) => {
         current_voting_index++;
         
         //pull the voting card animation.
-
         show_voting_cards()
     });
 
@@ -406,23 +413,23 @@ const display_voting_view = (current_player_answers, index) => {
         <div class="center player-answer-container-TEST">
             ${
 
-                current_player_answers.map((player, player_idx) => `
-                    <div id="card_${player.player}" class="player-answer voting-card-selector ${
+                current_player_answers.map((player_obj, player_idx) => `
+                    <div id="card_${player_obj.player.suid}" class="player-answer voting-card-selector ${
                         self_voting
                         ? ""
-                        : player.player == getCookie("usnm")?'disabled':''
+                        : player_obj.player.suid == getCookie("suid")?'disabled':''
                     }" onclick="${
                         
                         //if its the own players card they should not be able to vote for themself.
                         //however if self_voting is enabled, they can vote for themselves
                         self_voting
-                        ? `vote_for('${player.player}')`
-                        : player.player == getCookie("usnm")?'':`vote_for('${player.player}')`
+                        ? `vote_for('${player_obj.player.suid}')`
+                        : player_obj.player.suid == getCookie("suid")?'':`vote_for('${player_obj.player.suid}')`
 
                     }">
                         
                         <p>${
-                            player.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner}</span></span>`).join(" ")// THIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THISTHIS THIS
+                            player_obj.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner_name}</span></span>`).join(" ")
                         }</p>
                         <div class="bottom"></div>
                         <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
@@ -439,16 +446,19 @@ const display_voting_view = (current_player_answers, index) => {
 
 // -------------------------------------------------- HANDLE VOTING -------------------------------------------------- //
 
-const vote_for = (player) => {
+const vote_for = (voted_for_suid) => {
 
     if(!has_voted){
         socket.emit("game:vote-for", {
             room_id: room_id,
-            voter: getCookie("usnm"),
-            voted_for: player,
+            voter: {
+                name: getCookie("usnm"),
+                suid: getCookie("suid")
+            },
+            voted_for_suid: voted_for_suid,
         });
 
-        document.getElementById(`card_${player}`).classList.add("vote");
+        document.getElementById(`card_${voted_for_suid}`).classList.add("vote");
 
         // loop through all elements with the class of player-answer and add the class "disabled"
         document.querySelectorAll(".player-answer").forEach(player_answer => {
@@ -457,6 +467,7 @@ const vote_for = (player) => {
         });
     }
 }
+
 socket.on(`game:vote-for:${room_id}`, (data) => {
     const total_votes = data.total_votes;
     const players = data.players;
@@ -478,10 +489,11 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
         }else{
 
             display_card_owner_percentage(current_player_answers, players, most_voted_for);
-            setTimeout(() => next_voting(current_player_answers, players), 4000);
+            setTimeout(() => next_voting(current_player_answers), 4000);
         }
     }
 });
+
 //displays the percentage at the bottom of
 //cards + colors all the snippets in the card
 //based on the player's player_color
@@ -489,6 +501,9 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
 
     const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
     const voting_index_answers_percentage = voting_index_answers.map(map_obj_to_percentage);
+
+    console.log("MVF", most_voted_for)
+    console.log(players)
 
     most_voted_for.map(player => {
         
@@ -501,7 +516,7 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
         //all players have a player_color, so color all the current_player's snippets with their color
         current_player_owned_snippets.forEach(snippet => {
             try{
-                snippet.style.background = players.find(this_player => this_player.player == snippet.classList[1].split("-")[2]).player_color;
+                snippet.style.background = players.find(this_player => this_player.suid == snippet.classList[1].split("-")[2]).player_color;
                 snippet.classList.add("tooltip");
             }catch{}
         });
@@ -526,31 +541,47 @@ const display_results = (word_contributors) => {
     let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 1));
     const sorted_results = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]);
 
-    const winner = sorted_results[0];
-    const second_place = sorted_results[1]??null;
-    const third_place = sorted_results[2]??null;
+    let winner = sorted_results[0];
+    let second_place = sorted_results[1]??null;
+    let third_place = sorted_results[2]??null;
 
-    const winner_obj = {
+
+    console.log(sorted_results)
+    console.log(winner, second_place, third_place);
+
+    let winner_obj, second_place_obj, third_place_obj;
+
+    winner_obj = {
         score: summed_results[winner],
-        color: players.find(player => player.player == winner).player_color,
-        pfp: players.find(player => player.player == winner).pfp,
-        player: winner,
+        color: all_players.find(player => player.suid == winner).player_color,
+        pfp: all_players.find(player => player.suid == winner).pfp,
+        player: all_players.find(player => player.suid == winner).name,
     }
-    const second_place_obj = {
-        score: summed_results[second_place],
-        color: players.find(player => player.player == second_place).player_color,
-        pfp: players.find(player => player.player == second_place).pfp,
-        player: second_place,
+    try{
+        second_place_obj = {
+            score: summed_results[second_place],
+            color: all_players.find(player => player.suid == second_place).player_color,
+            pfp: all_players.find(player => player.suid == second_place).pfp,
+            player: all_players.find(player => player.suid == second_place).name,
+        }
+    }catch{
+        second_place_obj = {score: 0, color: "", pfp: 0, player: ""};
+        second_place = null;
     }
-    const third_place_obj = {
-        score: summed_results[third_place],
-        color: players.find(player => player.player == third_place).player_color,
-        pfp: players.find(player => player.player == third_place).pfp,
-        player: third_place,
+    try{
+        third_place_obj = {
+            score: summed_results[third_place],
+            color: all_players.find(player => player.suid == third_place).player_color,
+            pfp: all_players.find(player => player.suid == third_place).pfp,
+            player: all_players.find(player => player.suid == third_place).name,
+        }
+    }catch{
+        third_place_obj = {score: 0, color: "", pfp: 0, player: ""};
+        third_place = null;
     }
 
     return `
-		<h1 class="winner-top-text">${winner.toUpperCase()} IS THE WINNER</h1>
+		<h1 class="winner-top-text fade-in-view rank-nr-1">${all_players.find(player_obj => player_obj.suid == winner).name.toUpperCase()} IS THE WINNER</h1>
 
 		<div class="blob-container">
 			<div class="blob-1"></div>
@@ -602,27 +633,6 @@ const display_results = (word_contributors) => {
 			</div>`}
 		</div>
     `
-
-
-    // return `
-    //     <div class="center column">
-    //         <h1>Results</h1>
-
-    //         ${
-    //             //current_total_votes looks something like this: {player1: 250, player2: 150, player3: 500}
-    //             //sort current_total_votes by the value of the object
-    //             Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]).map((player, player_idx) => `
-    //                 <span class="player-result ${player_idx == 0?'winner':''}" style="animation-delay: ${(Object.keys(summed_results).length - player_idx) * 3}s">
-    //                     <div class=player-info>
-    //                         <p>${player_idx+1}: ${player}</p>
-    //                         ${player_idx == 0?`<img src="https://artur.red/icons/crown.svg" class="crown" alt="crown">`:''}
-    //                     </div>
-    //                     <p>${summed_results[player]}</p>
-    //                 </span>
-    //             `).join("")
-    //         }
-    //     </div>   
-    // `;
 }
 
 /* -------------------------------------------------- PLAYER CLEARING -------------------------------------------------- */

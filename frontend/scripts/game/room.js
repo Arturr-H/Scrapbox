@@ -29,13 +29,13 @@ const display_players = (players) => players.map(player_obj => `
             <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Profile Picture">
         </div>
         <div class="info">
-            <p>${player_obj.player}</p>
+            <p>${player_obj.name}</p>
             ${
     //if the player is a leader, hide the kick button
     player_obj.leader
         ? ''
         : is_leader
-            ? '<img class="kick-button" onclick="kick_user(`' + player_obj.player + '`)" src="https://artur.red/icons/xmark.svg" alt="xmark"></img>'
+            ? '<img class="kick-button" onclick="kick_user(`' + player_obj.suid + '`)" src="https://artur.red/icons/xmark.svg" alt="xmark"></img>'
             : ''
     }
         </div>
@@ -57,8 +57,11 @@ lobby_short_id.addEventListener("click", () => {
 //Send that the player has joined the game
 socket.emit("player-join", {
     room_id: room_id,
-    player: getCookie("usnm"),
-    pfp: getCookie("pfp"),
+    player: {
+        name: getCookie("usnm"),
+        pfp: getCookie("pfp"),
+        suid: getCookie("suid"),
+    },
 });
 
 //When other players join
@@ -72,8 +75,8 @@ socket.on(`player-join:${room_id}`, (data) => {
 
     //If its not the player
     if (data.new_player != undefined) {
-        if (data.new_player.player != getCookie("usnm")) {
-            notice(`${data.new_player.player} has joined the game!`);
+        if (data.new_player.suid != getCookie("suid")) {
+            notice(`${data.new_player.name} has joined the game!`);
         }
     }
 
@@ -93,7 +96,9 @@ socket.on(`player-join:${room_id}`, (data) => {
         const room_data_json = await room_data.json();
         const players = room_data_json.game.players;
 
-        is_leader = room_data_json.game.leader == getCookie("usnm");
+        console.log(players);
+
+        is_leader = room_data_json.game.leader.suid == getCookie("suid");
 
         player_list.innerHTML = display_players(players);
         display_player_count(players);
@@ -115,15 +120,15 @@ socket.on(`player-join:${room_id}`, (data) => {
 
         room_short_id = room_data_json.small_code;
 
-        if (room_data_json.game.leader == getCookie("usnm")) {
+        if (room_data_json.game.leader.suid == getCookie("suid")) {
             start_button.style.display = "block";
         } else {
             config_area.innerHTML = `
-                <p>Waiting for <b>${room_data_json.game.leader}</b> to start the game</p>
+                <p>Waiting for <b>${room_data_json.game.leader.name}</b> to start the game</p>
             `;
         }
 
-    } catch {
+    }catch {
         console.log("error");
     }
 })();
@@ -140,7 +145,11 @@ start_button.addEventListener("click", () => {
 
     socket.emit("start-game", {
         id: room_id,
-        player: getCookie("usnm"),
+        player: {
+            name: getCookie("usnm"),
+            pfp: getCookie("pfp"),
+            suid: getCookie("suid"),
+        },
     });
 });
 
@@ -167,7 +176,10 @@ socket.on(`return-message:${room_id}`, (message) => {
 question_type.addEventListener("change", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
-        player: getCookie("usnm"),
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
         new_value: question_type.value,
         setting: "question_type"
     })
@@ -176,7 +188,10 @@ question_type.addEventListener("change", () => {
 toggle_public.addEventListener("click", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
-        player: getCookie("usnm"),
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
         new_value: toggle_public.checked,
         setting: "public"
     })
@@ -185,7 +200,10 @@ toggle_public.addEventListener("click", () => {
 question_count.addEventListener("change", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
-        player: getCookie("usnm"),
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
         new_value: question_count.value,
         setting: "question_count"
     })
@@ -194,7 +212,10 @@ question_count.addEventListener("change", () => {
 self_voting.addEventListener("click", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
-        player: getCookie("usnm"),
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
         new_value: self_voting.checked,
         setting: "self_voting"
     })
@@ -203,7 +224,10 @@ self_voting.addEventListener("click", () => {
 word_contribution.addEventListener("click", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
-        player: getCookie("usnm"),
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
         new_value: word_contribution.checked,
         setting: "word_contribution"
     })
@@ -212,7 +236,10 @@ word_contribution.addEventListener("click", () => {
 extra_snippets.addEventListener("change", () => {
     socket.emit(`config:settings-toggle`, {
         room: room_id,
-        player: getCookie("usnm"),
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
         new_value: extra_snippets.value,
         setting: "extra_snippets"
     })
@@ -220,7 +247,7 @@ extra_snippets.addEventListener("change", () => {
 
 
 socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
-    notice(`${new_data.player} has changed the ${new_data.setting} setting to ${new_data.new_value}`);
+    notice(`${new_data.name} has changed the ${new_data.setting} setting to ${new_data.new_value}`);
 
     //set the checkbox to the new value
     if (new_data.setting == "mature") {
@@ -248,11 +275,11 @@ socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
 //
 // kick players
 
-const kick_user = (usnm) => {
+const kick_user = (kick_request_suid) => {
     socket.emit(`config:user-kick`, {
         room_id: room_id,
-        kick_request: usnm,
-        kick_requester: getCookie("usnm")
+        kick_request_suid: kick_request_suid,
+        kick_requester_suid: getCookie("suid"),
     });
 };
 
@@ -262,11 +289,11 @@ socket.on(`config:user-kick:${room_id}`, (data) => {
     const kicked_player = data.kicked_player;
     const new_player_list = data.new_player_list;
 
-    notice(`${kicked_player} has been kicked!`);
+    notice(`${kicked_player.name} has been kicked!`);
 
-    if (kicked_player == getCookie("usnm")) {
+    if (kicked_player.suid == getCookie("suid")) {
         window.open("https://artur.red", "_self");
-    } else {
+    }else {
         player_list.innerHTML = display_players(new_player_list);
         display_player_count(new_player_list);
     }

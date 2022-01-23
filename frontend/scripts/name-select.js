@@ -20,7 +20,7 @@ submit_name.addEventListener('click', () => {
 
     else{
         setCookie("usnm", name_input.value, 30);
-        setCookie("uid", get_random_id(), 30);
+        setCookie("suid", get_random_id(), 30);
 
         if (queued_room != "none"){
             //so i've set up in the server that checks if the user
