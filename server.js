@@ -185,7 +185,7 @@ app.get("/api/create-room", async (req, res) => {
     if(!leader){
         const new_name = names.generate_name();
         const new_pfp = names.generate_pfp(PROFILE_PICTURE_COUNT);
-        const new_suid = names.generate_uid();
+        const new_suid = names.generate_suid();
 
         res.cookie("usnm", new_name, {maxAge: 1000*60*60*24*30});
         res.cookie("pfp", new_pfp, {maxAge: 1000*60*60*24*30});
@@ -956,6 +956,10 @@ app.get("/:small_code?", (req, res) => {
 
             name = new_name;
             pfp = new_pfp;
+
+            const new_suid = generate_uid();
+            res.cookie("suid", new_suid, {maxAge: 1000*60*60*24*30});
+            suid = new_suid;
         }
 
         //get the room id from the small code, rooms is an object

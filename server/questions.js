@@ -123,14 +123,6 @@ module.exports = {
                 additional_snippets: null
             },
             {
-                question:`What's the best thing about being a ${Blank()}?`,
-                additional_snippets: null
-            },
-            {
-                question:`Since when was it illegal to ${Blank()}?`,
-                additional_snippets: null
-            },
-            {
                 question:`I have a dream that one day this nation will rise up and live out the true meaning of its creed: ${Blank()}.`,
                 additional_snippets: null
             },
@@ -185,10 +177,6 @@ module.exports = {
             {
                 question:`I just realized that I'll never be able to ${Blank()} again.`,
                 additional_snippets: null
-            },
-            {
-                question:`THE FUCKING WORLD IS ENDING! "Not now mom I'm ${Blank()}"`,
-                additional_snippets: ["playing", "trying", "to"]
             },
             {
                 question:`I just bought a new router! Could you get me a solid Wi-Fi name?`,
@@ -256,10 +244,6 @@ module.exports = {
                 additional_snippets: Names.concat(["once", "upon", "a", "time"])
             },
             {
-                question:`I checked you computer last night. Found ${Blank()}.`,
-                additional_snippets: null
-            },
-            {
                 question:`I checked you computer last night. Why is ${Blank()} in your search history?`,
                 additional_snippets: null
             },
@@ -270,6 +254,30 @@ module.exports = {
             {
                 question:`Someone accuses you of eating all the food left in the fridge. How do you respond?`,
                 additional_snippets: ["eating", "ate"]
+            },
+            {
+                question:`Now that I'm older, I'm finally going to ${Blank()}.`,
+                additional_snippets: ["get", "have", "do"]
+            },
+            {
+                question:`"I'm going to ${Blank()} the next time I see you."`,
+                additional_snippets: null
+            },
+            {
+                question:`"Would you like some BBQ sauce with your ${Blank()}?"`,
+                additional_snippets: null
+            },
+            {
+                question:`Free ${Blank()} for everyone! Except for ${name}.`,
+                additional_snippets: null
+            },
+            {
+                question:`Oh no! ${name} has been kidnapped! Execute plan B: ${Blank()}.`,
+                additional_snippets: null
+            },
+            {
+                question:`Roses are red, violets are blue, ${Blank()}`,
+                additional_snippets: Names
             },
             
         ];
@@ -322,7 +330,12 @@ module.exports = {
             {
                 question: `Oh you don't know what sex is? I can sum it up for you: ${Blank()}`,
                 additional_snippets: null
-            }
+            },
+            {
+                question:`THE FUCKING WORLD IS ENDING! "Not now mom I'm ${Blank()}"`,
+                additional_snippets: ["playing", "trying", "to"]
+            },
+
         ]
 
         if (typeof questionType == "string" && questionType == "mature") {
