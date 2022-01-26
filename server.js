@@ -931,12 +931,8 @@ io.on("connection", (socket) => {
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
 
-            console.log(room_id, player, message);
-            
             //replace bad words with *:s
             const filtered_message = filter_bad_words(message);
-
-            console.log(filtered_message);
 
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.suid === suid)){

@@ -1833,6 +1833,14 @@ span.snippet {
 
 	margin-top: 1rem;
 }
+
+.rank{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-flow: column;
+}
+
 .rank-1{
 	height: 50vh;
 	background: #FFD700 !important;
@@ -1850,26 +1858,39 @@ span.snippet {
 	position: absolute;
 	z-index: 5;
 
-	top: -12rem;
+	top: -13.2rem;
+
+	animation: crown-drop 1s ease-in-out forwards;
+	animation-delay: 9s;
+
+	transform: translateY(-100vh)
 }.rank-2{
 	height: 33vh;
 	background: rgb(148, 148, 148) !important;
 	color: black !important;
 }.rank-3{
-	height: 7rem;
+	height: 12.5vh;
 	background: #CD7F32;
 	color: black !important;
 }.rank .total-points{
-	display: inline-block;
-	margin-left: auto;
 
-	color: white;
+	color: black;
 	font-size: 1.2rem;
-	font-weight: 100;
-	margin-right: .5rem;
+	font-weight: 400;
 }
 .rank .player{
 	border-radius: 1000px;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	width: 100% !important;
+	height: 3.5rem !important;
+}
+
+.rank-display{
+	display: flex;
+	justify-content: center;
+	flex-flow: column;
 }
 
 
@@ -1882,32 +1903,58 @@ span.snippet {
 }
 
 .rank-nr-1{
-	animation-delay: 4s !important;
 	z-index: 10;
-	/* animation: rank-2-pop-up .5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; */
+	animation: rank-1-pop-up .625s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	animation-delay: 8s !important;
 }.rank-nr-2{
-	animation: rank-2-pop-up 4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-	animation-delay: 3s;
+	animation: rank-2-pop-up 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	animation-delay: 5s;
 }.rank-nr-3{
-	animation-delay: 1.5s;
 	animation: rank-3-pop-up 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	animation-delay: 1.5s;
 }
 
-@keyframes pop-up {
-	from{ transform: translateY(100%)}
-	to{ transform: translateY(0)}
+.rank .player{
+	transform: scale(0);
+	animation: player-pop-up .8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.rank .player:after{
+	transform: scale(0);
+	animation: player-pop-up .8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.rank-nr-3 .player{
+	animation-delay: 2s !important;
+}
+.rank-nr-2 .player{
+	animation-delay: 5.5s !important;
+}
+.rank-nr-1 .player{
+	animation-delay: 9s !important;
+}
+
+@keyframes player-pop-up {
+	from{ transform: scale(0)}
+	to{ transform: scale(1)}
 }
 @keyframes rank-2-pop-up {
 	0%{ transform: translateY(100%)}
 	20%{ transform: translateY(0)}
 	80%{ transform: translateY(0)}
-	100%{ transform: translateY(0) translateX(-100%)}
+	100%{ transform: translateY(0) translateX(-120%)}
 }
 @keyframes rank-3-pop-up {
 	0%{ transform: translateY(100%)}
 	25%{ transform: translateY(0)}
 	75%{ transform: translateY(0)}
-	100%{ transform: translateY(0) translateX(100%)}
+	100%{ transform: translateY(0) translateX(120%)}
+}
+@keyframes rank-1-pop-up {
+	0%{ transform: translateY(100%)}
+	100%{ transform: translateY(0)}
+}
+@keyframes crown-drop {
+	0%{ transform: translateY(-100vh)}
+	100%{ transform: translateY(0)}
 }
 
 

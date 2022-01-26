@@ -54,15 +54,6 @@ const filter_xss = (word) => word.toString()
                                 .replace(/\r/g, "")
                                 .replace(/\'/g, "&#39;")
                                 .replace(/\"/g, "&quot;");
-const map_obj_to_percentage = (obj) => {
-    let total = 0;
-    Object.values(obj).forEach(value => total += value);
-    return Object.keys(obj).map(key => {
-        return {
-            [key]: Math.round((obj[key] / total) * 100)
-        }
-    });
-}
 const sumObjectsByKey = (...objs) => {
     return objs.reduce((a, b) => {
     for (let k in b) {
@@ -547,7 +538,7 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
 }
 const display_results = (word_contributors) => {
 
-    let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 1));
+    let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 0.35));
     const sorted_results = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]);
 
     let winner = sorted_results[0];
@@ -586,7 +577,7 @@ const display_results = (word_contributors) => {
     }
 
     return `
-		<h1 class="winner-top-text fade-in-view rank-nr-1">${all_players.find(player_obj => player_obj.suid == winner).name.toUpperCase()} IS THE WINNER</h1>
+        <h1 class="winner-top-text fade-in-view rank-nr-1">${all_players.find(player_obj => player_obj.suid == winner).name.toUpperCase()} IS THE WINNER</h1>
 
 		<div class="blob-container">
 			<div class="blob-1"></div>
@@ -604,37 +595,32 @@ const display_results = (word_contributors) => {
 					</div>
 					<div class="info">
 						<p>${second_place_obj.player}</p>
-						<span class="total-points">${second_place_obj.score}</span>
 					</div>
 				</div>
-				<div class="rank-2">2</div>
+				<div class="rank-2 rank-display">2<span class="total-points">${second_place_obj.score} Points</span></div>
 			</div>`}
 			<div class="rank rank-nr-1">
-				<div class="player ">
+				<div class="player">
 					<div class="pfp">
-                        <img style="background: ${winner_obj.color}" src="https://artur.red/faces/${winner_obj.pfp}.svg" alt="Player profile image">
+						<img style="background: ${winner_obj.color}" src="https://artur.red/faces/${winner_obj.pfp}.svg" alt="Player profile image">
 					</div>
-					<div class="info">
-						<p>${winner_obj.player}</p>
-						<span class="total-points">${winner_obj.score}</span>
-					</div>
+					<p>${winner_obj.player}</p>
 				</div>
-				<div class="rank-1">1</div>
+				<div class="rank-1 rank-display">1<span class="total-points">${winner_obj.score} Points</span></div>
 			</div>
 			${
                 third_place == null
                 ? ""
                 : `<div class="rank rank-nr-3">
-				<div class="player ">
+				<div class="player">
 					<div class="pfp">
-                        <img style="background: ${third_place_obj.color}" src="https://artur.red/faces/${third_place_obj.pfp}.svg" alt="Player profile image">
-                    </div>
+						<img style="background: ${third_place_obj.color}" src="https://artur.red/faces/${third_place_obj.pfp}.svg" alt="Player profile image">
+					</div>
 					<div class="info">
 						<p>${third_place_obj.player}</p>
-						<span class="total-points">${third_place_obj.score}</span>
 					</div>
 				</div>
-				<div class="rank-3">3</div>
+				<div class="rank-3 rank-display">3<span class="total-points">${third_place_obj.score} Points</span></div>
 			</div>`}
 		</div>
     `
@@ -891,6 +877,9 @@ socket.on(`game:extra-snippet:${room_id}`, (data) => {
 
 /* TRANSITION OVERLAY */
 const transition = (text, is_voting, function_callback) => {
+
+    let has_skipped_transition = false;
+
     if(document.getElementById("transition-container").innerHTML != ""){
         document.getElementById("transition-container").innerHTML = "";
     }
@@ -901,6 +890,11 @@ const transition = (text, is_voting, function_callback) => {
         </div>
     `
     const screen_overlay = document.getElementById("screen-overlay");
+    screen_overlay.onclick = () => {
+        has_skipped_transition = true;
+        if(typeof function_callback === "function") function_callback();
+        screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
+    }
 
     setTimeout(() => {
         screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
