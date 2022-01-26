@@ -128,6 +128,15 @@ socket.on(`player-join:${room_id}`, (data) => {
             `;
         }
 
+        if(is_leader){
+            if (getCookie("CONF_question_type")) question_type.value = getCookie("CONF_question_type");
+            if (getCookie("CONF_question_count")) question_count.value = getCookie("CONF_question_count");
+            if (getCookie("CONF_extra_snippets")) extra_snippets.value = getCookie("CONF_extra_snippets");
+
+            if (getCookie("CONF_public")) toggle_public.checked = getCookie("CONF_public");
+            if (getCookie("CONF_self_voting")) self_voting.checked = getCookie("CONF_self_voting");
+            if (getCookie("CONF_word_contribution")) word_contribution.checked = getCookie("CONF_word_contribution");
+        }
     }catch {
         console.log("error");
     }
@@ -174,6 +183,8 @@ socket.on(`return-message:${room_id}`, (message) => {
 
 
 question_type.addEventListener("change", () => {
+    setCookie("CONF_question_type", question_type.value);
+
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: {
@@ -186,6 +197,8 @@ question_type.addEventListener("change", () => {
 });
 
 toggle_public.addEventListener("click", () => {
+    setCookie("CONF_public", toggle_public.checked);
+
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: {
@@ -198,6 +211,8 @@ toggle_public.addEventListener("click", () => {
 });
 
 question_count.addEventListener("change", () => {
+    setCookie("CONF_question_count", question_count.value);
+
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: {
@@ -210,6 +225,8 @@ question_count.addEventListener("change", () => {
 });
 
 self_voting.addEventListener("click", () => {
+    setCookie("CONF_self_voting", self_voting.checked);
+
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: {
@@ -222,6 +239,8 @@ self_voting.addEventListener("click", () => {
 });
 
 word_contribution.addEventListener("click", () => {
+    setCookie("CONF_word_contribution", word_contribution.checked);
+
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: {
@@ -234,6 +253,8 @@ word_contribution.addEventListener("click", () => {
 });
 
 extra_snippets.addEventListener("change", () => {
+    setCookie("CONF_extra_snippets", extra_snippets.value);
+
     socket.emit(`config:settings-toggle`, {
         room: room_id,
         player: {
