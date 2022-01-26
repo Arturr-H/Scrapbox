@@ -42,14 +42,91 @@ const display_players = (players) => players.map(player_obj => `
     </li>
 `).join("");
 const display_player_count = (players) => player_count.innerHTML = `${players.length}/16`;
-
-
 lobby_short_id.addEventListener("click", () => {
     //copy the short id to the clipboard
     navigator.clipboard.writeText("https://artur.red/" + room_short_id);
     notice("Copied to clipboard!");
 })
 
+
+const question_type_change = () => {
+    setCookie("CONF_question_type", question_type.value);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: question_type.value,
+        setting: "question_type"
+    })
+}
+const toggle_public_change = () => {
+    setCookie("CONF_public", toggle_public.checked);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: toggle_public.checked,
+        setting: "public"
+    })
+}
+const question_count_change = () => {
+    setCookie("CONF_question_count", question_count.value);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: question_count.value,
+        setting: "question_count"
+    })
+}
+const self_voting_change = () => {
+    setCookie("CONF_self_voting", self_voting.checked);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: self_voting.checked,
+        setting: "self_voting"
+    })
+}
+const word_contribution_change = () => {
+    setCookie("CONF_word_contribution", word_contribution.checked);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: word_contribution.checked,
+        setting: "word_contribution"
+    })
+}
+const extra_snippets_change = () => {
+    setCookie("CONF_extra_snippets", extra_snippets.value);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: extra_snippets.value,
+        setting: "extra_snippets"
+    })
+}
 
 
 // > > JOIN HANDLER  &  PLAYER COUNTER > >
@@ -96,8 +173,6 @@ socket.on(`player-join:${room_id}`, (data) => {
         const room_data_json = await room_data.json();
         const players = room_data_json.game.players;
 
-        console.log(players);
-
         is_leader = room_data_json.game.leader.suid == getCookie("suid");
 
         player_list.innerHTML = display_players(players);
@@ -129,13 +204,30 @@ socket.on(`player-join:${room_id}`, (data) => {
         }
 
         if(is_leader){
-            if (getCookie("CONF_question_type")) question_type.value = getCookie("CONF_question_type");
-            if (getCookie("CONF_question_count")) question_count.value = getCookie("CONF_question_count");
-            if (getCookie("CONF_extra_snippets")) extra_snippets.value = getCookie("CONF_extra_snippets");
-
-            if (getCookie("CONF_public")) toggle_public.checked = getCookie("CONF_public");
-            if (getCookie("CONF_self_voting")) self_voting.checked = getCookie("CONF_self_voting");
-            if (getCookie("CONF_word_contribution")) word_contribution.checked = getCookie("CONF_word_contribution");
+            if (getCookie("CONF_question_type")){
+                question_type.value = getCookie("CONF_question_type");
+                question_type_change();
+            };
+            if (getCookie("CONF_public")){
+                toggle_public.checked = getCookie("CONF_public");
+                toggle_public_change();
+            }
+            if (getCookie("CONF_question_count")){
+                question_count.value = getCookie("CONF_question_count");
+                question_count_change();
+            }
+            if (getCookie("CONF_self_voting")){
+                self_voting.checked = getCookie("CONF_self_voting");
+                self_voting_change();
+            }
+            if (getCookie("CONF_word_contribution")){
+                word_contribution.checked = getCookie("CONF_word_contribution");
+                word_contribution_change();
+            }
+            if (getCookie("CONF_extra_snippets")){
+                extra_snippets.value = getCookie("CONF_extra_snippets");
+                extra_snippets_change();
+            }
         }
     }catch {
         console.log("error");
@@ -150,8 +242,6 @@ socket.on(`player-join:${room_id}`, (data) => {
 // > > START HANDLER > >
 
 start_button.addEventListener("click", () => {
-    console.log("starting....")
-
     socket.emit("start-game", {
         id: room_id,
         player: {
@@ -181,90 +271,12 @@ socket.on(`return-message:${room_id}`, (message) => {
 //
 // > > CONFIG HANDLER > >
 
-
-question_type.addEventListener("change", () => {
-    setCookie("CONF_question_type", question_type.value);
-
-    socket.emit(`config:settings-toggle`, {
-        room: room_id,
-        player: {
-            name: getCookie("usnm"),
-            suid: getCookie("suid")
-        },
-        new_value: question_type.value,
-        setting: "question_type"
-    })
-});
-
-toggle_public.addEventListener("click", () => {
-    setCookie("CONF_public", toggle_public.checked);
-
-    socket.emit(`config:settings-toggle`, {
-        room: room_id,
-        player: {
-            name: getCookie("usnm"),
-            suid: getCookie("suid")
-        },
-        new_value: toggle_public.checked,
-        setting: "public"
-    })
-});
-
-question_count.addEventListener("change", () => {
-    setCookie("CONF_question_count", question_count.value);
-
-    socket.emit(`config:settings-toggle`, {
-        room: room_id,
-        player: {
-            name: getCookie("usnm"),
-            suid: getCookie("suid")
-        },
-        new_value: question_count.value,
-        setting: "question_count"
-    })
-});
-
-self_voting.addEventListener("click", () => {
-    setCookie("CONF_self_voting", self_voting.checked);
-
-    socket.emit(`config:settings-toggle`, {
-        room: room_id,
-        player: {
-            name: getCookie("usnm"),
-            suid: getCookie("suid")
-        },
-        new_value: self_voting.checked,
-        setting: "self_voting"
-    })
-});
-
-word_contribution.addEventListener("click", () => {
-    setCookie("CONF_word_contribution", word_contribution.checked);
-
-    socket.emit(`config:settings-toggle`, {
-        room: room_id,
-        player: {
-            name: getCookie("usnm"),
-            suid: getCookie("suid")
-        },
-        new_value: word_contribution.checked,
-        setting: "word_contribution"
-    })
-});
-
-extra_snippets.addEventListener("change", () => {
-    setCookie("CONF_extra_snippets", extra_snippets.value);
-
-    socket.emit(`config:settings-toggle`, {
-        room: room_id,
-        player: {
-            name: getCookie("usnm"),
-            suid: getCookie("suid")
-        },
-        new_value: extra_snippets.value,
-        setting: "extra_snippets"
-    })
-});
+question_type.addEventListener(     "change", question_type_change      );
+toggle_public.addEventListener(     "click",  toggle_public_change      );
+question_count.addEventListener(    "change", question_count_change     );
+self_voting.addEventListener(       "click",  self_voting_change        );
+word_contribution.addEventListener( "click",  word_contribution_change  );
+extra_snippets.addEventListener(    "change", extra_snippets_change     );
 
 
 socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
@@ -374,8 +386,6 @@ socket.on(`name-change:${room_id}`, (data) => {
     const new_name = data.new_name;
     const old_name = data.old_name;
     const leader_name = data.leader_name;
-
-    console.log(`${old_name} changed their name to ${new_name}`);
 
     player_list.innerHTML = display_players(new_player_list);
     display_player_count(new_player_list);

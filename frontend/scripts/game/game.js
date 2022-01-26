@@ -144,7 +144,6 @@ text_submit.addEventListener("click", async () => {
 //Text server in
 socket.on(`game:text:${room_id}`, (data) => {
     current_snippets = data.current_snippets;
-    console.log(current_snippets);
     const players = data.players;
 
     //update the player list
@@ -417,8 +416,6 @@ const display_voting_view = (current_player_answers, index) => {
 
     document.getElementById("sunburst").style.display = "flex";
 
-    console.log(current_player_answers)
-
     return `
         <div class="question">
             <h1>${questions[current_voting_index].question}</h1>
@@ -442,7 +439,6 @@ const display_voting_view = (current_player_answers, index) => {
                     }">
                         
                         <p>${
-                            console.log(player_obj.sentences[index].sentence),
                             player_obj.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner_name}</span></span>`).join(" ")
                         }</p>
                         <div class="bottom"></div>
@@ -514,7 +510,6 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
 const display_card_owner_percentage = (current_player_answers, players, most_voted_for) => {
 
     const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
-    console.log(players)
 
     most_voted_for.map(player_suid => {
         
@@ -558,10 +553,6 @@ const display_results = (word_contributors) => {
     let winner = sorted_results[0];
     let second_place = sorted_results[1]??null;
     let third_place = sorted_results[2]??null;
-
-
-    console.log(sorted_results)
-    console.log(winner, second_place, third_place);
 
     let winner_obj, second_place_obj, third_place_obj;
 
@@ -769,8 +760,6 @@ const new_snippets_set = (input_str, additional_snippets) => {
     //nr1: [{word: "some_word", owner: "some_owner"}, {word: "some_word", owner: "some_owner"}]
     //nr2: ["some_word", "some_word"]
     //and they need diffrent mapping methods.
-
-    console.log(input_str);
 
     const is_additional_snippets = additional_snippets != 0 || additional_snippets != null;
 
