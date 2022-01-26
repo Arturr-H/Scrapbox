@@ -17,7 +17,8 @@ chat_form.addEventListener("submit", (e) => {
     socket.emit("chat:message", {
         message: chat_input.value,
         room_id: room_id,
-        player: getCookie("usnm")
+        player: getCookie("usnm"),
+        suid: getCookie("suid")
     });
 
     chat_input.value = "";

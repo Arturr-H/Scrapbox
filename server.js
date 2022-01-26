@@ -414,37 +414,18 @@ app.get("/api/get-room-data", (req, res) => {
         return res.sendStatus(404);
     }
 });
-//name selection, and saves the game that is queued so
-//the user gets automatically redirected to the game after
-//they have selected their name.
-app.get("/name/game-queue/:id?", (req, res) => {
-
-    try{
-
-        const short_code = req.params.id;
-        const username = req.cookies.usnm;
-
-        //Check if user has a name
-        if( username.length >= 3 ) {
-            if (req.params.id != "CREATE_ROOM_QUEUE") return res.redirect(`/${short_code}`);
-            else return res.redirect("/api/create-room");
-        };
-
-
-        res.status(200).render(default_paths.name_select, {
-            room: req.params.id
-        });
-    }catch(err){
-        if (DEBUG) console.log(err);
-        res.sendStatus(404);
-    }
-});
-
+//where users can change their names
 app.get("/name", (req, res) => {
     res.render(default_paths.name_select, {
         room: "none"
     });
 });
+//Shhhhhhhhhhhhh
+app.get("/balls", (req, res) => {res.send("<img src='https://c.tenor.com/S48-9VW_zekAAAAd/cat.gif' />")});
+app.get("/artur", (req, res) => {res.send("<img src='https://c.tenor.com/RFD6Dsb16OIAAAAd/spin.gif' />")});
+app.get("/aaron", (req, res) => {res.send("<img src='https://c.tenor.com/tCPGyy8fUiUAAAAC/punt-kick.gif' />")});
+app.get("/AAAAAAA", (req, res) => {res.send("<img src='https://c.tenor.com/mbTPJ5K06FwAAAAS/cat-cute-cat.gif' />")});
+
 
 //Check every minute if there are any rooms that have
 //surpassed the cleanup time. If there are, then delete them.
@@ -941,6 +922,7 @@ io.on("connection", (socket) => {
         try{
             const room_id = data.room_id;
             const player = data.player;
+            const suid = data.suid;
             //filter message from xss and bad words
             const message = data.message
                 .replace(/&/g, "&amp;")
@@ -948,12 +930,16 @@ io.on("connection", (socket) => {
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+
+            console.log(room_id, player, message);
             
             //replace bad words with *:s
             const filtered_message = filter_bad_words(message);
 
+            console.log(filtered_message);
+
             //check if player is in room
-            if (rooms[room_id].game.players.find(x => x.player === player)){
+            if (rooms[room_id].game.players.find(x => x.suid === suid)){
 
                 //send the message to the players
                 io.emit(`chat:message:${room_id}`, {
@@ -1089,18 +1075,10 @@ app.get("/:small_code?", (req, res) => {
         }
     }
     catch(err){
-        console.log(err);
+        if (DEBUG) console.log(err);
         return res.sendStatus(404);
     }
 })
-
-
-
-//Shhhhhhhhhhhhh
-app.get("/balls", (req, res) => {res.send("<img src='https://c.tenor.com/S48-9VW_zekAAAAd/cat.gif' />")});
-app.get("/artur", (req, res) => {res.send("<img src='https://c.tenor.com/RFD6Dsb16OIAAAAd/spin.gif' />")});
-app.get("/aaron", (req, res) => {res.send("<img src='https://c.tenor.com/tCPGyy8fUiUAAAAC/punt-kick.gif' />")});
-app.get("/AAAAAAA", (req, res) => {res.send("<img src='https://c.tenor.com/mbTPJ5K06FwAAAAS/cat-cute-cat.gif' />")});
 
 //Listeners
 server.listen(PORT, () => {
