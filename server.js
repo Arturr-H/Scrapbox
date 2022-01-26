@@ -87,11 +87,15 @@ const default_paths = {
 //custom messages like "you've been kicked from this room";
 const custom_message = (message) => {
     return `
-    
-        <div class="custom-message-wrapper">
-            <h1 class="custom-message-text">${message}</h1>
+        <div style="display: flex;justify-content: center;align-items: center;flex-direction: column;width: 100%;height: 100%;position: absolute;top: 0;left: 0;z-index: 1;background: #222634;">
+            <p style="color: white;">Oh no!</p>
+            <h1 style="color: white;">${message}</h1>
+            <a href="https://artur.red">
+                <button style="	border: 1px solid #BABABACC;border-radius: .5rem;background: transparent;color: white;box-sizing: border-box;padding: 1rem;height: min-content;min-width: 8rem;font-size: 0.9rem;cursor: pointer;">
+                    Home
+                </button>
+            </a>
         </div>
-    
     `
 }
 
@@ -114,7 +118,6 @@ const MAX_PLAYERS_PER_ROOM = 8;
 const MIN_PLAYERS_PER_ROOM = DEBUG ? 1 : 1;
 
 const QUESTION_COUNT = 2;
-const WORD_CONTRIBUTION_MULTIPLIER = 4;
 const ROOM_CLEANUP_TIME = 1000 * 60 * 60; //1 hour
 const ROOM_CLEANUP_CHECK_INTERVAL = 1000 * 60 * 60; //1 hour
 
@@ -123,7 +126,7 @@ const BASE_URL = "artur.red";
 
 const PROFILE_PICTURE_COUNT = fs.readdirSync(path.resolve("resources/faces")).length;
 
-//arturs fina palette: "#32021F", "#1446a0", "#1A5E63", "#DB3069", "#F71735", "#FFD400", "#7EE081", "#FFECD1"
+const DEFAULT_SNIPPETS = ["🤩", "👍", "😎", "😂", "👎", "👀", "🔥", "🥳", "🤡", ".", ",", "(", ")", "+", '+', "=", "!", "?"]
 const ROOM_COLORS = ["#e6194B", "#f58231", "#ffe119", "#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4"];
 
 const map_obj_to_percentage = (obj) => {
@@ -150,6 +153,7 @@ app.use("/script", express.static(path.join(__dirname, "frontend/scripts")));
 app.use("/style", express.static(path.join(__dirname, "frontend/style")));
 app.use("/page", express.static(path.join(__dirname, "frontend/html")));
 
+app.get("/favicon.ico", (req, res) => {res.sendFile(path.resolve("resources/images/logo.svg"))});
 
 //Express Routes    || STATIC PAGES ONLY ||
 app.get("/", (req, res) => {
@@ -209,6 +213,7 @@ app.get("/api/create-room", async (req, res) => {
         leader: true,
         online: true,
         player_color: room_colors[0],
+        extra_snippets_used: 0,
     }
 
     //Create the room
@@ -216,9 +221,11 @@ app.get("/api/create-room", async (req, res) => {
         roomcode: roomcode,
         small_code: small_code,
         qr: qr,
-        cleanup: new Date().getTime() + ROOM_CLEANUP_TIME,
 
+        cleanup: new Date().getTime() + ROOM_CLEANUP_TIME,
         room_colors: room_colors,
+
+        game_dictionary: [],
 
         game: {
             players: [leader_obj],
@@ -237,17 +244,7 @@ app.get("/api/create-room", async (req, res) => {
             current_questions: [],
             current_player_answers: [],
             word_contributors: {},
-            //looks something like this:
-            // [
-            //     { player: 'shit man', sentences: [ [Object], [Object] ] },
-            //     { player: 'Aaron', sentences: [ [Object], [Object] ] }
-            // ]
-
-            current_player_votes: {
-                [leader]: 0,
-            },
-            //looks something like this:
-            // { 'shit man': 1, Aaron: 1 }
+            current_player_votes: {[leader]: 0},
         }
     };
 
@@ -294,7 +291,8 @@ app.get("/room/:roomID", (req, res) => {
             pfp: req.cookies.pfp,
             done: false,
             leader: is_leader,
-            online: true
+            online: true,
+            extra_snippets_used: 0,
         }
 
         //make the player online: true
@@ -373,11 +371,25 @@ app.get("/game/:gameID?", (req, res) => {
 
             //add the questions to the room if they are not already there
             if(rooms[game_id].game.current_questions.length == 0){
-                rooms[game_id].game.current_questions = get_questions(
+                
+                const questions = get_questions(
                     rooms[game_id].game.config.question_count,
                     players_in_room,
                     rooms[game_id].game.config.question_type
                 );
+
+                rooms[game_id].game.current_questions = questions;
+
+                questions.forEach(question => {
+                    if(question.additional_snippets != null){
+                        question.additional_snippets.forEach(snippet => {
+                            rooms[game_id].game_dictionary.push(snippet.toLowerCase());
+                        });
+                    }
+                });
+
+                console.log(rooms[game_id].game_dictionary)
+                
             }
             res.sendFile(default_paths.game_room);
         }
@@ -489,7 +501,8 @@ io.on("connection", (socket) => {
                 pfp: player.pfp,
                 done: false,
                 leader: (rooms[room_id].game.leader.uid == player.uid),
-                online: true
+                online: true,
+                extra_snippets_used: 0
             }
             //make the player online: true
             rooms[room_id].game.players.find(x => x.suid === player.suid).online = true;
@@ -676,9 +689,23 @@ io.on("connection", (socket) => {
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.suid === player.suid)){
 
+                //add the words to the game_dictionary
+                rooms[room_id].game_dictionary = [
+                    ...rooms[room_id].game_dictionary,
+                    ...text.map(x => x.word.toLowerCase())
+                ];
+                console.log("SHIT")
+                console.log("SHIT")
+                console.log("SHIT")
+                console.log("SHIT")
+                console.log(text);
+                console.log("SHIT")
+                console.log("SHIT")
+                console.log("SHIT")
+                console.log("SHIT")
+
                 //split the text into an array of words, and randomize it using Math.random
                 const random_words = text.sort(() => Math.random() - 0.5);
-
 
                 //concat the random_words to the current_snippets array
                 rooms[room_id].game.current_snippets = [
@@ -688,14 +715,6 @@ io.on("connection", (socket) => {
                 //randomly sort the array
                 rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.sort(() => Math.random() - 0.5);
 
-                //rooms[room_id].game.current_snippets looks something like this:
-                //[
-                //{word: "word1", owner: "player1"},
-                //{word: "word2", owner: "player2"},
-                //{word: "word3", owner: "player3"},
-                //{word: "word4", owner: "player4"},
-                //
-                //]
                 //remove duplicates from the array of objects
                 rooms[room_id].game.current_snippets = rooms[room_id].game.current_snippets.filter((x, i, a) => a.findIndex(y => y.word === x.word) === i);
                 
@@ -732,13 +751,27 @@ io.on("connection", (socket) => {
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.suid === player.suid)){
 
-                //make a new object of all the owners of the words in the sentences
+                //Loop through the sentences and check if the words are in the game_dictionary
+                //if they are not, then remove them from the array
+                const valid_sentences = sentences.map(x => {
+                    const valid_sentence = x.sentence.filter(y => rooms[room_id].game_dictionary.includes(y.word.toLowerCase()));
+                    console.log(valid_sentence);
+                    return {
+                        question_id: x.question_id,
+                        sentence: valid_sentence,
+                        player: x.player
+                    }
+                });
+                console.log("vs");
+                console.log(valid_sentences[0].sentence);
+
+                //make a new object of all the owners of the words in the valid_sentences
                 //should look something like this: {player1: 2, player2: 1, player3: 5, player4: 6}
                 //the key is the player, and the value is the number of words they submitted
                 //and the [Object]s look something like this:
                 // {word: "word1", owner: "player1"}
                 let owners = {};
-                sentences.forEach(x => {
+                valid_sentences.forEach(x => {
 
                     x.sentence.forEach(word_obj => {
 
@@ -768,19 +801,20 @@ io.on("connection", (socket) => {
 
                     if(rooms[room_id].game.config.word_contribution){
                         rooms[room_id].game.word_contributors = sumObjectsByKey(rooms[room_id].game.word_contributors, x.owners);
+                        console.log(owners)
                     }
 
                     owners = {};
                 });
 
 
-                //add the sentences to the list of submitted sentences
+                //add the valid_sentences to the list of submitted sentences
                 rooms[room_id].game.current_player_answers.push({
                     player: {
                         name: player.name,
                         suid: player.suid
                     },
-                    sentences: sentences,
+                    sentences: valid_sentences,
                 });
 
                 //set the player to done
@@ -807,6 +841,43 @@ io.on("connection", (socket) => {
             return false;
         }
     })
+
+    socket.on("game:extra-snippet", (data) => {
+        const word = data.word;
+        const owner = data.owner;
+        const room_id = data.room_id;
+
+        try{
+
+            console.log(word, owner, room_id);
+
+            //check if player is in room
+            if (rooms[room_id].game.players.find(x => x.suid === owner)){
+
+                const room_extra_snippets = rooms[room_id].game.config.extra_snippets;
+                console.log(rooms[room_id].game.players.find(x => x.suid === owner))
+                const player_used_extra_snippets = rooms[room_id].game.players.find(x => x.suid === owner).extra_snippets_used;
+
+                console.log(room_extra_snippets, player_used_extra_snippets);
+
+                if (player_used_extra_snippets < room_extra_snippets){
+                
+                    //add the word to the game_dictionary
+                    rooms[room_id].game_dictionary.push(word.toLowerCase());
+
+                    //send the data back to the players
+                    io.emit(`game:extra-snippet:${room_id}`, {
+                        word: word,
+                        owner: owner
+                    });
+                }
+            }
+        }
+        catch(err){
+            if (DEBUG) console.log(err);
+            return false;
+        }
+    });
 
     //VOTING -------------------
     socket.on("game:vote-for", (data) => {
@@ -922,24 +993,33 @@ io.on("connection", (socket) => {
 });
 
 
-//Shhhhhhhhhhhhh
-app.get("/balls", (req, res) => {res.send("<img src='https://c.tenor.com/S48-9VW_zekAAAAd/cat.gif' />")});
-app.get("/artur", (req, res) => {res.send("<img src='https://c.tenor.com/RFD6Dsb16OIAAAAd/spin.gif' />")});
-app.get("/aaron", (req, res) => {res.send("<img src='https://c.tenor.com/tCPGyy8fUiUAAAAC/punt-kick.gif' />")});
-app.get("/AAAAAAA", (req, res) => {res.send("<img src='https://c.tenor.com/mbTPJ5K06FwAAAAS/cat-cute-cat.gif' />")});
-app.get("/favicon.ico", (req, res) => {res.sendFile(path.resolve("resources/images/logo.svg"))});
-
-
-
 app.get("/:small_code?", (req, res) => {
 
     try{
         
         const small_code = req.params.small_code;
 
+        //get the room id from the small code, rooms is an object
+        const get_roomcode = () => {
+            for (let room in rooms){
+                if (rooms[room].small_code == small_code){
+                    return room;
+                }
+            }
+            return false;
+        }
+        const room_id = get_roomcode();
+
         let name = req.cookies["usnm"];
         let pfp = req.cookies.pfp;
         let suid = req.cookies.suid;
+
+
+        //if the user is already in the room
+        if (rooms[room_id].game.players.find(x => x.suid === suid)){
+            return res.send(custom_message("You are already in the room"));
+        }
+
 
         if(!suid){
             const new_suid = generate_uid();
@@ -961,17 +1041,6 @@ app.get("/:small_code?", (req, res) => {
             res.cookie("suid", new_suid, {maxAge: 1000*60*60*24*30});
             suid = new_suid;
         }
-
-        //get the room id from the small code, rooms is an object
-        const get_roomcode = () => {
-            for (let room in rooms){
-                if (rooms[room].small_code == small_code){
-                    return room;
-                }
-            }
-            return false;
-        }
-        const room_id = get_roomcode();
         
         const player_obj = {
             name: name,
@@ -981,7 +1050,8 @@ app.get("/:small_code?", (req, res) => {
             done: false,
             online: true,
             leader: (rooms[room_id].game.leader.suid == suid),
-            player_color: rooms[room_id].room_colors[rooms[room_id].game.players.length]
+            player_color: rooms[room_id].room_colors[rooms[room_id].game.players.length],
+            extra_snippets_used: 0,
         }
         
         let found_room = false;
@@ -1025,6 +1095,13 @@ app.get("/:small_code?", (req, res) => {
 })
 
 
+
+//Shhhhhhhhhhhhh
+app.get("/balls", (req, res) => {res.send("<img src='https://c.tenor.com/S48-9VW_zekAAAAd/cat.gif' />")});
+app.get("/artur", (req, res) => {res.send("<img src='https://c.tenor.com/RFD6Dsb16OIAAAAd/spin.gif' />")});
+app.get("/aaron", (req, res) => {res.send("<img src='https://c.tenor.com/tCPGyy8fUiUAAAAC/punt-kick.gif' />")});
+app.get("/AAAAAAA", (req, res) => {res.send("<img src='https://c.tenor.com/mbTPJ5K06FwAAAAS/cat-cute-cat.gif' />")});
+
 //Listeners
 server.listen(PORT, () => {
     console.log("Clearing game rooms...");
@@ -1045,4 +1122,4 @@ server.listen(PORT, () => {
 
 
     console.log("up and running");
-})// ONE DARK PRO FLAT
+})

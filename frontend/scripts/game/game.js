@@ -38,7 +38,7 @@ let current_voting_index = 0;
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
-    <li class="player ${player_obj.done?"active":""}">
+    <li class="player ${player_obj.done?"active":""}" ${player_obj.suid == getCookie("suid")?"style='border: 2px solid var(--vibrant-green);'":""}>
         <div class="pfp">
             <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
         </div>
@@ -144,6 +144,7 @@ text_submit.addEventListener("click", async () => {
 //Text server in
 socket.on(`game:text:${room_id}`, (data) => {
     current_snippets = data.current_snippets;
+    console.log(current_snippets);
     const players = data.players;
 
     //update the player list
@@ -200,21 +201,21 @@ const display_question_view = (current_snippets) => {
                 ${
                     current_extra_snippets.map(word => {
                         return `
-                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}', '${word.suid}')" class="snippet clickable golden">${word.word}</span>
+                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner_name}', '${word.owner}')" class="snippet clickable golden">${word.word}</span>
                     `}).join(" ")
                 }
                 ${
                     //randomly sort the snippets
                     current_snippets.sort(() => Math.random() - 0.5).map(word => {
                         return `
-                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}', '${word.suid}')" class="snippet clickable">${word.word}</span>
+                            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner_name}', '${word.owner}')" class="snippet clickable">${word.word}</span>
                     `}).join(" ")
                 }
             </div>
             
             <div class="keyboard-controls" draggable="false">
 
-                <div draggable="false" class="shuffle" onclick="shuffle_snippets()"><img draggable="false" src="https://artur.red/icons/shuffle.svg" alt="Shuffle" ></div>
+                <div draggable="false" class="shuffle" onclick="shuffle_snippets('${questions[current_question_index].additional_snippets}')"><img draggable="false" src="https://artur.red/icons/shuffle.svg" alt="Shuffle" ></div>
                 <div draggable="false" id="mini-keyboard-toggle" onclick="toggle_keyboard('${questions[current_question_index].additional_snippets}')">
                     😂
                 </div>
@@ -320,8 +321,8 @@ const additional_words = (word_array) => {
 const add_word = (word, owner, suid) => {
     sentences[current_question_index].sentence.push({
         word: filter_xss(word).toLowerCase(),
-        owner: owner,
-        suid: suid,
+        owner_name: owner,
+        owner: suid,
         id: get_unique_id(),
     });
 
@@ -337,12 +338,22 @@ const remove_word = (word_id) => {
     sentences[current_question_index].sentence = sentences[current_question_index].sentence.filter(word_obj => word_obj.id !== word_id);
 }
 
-const shuffle_snippets = () => {
-    document.getElementById("snippet-input").innerHTML = current_snippets.sort(() => Math.random() - 0.5).map(word => {
-        return `
-            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner}', '${word.suid}')" class="snippet clickable">${word.word}</span>
-        `
-    }).join(" ");
+const shuffle_snippets = (additional) => {
+    let extra = current_extra_snippets.map(snippet => `
+        <span class="snippet golden" onclick="add_word('${snippet.word}', '${getCookie("usnm")}', '${getCookie("suid")}')">${snippet.word}</span>
+    `).join(" ");
+    
+    let _additional = "";
+    if (additional != "null") {
+        _additional = additional.split(",").map(snippet => `
+            <span class="snippet golden" onclick="add_word('${snippet}', '${getCookie("usnm")}', '${getCookie("suid")}')">${snippet}</span>
+        `).join(" ");
+    }
+
+    let regular = current_snippets.sort(() => Math.random() - 0.5).map(word => `
+            <span onclick="add_word('${filter_xss(word.word)}', '${word.owner_name}', '${word.owner}')" class="snippet clickable">${word.word}</span>
+    `).join(" ");
+    document.getElementById("snippet-input").innerHTML = extra + _additional + regular;
 }
 
 const submit_sentence = () => {
@@ -406,6 +417,8 @@ const display_voting_view = (current_player_answers, index) => {
 
     document.getElementById("sunburst").style.display = "flex";
 
+    console.log(current_player_answers)
+
     return `
         <div class="question">
             <h1>${questions[current_voting_index].question}</h1>
@@ -429,6 +442,7 @@ const display_voting_view = (current_player_answers, index) => {
                     }">
                         
                         <p>${
+                            console.log(player_obj.sentences[index].sentence),
                             player_obj.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner_name}</span></span>`).join(" ")
                         }</p>
                         <div class="bottom"></div>
@@ -500,24 +514,24 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
 const display_card_owner_percentage = (current_player_answers, players, most_voted_for) => {
 
     const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
-    const voting_index_answers_percentage = voting_index_answers.map(map_obj_to_percentage);
-
-    console.log("MVF", most_voted_for)
     console.log(players)
 
-    most_voted_for.map(player => {
+    most_voted_for.map(player_suid => {
         
-        const player_card = document.getElementById(`card_${player}`);
+        const player_card = document.getElementById(`card_${player_suid}`);
         // const player_card_content = player_card.querySelector(".bottom");
         player_card.classList.add("winning-card");
 
-        const current_player_owned_snippets = document.querySelectorAll(`#card_${player} .owner`);
+        const current_player_owned_snippets = document.querySelectorAll(`#card_${player_suid} .owner`);
 
         //all players have a player_color, so color all the current_player's snippets with their color
         current_player_owned_snippets.forEach(snippet => {
             try{
                 snippet.style.background = players.find(this_player => this_player.suid == snippet.classList[1].split("-")[2]).player_color;
                 snippet.classList.add("tooltip");
+
+                const tooltip = document.querySelectorAll(`#card_${player} .owner .tooltiptext`);
+                tooltip.innerHTML = players.find(this_player => this_player.suid == snippet.classList[1].split("-")[2]).name;
             }catch{}
         });
 
@@ -656,6 +670,8 @@ document.addEventListener("keyup", (e) => {
         //if the player has backspaced, we want to remove the last character from the word they are typing.
         word = word.slice(0, -1);
     }if (e.key == "Enter" || e.key === " " || e.key === "Spacebar"){
+
+        if(word == "") return;
         
         //click on the first word that matches the word they are typing.
         //so basically to explain to my future self, lets say you search
@@ -754,6 +770,8 @@ const new_snippets_set = (input_str, additional_snippets) => {
     //nr2: ["some_word", "some_word"]
     //and they need diffrent mapping methods.
 
+    console.log(input_str);
+
     const is_additional_snippets = additional_snippets != 0 || additional_snippets != null;
 
 
@@ -770,7 +788,7 @@ const new_snippets_set = (input_str, additional_snippets) => {
 
     if (typeof input_str === "string") {
 
-        return [...input_str].map(element => `<span onclick="add_word('${element}')" class="snippet clickable">${element}</span>`).join("");
+        return [...input_str].map(element => `<span onclick="add_word('${element}', '', '')" class="snippet clickable">${element}</span>`).join("");
 
     }else{
 
@@ -778,15 +796,14 @@ const new_snippets_set = (input_str, additional_snippets) => {
             try{
 
                 return new_additional_snippets.map(element => `<span onclick="add_word('${filter_xss(element)}', '')" class="snippet clickable golden">${filter_xss(element)}</span>`).concat(
-                    current_extra_snippets.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable golden">${filter_xss(element.word)}</span>`)).concat(
-                    input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`)).join("");
+                    current_extra_snippets.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}', '${element.suid}')" class="snippet clickable golden">${filter_xss(element.word)}</span>`)).concat(
+                    input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner_name}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`)).join("");
 
             }catch(err){
-                console.log(err)
-                return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
+                return input_str.map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner_name}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
             }
         }else{
-            return current_extra_snippets.concat(input_str).map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
+            return current_extra_snippets.concat(input_str).map(element => `<span onclick="add_word('${filter_xss(element.word)}', '${element.owner_name}', '${element.owner}')" class="snippet clickable">${filter_xss(element.word)}</span>`).join("");
         }
     }
 }
@@ -858,22 +875,28 @@ const toggle_keyboard = (additional_snippets) => {
     }
 }
 const add_extra_snippet = () => {
-    extra_snippets--;
     if (extra_snippets < 0) return;
     const value = document.getElementById("extra-snippet-input-text").value;
-    
     document.getElementById("extra-snippet-input-text").value = "";
-    document.getElementById("extra-snippet-count").innerHTML = extra_snippets;
 
-    
-    current_extra_snippets.push({
+    socket.emit("game:extra-snippet", {
         word: value,
+        owner: getCookie("suid"),
+        room_id: room_id
+    });
+}
+socket.on(`game:extra-snippet:${room_id}`, (data) => {
+    current_extra_snippets.push({
+        word: data.word,
         owner: getCookie("usnm")
     });
 
+    extra_snippets--;
+    document.getElementById("extra-snippet-count").innerHTML = extra_snippets;
+
     state = 0;
     toggle_keyboard(questions[current_question_index].additional_snippets);
-}
+});
 
 /* -------------------------------------------------- ANIMATIONS -------------------------------------------------- */
 

@@ -1881,7 +1881,8 @@ span.snippet {
 	transform: translateY(100%);
 }
 .rank-nr-1{
-	animation-delay: 4s;
+	animation-delay: 4s !important;
+	z-index: 10;
 }.rank-nr-2{
 	animation-delay: 2s;
 }.rank-nr-3{
@@ -2117,7 +2118,6 @@ make a choice between our prefabricated artific(********i*********)ally construc
 }.dots .dot.active{
 	background: var(--vibrant-green);
 }
-
 
 .golden{
 	background: #D3AF37 !important; 

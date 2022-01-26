@@ -50,6 +50,31 @@ module.exports = {
         }
         //Ett random namn av alla de som spelar i spelet...
         const name = rC(Names);
+        const get_names = (nr) => {
+            //they can't be the same
+            let total_tries = 0;
+            let current_names = []
+    
+            while (total_tries < 100 && current_names.length < nr) {
+                let name = rC(Names);
+                if (current_names.indexOf(name) === -1){
+                    current_names.push(name);
+                }
+                total_tries++;
+            }
+
+            if (current_names.length < nr) {
+                const extra_names_length = nr - current_names.length;
+                const extra_names = ["Someone", "Bob", "Nobody"]
+                for (let i = 0; i < extra_names_length; i++) {
+                    current_names.push(extra_names[i]);
+                }
+            }
+
+            return current_names;
+        }
+
+        const two_names = get_names(2);
 
 
         let defaultQuestions = [
@@ -279,8 +304,24 @@ module.exports = {
                 question:`Roses are red, violets are blue, ${Blank()}`,
                 additional_snippets: Names
             },
+            {
+                question:`Breaking news! ${name} just got arrested for ${Blank()}.`,
+                additional_snippets: ["being", "doing", "having", "trying", "to"]
+            },
+            {
+                question:`"Cut the ${Blank()} in half and put it in the freezer."`,
+                additional_snippets: null
+            },
+            {
+                question:`If ${two_names[0]} and ${two_names[1]} were to fight, who would win and why?`,
+                additional_snippets: two_names.concat(["because"])
+            },
+            {
+                question:`${two_names[0]} and ${two_names[1]} don't get along. Why?`,
+                additional_snippets: two_names.concat(["because"])
+            },
             
-        ];
+        ]; 
 
         let matureQuestions = [
             {

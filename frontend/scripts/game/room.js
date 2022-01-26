@@ -24,7 +24,7 @@ let room_short_id = "";
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
-    <li class="player ${player_obj.leader ? 'leader' : ''}">
+    <li class="player ${player_obj.leader ? 'leader' : ''}" ${player_obj.suid == getCookie("suid")?"style='border: 2px solid var(--vibrant-green);'":""}>
         <div class="pfp">
             <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Profile Picture">
         </div>

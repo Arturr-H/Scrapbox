@@ -16,7 +16,7 @@ const room_list = document.getElementById("room-list");
                     room.game.players[0].pfp
                 }.svg" alt="Profile Picture">
 
-                <h3>${room.game.leader}</h3>
+                <h3>${room.game.leader.name}</h3>
                 <h3>${room.game.players.length}/16</h3>
                 <h3>${room.game.config.question_type}</h3>
             </li>
