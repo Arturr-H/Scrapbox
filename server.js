@@ -177,13 +177,13 @@ app.get("/api/create-room", async (req, res) => {
     //generate room code
     const roomcode = generate_roomcode();
     const small_code = generate_small_code();
+    const room_colors = ROOM_COLORS.sort(() => Math.random() - 0.5)
+    const qr = await qr_code.toDataURL(`${PROTOCOL}://${BASE_URL}/${small_code}`, {color: {dark: "#000", light: "#00000000"}}).then(async (data) => await data);
 
     let leader = req.cookies["usnm"];
     let pfp = req.cookies["pfp"];
     let suid = req.cookies["suid"];
 
-    const room_colors = ROOM_COLORS.sort(() => Math.random() - 0.5)
-    const qr = await qr_code.toDataURL(`${PROTOCOL}://${BASE_URL}/${small_code}`, {color: {dark: "#000", light: "#00000000"}}).then(async (data) => await data);
 
     //if the user got no name
     if(!leader){
@@ -204,6 +204,7 @@ app.get("/api/create-room", async (req, res) => {
         suid = new_suid;
     }
 
+    //all the data for the leader of the room
     const leader_obj = {
         name: leader,
         uid: generate_uid(),
@@ -215,6 +216,18 @@ app.get("/api/create-room", async (req, res) => {
         player_color: room_colors[0],
         extra_snippets_used: 0,
     }
+
+    const leader_configuration_cache = {
+        question_type:      req.cookies["CONF_question_type"]      || "regular",
+        question_count:     req.cookies["CONF_question_count"]     || QUESTION_COUNT,
+        extra_snippets:     req.cookies["CONF_extra_snippets"]     || 1,
+        public:             req.cookies["CONF_public"]             || false,
+        self_voting:        req.cookies["CONF_self_voting"]        || false,
+        word_contribution:  req.cookies["CONF_word_contribution"]  || false,
+        story_writing_time: req.cookies["CONF_story_writing_time"] || 90,
+        answer_time:        req.cookies["CONF_answer_time"]        || 30,
+    }
+
 
     //Create the room
     rooms[roomcode] = {
@@ -232,14 +245,20 @@ app.get("/api/create-room", async (req, res) => {
             kicked_players: [],
             leader: leader_obj,
             started: false,
-            config: {
-                question_type: "regular",
-                question_count: QUESTION_COUNT,
-                extra_snippets: 1,
-                public: false,
-                self_voting: false,
-                word_contribution: true
-            },
+            start_time: 0,
+            config: leader_configuration_cache,
+
+            // {
+            //     question_type: "regular",
+            //     question_count: QUESTION_COUNT,
+            //     extra_snippets: 1,
+            //     public: false,
+            //     self_voting: false,
+            //     word_contribution: true,
+            //     story_writing_time: 90,
+            //     answer_time: 30,
+            // }
+
             current_snippets: [],
             current_questions: [],
             current_player_answers: [],
@@ -388,8 +407,6 @@ app.get("/game/:gameID?", (req, res) => {
                     }
                 });
 
-                console.log(rooms[game_id].game_dictionary)
-                
             }
             res.sendFile(default_paths.game_room);
         }
@@ -458,6 +475,8 @@ io.on("connection", (socket) => {
 
                     //Set the game to started
                     rooms[room_data.id].game.started = true;
+                    rooms[room_data.id].game.start_time = new Date().getTime();
+
                 }else{
                     io.emit(`return-message:${room_data.id}`, "2 players required to start the game.");
                 }
@@ -524,7 +543,7 @@ io.on("connection", (socket) => {
 
                 try{
                     //if the user is still not online after 5 seconds, remove them from the room
-                    if(!rooms[room_id].game.players.find(x => x.suid === user_suid).online){
+                    if(!rooms[room_id] || !rooms[room_id].game.players.find(x => x.suid === user_suid).online){
                         
                         //remove the player from the room and from current player votes and current player answers
                         rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.suid !== user_suid);
@@ -675,15 +694,6 @@ io.on("connection", (socket) => {
                     ...rooms[room_id].game_dictionary,
                     ...text.map(x => x.word.toLowerCase())
                 ];
-                console.log("SHIT")
-                console.log("SHIT")
-                console.log("SHIT")
-                console.log("SHIT")
-                console.log(text);
-                console.log("SHIT")
-                console.log("SHIT")
-                console.log("SHIT")
-                console.log("SHIT")
 
                 //split the text into an array of words, and randomize it using Math.random
                 const random_words = text.sort(() => Math.random() - 0.5);
@@ -736,15 +746,12 @@ io.on("connection", (socket) => {
                 //if they are not, then remove them from the array
                 const valid_sentences = sentences.map(x => {
                     const valid_sentence = x.sentence.filter(y => rooms[room_id].game_dictionary.includes(y.word.toLowerCase()));
-                    console.log(valid_sentence);
                     return {
                         question_id: x.question_id,
                         sentence: valid_sentence,
                         player: x.player
                     }
                 });
-                console.log("vs");
-                console.log(valid_sentences[0].sentence);
 
                 //make a new object of all the owners of the words in the valid_sentences
                 //should look something like this: {player1: 2, player2: 1, player3: 5, player4: 6}
@@ -782,7 +789,6 @@ io.on("connection", (socket) => {
 
                     if(rooms[room_id].game.config.word_contribution){
                         rooms[room_id].game.word_contributors = sumObjectsByKey(rooms[room_id].game.word_contributors, x.owners);
-                        console.log(owners)
                     }
 
                     owners = {};
@@ -830,16 +836,11 @@ io.on("connection", (socket) => {
 
         try{
 
-            console.log(word, owner, room_id);
-
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.suid === owner)){
 
                 const room_extra_snippets = rooms[room_id].game.config.extra_snippets;
-                console.log(rooms[room_id].game.players.find(x => x.suid === owner))
                 const player_used_extra_snippets = rooms[room_id].game.players.find(x => x.suid === owner).extra_snippets_used;
-
-                console.log(room_extra_snippets, player_used_extra_snippets);
 
                 if (player_used_extra_snippets < room_extra_snippets){
                 
@@ -973,6 +974,8 @@ io.on("connection", (socket) => {
         }
     })
 });
+
+
 
 
 app.get("/:small_code?", (req, res) => {

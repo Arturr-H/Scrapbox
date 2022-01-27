@@ -26,6 +26,8 @@ let all_players = [];
 let extra_snippets = 0;
 let current_extra_snippets = [];
 
+let has_submitted_story = false;
+
 const VOTING_TIME_IN_MS = 20000;
 
 const get_unique_id = () => {
@@ -94,6 +96,15 @@ const multiply_values_in_object = (obj, factor) => {
         extra_snippets = room_data_json.game.config.extra_snippets;
 
         all_players = players;
+
+        const story_writing_time = room_data_json.game.config.story_writing_time * 1000;
+        const game_start_time = room_data_json.game.start_time;
+
+        clock(game_start_time + story_writing_time, () => {
+            if (!has_submitted_story) text_submit.click();
+        });
+
+
     }catch(err){
         console.log("error");
     }
@@ -115,6 +126,8 @@ text_submit.addEventListener("click", async () => {
 
     //send the text to the server if it's not empty
     if(mapped_text.length > 0){
+        has_submitted_story = true;
+
         socket.emit("game:text", {
             room_id: room_id,
             text: mapped_text,
@@ -929,3 +942,26 @@ const show_voting_cards = () => {
         }, next_card_delay*i);
     });
 };
+
+/* -------------------------------------------------- CLOCK -------------------------------------------------- */
+
+let clock_interval = null;
+
+const clock = (end_time, callback) => {
+    const clock_counter = document.getElementById("clock-counter");
+
+    clock_interval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = end_time - now;
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (distance < 0) {
+            clearInterval(clock_interval);
+            clock_interval = null;
+            callback();
+        }else{
+            clock_counter.innerHTML = `${minutes}:${seconds}`;
+        }
+    }, 100);
+}

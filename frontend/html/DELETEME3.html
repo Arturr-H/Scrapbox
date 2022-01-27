@@ -1,58 +1,17 @@
 <!DOCTYPE html>
 
 <html lang="en">
-
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content="#000000" />
-		<link rel="apple-touch-icon" href="https://artur.red/images/logo.svg" />
-
-		<!-- Meta -->
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="keywords" content="Artur.red, ScrapBox, Scrap box, Artur red, Play ScrapBox, ScrapBox Join Room">
-		<meta name="author" content="Artur Hoffsummer, Aaron Clauss">
-		<meta name="publisher" content="Artur Hoffsummer, Aaron Clauss">
-		<meta name="copyright" content="Artur Hoffsummer, Aaron Clauss">
-		<meta name="description" content="Scrapbox, a word-scrambling multiplayer game. Create lobbies with up to eight players and create the best sentences to win the nr 1 spot!">
-		<meta name="page-type" content="Games">
-		<meta name="audience" content="Everyone">
-		<link rel="icon" type="image/x-icon" href="https://artur.red/images/logo.svg">
+		<title>Document</title>
 
-		
-		<meta name="title" content="ScrapBox | Room">
-		<meta name="description" content="ScrapBox, a word-scrambling multiplayer game. Create lobbies with up to eight players and create the best sentences to win the nr 1 spot!">
-
-		<!-- Open Graph / Facebook -->
-		<meta property="og:type" content="game">
-		<meta property="og:url" content="https://artur.red/">
-		<meta property="og:title" content="ScrapBox | Room">
-		<meta property="og:description" content="ScrapBox, a word-scrambling multiplayer game. Create lobbies with up to eight players and create the best sentences to win the nr 1 spot!">
-		<meta property="og:image" content="https://artur.red/images/screenshot.png">
-
-		<!-- Twitter -->
-		<meta property="twitter:card" content="summary_large_image">
-		<meta property="twitter:url" content="https://artur.red/">
-		<meta property="twitter:title" content="ScrapBox | Room">
-		<meta property="twitter:description" content="ScrapBox, a word-scrambling multiplayer game. Create lobbies with up to eight players and create the best sentences to win the nr 1 spot!">
-		<meta property="twitter:image" content="https://artur.red/images/screenshot.png">
-
-		<!-- Scripts -->
-		<script src="/socket.io/socket.io.js" defer></script>
+		<link rel="stylesheet" href="https://artur.red/style/global.css">
 		<script src="https://artur.red/script/cookies.js" defer></script>
-		<script src="https://artur.red/script/game/room.js" defer></script>
-		<script src="https://artur.red/script/game/room-chat.js" defer></script>
-		<script src="https://artur.red/script/notice.js" defer></script>
 		<script src="https://artur.red/script/global.js" defer></script>
-		<script src="https://artur.red/script/modal.js" defer></script>
+		<script src="https://artur.red/script/game/browse-games.js" defer></script>
 
-		<!-- Styles -->
-		<link rel="stylesheet" href="https://artur.red/style/global.css" />
-
-		<!-- Title -->
-		<title>ScrapBox | Room</title>
 	</head>
 
 	<body class="dark" cz-shortcut-listen="true" data-new-gr-c-s-check-loaded="8.893.0" data-gr-ext-installed="">
@@ -60,7 +19,15 @@
 			<nav>
 				<p id="player-count" class="player-count">1/16</p>
 				<ul id="player-list">
-					
+					<li class="player leader" style="border: 2px solid var(--vibrant-green);">
+						<div class="pfp">
+							<img style="background: #ffe119" src="https://artur.red/faces/5.svg" alt="Profile Picture">
+						</div>
+						<div class="info">
+							<p>Aaron</p>
+
+						</div>
+					</li>
 				</ul>
 				<hr>
 				<div class="volume">
@@ -71,9 +38,9 @@
 
 			<div class="main-room-section">
 				<div class="room-section-header">
-					<h1 id="lobby-short-id" class="lobby-short-id"></h1>
+					<h1 id="lobby-short-id" class="lobby-short-id">5946 &nbsp; 405</h1>
 					<img id="room-qr" class="qr-code"
-						src="">
+						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAK/SURBVO3BQY4ERwwDwaTQ//8yfZV8EFConvHumhFERERERERERERERERERERE/DHinvkuMZlJTGYSZ8wkJjOJyXyXuFBENEVEU0Q0D+8T7zLvMpPYiZ04I95lXlRENEVEU0Q0D59nzoh3iZ25I+6YM+KDioimiGiKiObh9xM7M4lJ7MwkJjOJX6yIaIqIpohoHn4/c8bsxCT+R4qIpohoiojm4fPEZ4nJfJe4I36QIqIpIpoionl4n/kuM4nJTGIyOzOJyUxiZ36wIqIpIpoiohHxb2YnJjOJX6yIaIqIpohoxD0ziZ35LDGZO2IyZ8TOTGIyZ8SFIqIpIpoionl4n5nEGbEzOzOJnbkjJrMzO3NGvKiIaIqIpohoxOeZSUzmjNiZd4nJTGIy7xI7M4kLRURTRDRFRCPeZyZxxkzijpnEZCaxM2fEGXNHXCgimiKiKSIa8X1mEpPZicl8lpjMJHZmJ+6YSVwoIpoioikimod7ZhKTmcRkduKOOGPOmJ3YmUnszCReVEQ0RURTRDTintmJydwRk5nEzuzEztwRk3mXuFBENEVEU0Q0D+8Tk5nEzkxiMpOYzCR2YjJnxM5MZhKT2YnJvKiIaIqIpohoxD0ziZ2ZxM5MYmd2Ymd2YjLvEpPZiRcVEU0R0RQRzcM9cUacETsziZ3ZiTvijPlBioimiGiKiObhnvku8S4xmZ04YyZxRuzMJC4UEU0R0RQRzcP7xLvMu8RkPkt8lnhREdEUEU0R0Tx8njkj3mUmcUZMZme+y0ziQhHRFBFNEdE8/D3mjDgjdmYn7pgPKiKaIqIpIpqH30/cMZPYmUlM4oz5QYqIpohoiojm4fPEf8tMYhKfZc6IyXxREdEUEU0R0Ty8z3yXmcQkduaMmMwkdmJnJrEzLyoimiKiKSIiIiIiIiIiIiIiIiIiIiIi/rB/AGrVdO7q9gWUAAAAAElFTkSuQmCC">
 				</div>
 				<div class="room-section-body">
 					<div class="config" id="config-area">
@@ -89,7 +56,7 @@
 							
 								<div class="setting-text">
 									<p>Question type</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											Changes the type of questions asked in the game.
 										</span>
@@ -114,7 +81,7 @@
 							
 								<div class="setting-text">
 									<p>Question amount</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											Changes the amount of questions asked in the game.
 										</span>
@@ -136,7 +103,7 @@
 							
 								<div class="setting-text">
 									<p>Extra snippets</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											Enables players to add personal words during the game's runtime.
 										</span>
@@ -155,7 +122,7 @@
 							
 								<div class="setting-text">
 									<p>Public</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											Allows other players to join the game from the browse section.
 										</span>
@@ -179,7 +146,7 @@
 	
 								<div class="setting-text">
 									<p>Story writing time</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											How long the user has to write their words.
 										</span>
@@ -201,14 +168,13 @@
 	
 								<div class="setting-text">
 									<p>Answer time</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											How long the user has to answer the question.
 										</span>
 									</div>
 								</div>
 							</div>
-							
 							<div class="setting-row">
 								<div class="setting">
 									<label class="switch">
@@ -219,7 +185,7 @@
 
 								<div class="setting-text">
 									<p>Self-voting</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											Enables you to vote on your own submitions.
 										</span>
@@ -238,7 +204,7 @@
 
 								<div class="setting-text">
 									<p>Word contribution</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip">&#x1F6C8;
 										<span class="setting-tooltip-container">
 											Enables players to gain extra points for their words being used by the winning card.  
 										</span>

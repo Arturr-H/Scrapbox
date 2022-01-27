@@ -116,7 +116,7 @@ module.exports = {
             },
             {
                 question:`Hi, Welcome to McDonalds. what can I get for you?`,
-                additional_snippets: ["McDonalds", "burger", "with", "fries", "soda"]
+                additional_snippets: ["McDonalds", "burger", "fries", "soda"]
             },
             {
                 question:`Top ten reasons to keep going. Nr 10: ${Blank()}.`,
@@ -152,8 +152,8 @@ module.exports = {
                 additional_snippets: null
             },
             {
-                question:`I thought I'd never see ${Blank()} again, yet here we are.`,
-                additional_snippets: null
+                question:`I thought I'd never ${Blank()} again, yet here we are.`,
+                additional_snippets: ["see", "find", "do"]
             },
             {
                 question:`How would you spend a Saturday night with ${name}?`,
@@ -222,15 +222,15 @@ module.exports = {
             },
             {
                 question:`What would you engrave on your tombstone?`,
-                additional_snippets: ["a", "big", "text", "saying", "an", "image", "of"]
+                additional_snippets: ["text", "saying", "image", "of"]
             },
             {
                 question:`${Blank()}, underrated and should be celebrated.`,
                 additional_snippets: null
             },
             {
-                question:`Why are you ${Blank()} right now? -"Uhh it's for scientifical purposes"`,
-                additional_snippets: ["doing", "making", "trying", "to"]
+                question:`Why are you ${Blank()} right now? - "Uhh it's for scientifical purposes"`,
+                additional_snippets: ["doing", "making", "trying"]
             },
             {
                 question:`${Blank()} is the best thing since sliced bread.`,
@@ -238,16 +238,16 @@ module.exports = {
             },
             {
                 question:`${name}, our hero. Please ${Blank()} immediately.`,
-                additional_snippets: ["stop", "cancel"]
+                additional_snippets: ["stop", "save"]
             },
             {
                 question:`If you were to host an e-sport competition, what would the prize be?`,
-                additional_snippets: ["a", "bunch", "of", "some"]
+                additional_snippets: ["bunch", "of", "some"]
             },
-            {
-                question:`What continues to make me constipated?`,
-                additional_snippets: ["food", "culture"]
-            },
+            // {
+            //     question:`What continues to make me constipated?`,
+            //     additional_snippets: ["food", "culture"]
+            // },
             {
                 question:`${name} consists of pure ${Blank()}.`,
                 additional_snippets: null
@@ -257,19 +257,19 @@ module.exports = {
                 additional_snippets: ["being", "doing", "trying", "to"]
             },
             {
-                question:`Omg, Toys R Us has started selling ${Blank()} to children!`,
+                question:`Oh my god! Toys R Us has started selling ${Blank()} to children!`,
                 additional_snippets: ["a", "bunch", "some", "of", "toys"]
             },
             {
                 question:`McDonalds X ${Blank()}, the crossover we didn't know we needed`,
-                additional_snippets: ["lill nax sex"]
+                additional_snippets: null
             },
             {
                 question:`Write a story.`,
                 additional_snippets: Names.concat(["once", "upon", "a", "time"])
             },
             {
-                question:`I checked you computer last night. Why is ${Blank()} in your search history?`,
+                question:`I checked your computer last night ${name}, and it was packed with ${Blank()}`,
                 additional_snippets: null
             },
             {
@@ -283,6 +283,18 @@ module.exports = {
             {
                 question:`Now that I'm older, I'm finally going to ${Blank()}.`,
                 additional_snippets: ["get", "have", "do"]
+            },
+            {
+                question:`We are the prime age for ${Blank()}.`,
+                additional_snippets: ["get", "have", "do"]
+            },
+            {
+                question:`Yeah, I'm kind of a big deal. I'm ${Blank()}`,
+                additional_snippets: ["CEO", "prime minister", "king", "president"]
+            },
+            {
+                question:`When I grow up, I want to be the CEO of ${Blank()}.`,
+                additional_snippets: null
             },
             {
                 question:`"I'm going to ${Blank()} the next time I see you."`,
@@ -302,7 +314,11 @@ module.exports = {
             },
             {
                 question:`Roses are red, violets are blue, ${Blank()}`,
-                additional_snippets: Names
+                additional_snippets: Names.concat(["too", "sue", "do", "you", "zoo"])
+            },
+            {
+                question:`What is the reason why you're single?`,
+                additional_snippets: null
             },
             {
                 question:`Breaking news! ${name} just got arrested for ${Blank()}.`,
@@ -313,7 +329,7 @@ module.exports = {
                 additional_snippets: null
             },
             {
-                question:`If ${two_names[0]} and ${two_names[1]} were to fight, who would win and why?`,
+                question:`If ${two_names[0]} and ${two_names[1]} were to fight, who'd win and why?`,
                 additional_snippets: two_names.concat(["because"])
             },
             {
@@ -326,7 +342,7 @@ module.exports = {
         let matureQuestions = [
             {
                 question: `During sex, I like to think about ${Blank()}.`,
-                additional_snippets: ["when", "I", "was", "that"]
+                additional_snippets: ["when", "was", "that", "time"]
             },
             {
                 question: `What will always get you laid?`,
@@ -353,7 +369,7 @@ module.exports = {
                 additional_snippets: ["bill", "subscription"]
             },
             {
-                question: `If I ever see ${name} again, I'm going brutally murder him with ${Blank()}.`,
+                question: `If I ever see ${name} again, I'm going brutally murder them with ${Blank()}.`,
                 additional_snippets: ["army", "containing"]
             },
             {
@@ -361,7 +377,7 @@ module.exports = {
                 additional_snippets: null
             },
             {
-                question: `If you ever want your cock to grow back, you have to eat ${Blank()}.`,
+                question: `If you ever want your cock to grow back, you'll have to eat ${Blank()}.`,
                 additional_snippets: ["a", "lot", "of"]
             },
             {

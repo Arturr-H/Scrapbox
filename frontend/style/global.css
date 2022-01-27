@@ -126,6 +126,23 @@ nav {
 
 	display: flex;
 	flex-direction: column;
+
+	border-right: var(--border);
+
+	overflow-x: hidden;
+}nav::after{
+	content: "";
+	position: absolute;
+
+	bottom: 5rem;
+	left: 0%;
+	transform: translateX(-50%);
+
+	width: 15rem;
+	height: 15rem;
+
+	background: url(https://artur.red/images/logo.svg);
+	opacity: .2;
 }
 
 nav>form>input[type="text"] {
@@ -364,18 +381,18 @@ hr {
 }
 
 .main-room-section {
-	display: grid;
-	grid-template-rows: min-content 5fr;
-	grid-template-columns: 1fr;
+	display: flex;
+	flex-flow: column;
 
-
+	gap: 2rem;
 
 	width: 100%;
-	height: 100vh;
+	height: 100%;
 	max-height: 100vh;
 
-	padding: 3rem;
+	padding: 2rem;
 	padding-top: 0;
+	position: relative;
 	
 }.room-section-header {
 	background: var(--main-bg);
@@ -396,6 +413,20 @@ hr {
 	box-sizing: border-box;
 	padding: 0 1rem;
 }
+.room-section-body{
+	border-radius: var(--border-radius);
+	border: var(--border);
+	background: var(--main-bg);
+	
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	flex: 1;
+	max-height: 100%;
+
+	overflow-y:hidden;
+}
+
 
 .qr-code {
 	height: calc(100% - 2rem);
@@ -431,60 +462,79 @@ hr {
 	background: rgba(0, 0, 0, 0.5);
 }
 
-.container {
-	width: 100%;
-	height: calc(100% - 2rem - 8rem);
-	max-height: calc(100% - 2rem - 8rem);
-	display: flex;
-
-	border-radius: var(--border-radius);
-	border: var(--border);
-
-	margin-top: 2rem;
-	box-sizing: border-box;
-
-	overflow: hidden;
-	position: relative;
-
-	background-color: var(--main-bg) !important;
-	/* background: url(https://artur.red/images/pattern-03.svg); */
-	background-size: 15rem 15rem;
-
-}.container>div.config>p {
-	height: min-content;
-	width: max-content;
-
-	display: block;
-	margin: auto;
-}.config {
+.config {
 	padding: 2rem;
-	box-sizing: border-box;
 
 	width: 100%;
-	height: 100%;
+	max-width: 80rem;
+	
 
 	display: flex;
-	flex-direction: column;
-	gap: .8rem;
+	
 
 	overflow-y: scroll;
-
+}.config .settings{
+	flex: 1;
+	display: flex;
+	align-items: center;
+	flex-flow: column;
+	gap: .5rem;
 }.config .setting-row {
 	width: 100%;
 	max-width: 40rem;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	margin: .2rem 0;
+	gap: 2rem;
 }.setting-row .setting {
 	flex: 1;
+	display: flex;
+	justify-content: end;
 }.setting-row .setting-text {
 	flex: 1;
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	position: relative;
 }.setting-text p {
 	margin: 0;
 	font-size: 1.1rem;
 	font-weight: 300;
-}.config hr {
-	margin: 2rem 0;
+}
+
+.setting-tooltip{
+	position: relative;
+	display: inline-block;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 1.1rem;
+	margin: 0 0.4rem;
+}.setting-tooltip .setting-tooltip-container{
+	visibility: hidden;
+	width: 120px;
+	background-color: rgba(0, 0, 0, 0.514);
+	
+	color: #fff;
+	text-align: center;
+	font-size: 0.8rem;
+
+	border-radius: 6px;
+	padding: 0.5rem .3rem;
+	position: absolute;
+	z-index: 1;
+	top: 50%;
+	left: 200%;
+	transform: translateY(-50%);
+}.setting-tooltip .setting-tooltip-container:after{
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 100%;
+	margin-top: -5px;
+	border: 5px solid;
+	border-color: transparent rgba(0, 0, 0, 0.514) transparent transparent;
+}.setting-tooltip:hover .setting-tooltip-container{
+	visibility: visible;
 }
 
 .instructions {
@@ -492,6 +542,7 @@ hr {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	flex: 1 0 auto;
 }.instructions h1 {
 	max-width: 20rem;
 	font-size: 2rem;
@@ -586,6 +637,18 @@ button {
 	background: var(--main-color-hover) !important;
 }button:active, profile-pictures > button:active {
 	background: var(--main-color-active) !important;
+}button.btl{
+	position: absolute;
+	bottom: 1rem; right: 1rem;
+	z-index: 50;
+	background-color: var(--player-bg);
+}button#start-button{
+	width: 10rem;
+}.start-button{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .switch {
@@ -655,14 +718,15 @@ select {
 	width: 10rem;
 	height: 2.4rem;
 	box-sizing: border-box;
-	border: .1rem solid var(--border-color);
+	/* border: .1rem solid var(--border-color); */
+	border: none;
 
 	border-radius: 10rem;
 	position: relative;
 	cursor: pointer;
 	transition: background .2s ease;
 
-	background: var(--nav-bg);
+	background: var(--main-color);
 	color: var(--text-color);
 
 	padding: 0rem 1rem;
@@ -674,6 +738,8 @@ select {
 
 	background: var(--main-color);
 	color: var(--text-color);
+
+	visibility: hidden;
 }
 
 
@@ -1325,10 +1391,10 @@ span.player-result {
 
 	overflow: hidden;
 }.question{
-	text-align: center;
+	/* text-align: center; */
 	padding-top: 2rem;
 	padding-bottom: 2rem;
-
+	max-width: calc(80vw - 8rem);
 	z-index: 0;
 	font-size: 1.2rem;
 	font-family: "Roboto", sans-serif !important;
@@ -1819,17 +1885,14 @@ span.snippet {
 	padding-right: 1rem;
 
 	border-radius: 1rem 1rem 0 0;
-	background-color: var(--main-color);
-	color: white;
 
 	font-size: 2rem;
 	font-weight: bold;
 	text-align: center;
 	user-select: none;
-	cursor: pointer;
 
-	border: var(--border);
-	border-bottom: none;
+	border: var(--player-bg) solid 3px;
+	border-bottom:none;
 
 	margin-top: 1rem;
 }
@@ -1865,11 +1928,11 @@ span.snippet {
 
 	transform: translateY(-100vh)
 }.rank-2{
-	height: 33vh;
+	height: 30vh;
 	background: rgb(148, 148, 148) !important;
 	color: black !important;
 }.rank-3{
-	height: 12.5vh;
+	height: 18vh;
 	background: #CD7F32;
 	color: black !important;
 }.rank .total-points{
@@ -1885,7 +1948,18 @@ span.snippet {
 	text-align: center;
 	width: 100% !important;
 	height: 3.5rem !important;
+	position: relative;
 }
+/* .rank .player:after{
+	content: "";
+	position: absolute;
+	width: 100%; height: 100%;
+	top: 0; left: 0;
+	background: url(https://artur.red/images/user-highlight.svg);
+	background-size: 100% 100%;
+	transform: scale3d(8,8,8) !important;
+	z-index: 15;
+} */
 
 .rank-display{
 	display: flex;
@@ -2194,4 +2268,42 @@ make a choice between our prefabricated artific(********i*********)ally construc
 .golden{
 	background: #D3AF37 !important; 
 	color: black !important;
+}
+
+
+.stopwatch-position{
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}.stopwatch-position > p{
+	font-weight: 900;
+
+	margin-top: -1rem;
+}.stopwatch-container{
+	width: 5rem;
+	height: 5rem;
+	position: relative;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	user-select: none;
+	pointer-events: none;
+
+	right: 0%;
+}.stopwatch-container > .watch-piece{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}.stopwatch-container > .watch-piece.hour{
+	animation: rotate-loop-mini-sunburst linear infinite;
+	animation-duration: 8s;
+}.stopwatch-container > .watch-piece.minute{
+	animation: rotate-loop-mini-sunburst 2s linear infinite;
 }

@@ -68,3 +68,5 @@ Backend:
   NEW SEHS AGAIN AGAIN:
    - Winner text is displayed before winner is announced.
    - Extra snippets.
+
+   MOVE CONFIG CACHE TO SERVER-SIDE

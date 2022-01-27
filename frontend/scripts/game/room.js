@@ -16,6 +16,8 @@ const question_count = document.getElementById("question-count");
 const self_voting = document.getElementById("self-voting");
 const word_contribution = document.getElementById("word-contribution");
 const extra_snippets = document.getElementById("extra-snippets");
+const story_writing_time = document.getElementById("story-writing-time");
+const answer_time = document.getElementById("answer-time");
 
 const room_qr = document.getElementById("room-qr");
 
@@ -127,6 +129,32 @@ const extra_snippets_change = () => {
         setting: "extra_snippets"
     })
 }
+const story_writing_time_change = () => {
+    setCookie("CONF_story_writing_time", story_writing_time.value);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: story_writing_time.value,
+        setting: "story_writing_time"
+    })
+}
+const answer_time_change = () => {
+    setCookie("CONF_answer_time", answer_time.value);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: answer_time.value,
+        setting: "answer_time"
+    })
+}
 
 
 // > > JOIN HANDLER  &  PLAYER COUNTER > >
@@ -185,6 +213,8 @@ socket.on(`player-join:${room_id}`, (data) => {
         question_type.value = room_data_json.game.config.question_type;
         question_count.value = room_data_json.game.config.question_count;
         extra_snippets.value = room_data_json.game.config.extra_snippets;
+        story_writing_time.value = room_data_json.game.config.story_writing_time;
+        answer_time.value = room_data_json.game.config.answer_time;
 
         toggle_public.checked = room_data_json.game.config.public;
         self_voting.checked = room_data_json.game.config.self_voting;
@@ -201,33 +231,6 @@ socket.on(`player-join:${room_id}`, (data) => {
             config_area.innerHTML = `
                 <p>Waiting for <b>${room_data_json.game.leader.name}</b> to start the game</p>
             `;
-        }
-
-        if(is_leader){
-            if (getCookie("CONF_question_type")){
-                question_type.value = getCookie("CONF_question_type");
-                question_type_change();
-            };
-            if (getCookie("CONF_public")){
-                toggle_public.checked = getCookie("CONF_public");
-                toggle_public_change();
-            }
-            if (getCookie("CONF_question_count")){
-                question_count.value = getCookie("CONF_question_count");
-                question_count_change();
-            }
-            if (getCookie("CONF_self_voting")){
-                self_voting.checked = getCookie("CONF_self_voting");
-                self_voting_change();
-            }
-            if (getCookie("CONF_word_contribution")){
-                word_contribution.checked = getCookie("CONF_word_contribution");
-                word_contribution_change();
-            }
-            if (getCookie("CONF_extra_snippets")){
-                extra_snippets.value = getCookie("CONF_extra_snippets");
-                extra_snippets_change();
-            }
         }
     }catch {
         console.log("error");
@@ -277,6 +280,8 @@ question_count.addEventListener(    "change", question_count_change     );
 self_voting.addEventListener(       "click",  self_voting_change        );
 word_contribution.addEventListener( "click",  word_contribution_change  );
 extra_snippets.addEventListener(    "change", extra_snippets_change     );
+story_writing_time.addEventListener("change", story_writing_time_change );
+answer_time.addEventListener(       "change", answer_time_change        );
 
 
 socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
@@ -301,7 +306,12 @@ socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     if (new_data.setting == "extra_snippets") {
         extra_snippets.value = new_data.new_value;
     }
-    
+    if (new_data.setting == "story_writing_time") {
+        story_writing_time.value = new_data.new_value;
+    }
+    if (new_data.setting == "answer_time") {
+        answer_time.value = new_data.new_value;
+    }
 });
 
 // maturity
