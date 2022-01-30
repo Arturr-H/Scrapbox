@@ -248,17 +248,6 @@ app.get("/api/create-room", async (req, res) => {
             start_time: 0,
             config: leader_configuration_cache,
 
-            // {
-            //     question_type: "regular",
-            //     question_count: QUESTION_COUNT,
-            //     extra_snippets: 1,
-            //     public: false,
-            //     self_voting: false,
-            //     word_contribution: true,
-            //     story_writing_time: 90,
-            //     answer_time: 30,
-            // }
-
             current_snippets: [],
             current_questions: [],
             current_player_answers: [],
@@ -442,7 +431,7 @@ app.get("/balls", (req, res) => {res.send("<img src='https://c.tenor.com/S48-9VW
 app.get("/artur", (req, res) => {res.send("<img src='https://c.tenor.com/RFD6Dsb16OIAAAAd/spin.gif' />")});
 app.get("/aaron", (req, res) => {res.send("<img src='https://c.tenor.com/tCPGyy8fUiUAAAAC/punt-kick.gif' />")});
 app.get("/AAAAAAA", (req, res) => {res.send("<img src='https://c.tenor.com/mbTPJ5K06FwAAAAS/cat-cute-cat.gif' />")});
-
+//balls tea time
 
 //Check every minute if there are any rooms that have
 //surpassed the cleanup time. If there are, then delete them.
@@ -794,12 +783,15 @@ io.on("connection", (socket) => {
                     owners = {};
                 });
 
+                const this_player = rooms[room_id].game.players.find(x => x.suid === player.suid);
 
                 //add the valid_sentences to the list of submitted sentences
                 rooms[room_id].game.current_player_answers.push({
                     player: {
                         name: player.name,
-                        suid: player.suid
+                        suid: player.suid,
+                        player_color: this_player.player_color,
+                        pfp: this_player.pfp
                     },
                     sentences: valid_sentences,
                 });
@@ -842,6 +834,8 @@ io.on("connection", (socket) => {
                 const room_extra_snippets = rooms[room_id].game.config.extra_snippets;
                 const player_used_extra_snippets = rooms[room_id].game.players.find(x => x.suid === owner).extra_snippets_used;
 
+                console.log(rooms[room_id].game.players);
+
                 if (player_used_extra_snippets < room_extra_snippets){
                 
                     //add the word to the game_dictionary
@@ -854,8 +848,7 @@ io.on("connection", (socket) => {
                     });
                 }
             }
-        }
-        catch(err){
+        }catch(err){
             if (DEBUG) console.log(err);
             return false;
         }

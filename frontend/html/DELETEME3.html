@@ -15,376 +15,54 @@
 	</head>
 
 	<body class="dark" cz-shortcut-listen="true" data-new-gr-c-s-check-loaded="8.893.0" data-gr-ext-installed="">
-		<main id="main">
-			<nav>
-				<p id="player-count" class="player-count">1/16</p>
-				<ul id="player-list">
-					<li class="player leader" style="border: 2px solid var(--vibrant-green);">
-						<div class="pfp">
-							<img style="background: #ffe119" src="https://artur.red/faces/5.svg" alt="Profile Picture">
-						</div>
-						<div class="info">
-							<p>Aaron</p>
+		<div class="screen-overlay" id="screen-overlay">
+            <p class="transition-title-text">${(is_voting)?"Voting":""}</p>
+            <h1 id="screen-overlay-text">${text}</h1>
 
-						</div>
-					</li>
-				</ul>
-				<hr>
-				<div class="volume">
-					<img id="volume-image" src="https://artur.red/images/audio-levels/1.svg" alt="">
-					<input type="range" id="volume-slider" min="0" max="100" value="50">
-				</div>
-			</nav>
 
-			<div class="main-room-section">
-				<div class="room-section-header">
-					<h1 id="lobby-short-id" class="lobby-short-id">5946 &nbsp; 405</h1>
-					<img id="room-qr" class="qr-code"
-						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAK/SURBVO3BQY4ERwwDwaTQ//8yfZV8EFConvHumhFERERERERERERERERERERE/DHinvkuMZlJTGYSZ8wkJjOJyXyXuFBENEVEU0Q0D+8T7zLvMpPYiZ04I95lXlRENEVEU0Q0D59nzoh3iZ25I+6YM+KDioimiGiKiObh9xM7M4lJ7MwkJjOJX6yIaIqIpohoHn4/c8bsxCT+R4qIpohoiojm4fPEZ4nJfJe4I36QIqIpIpoionl4n/kuM4nJTGIyOzOJyUxiZ36wIqIpIpoiohHxb2YnJjOJX6yIaIqIpohoxD0ziZ35LDGZO2IyZ8TOTGIyZ8SFIqIpIpoionl4n5nEGbEzOzOJnbkjJrMzO3NGvKiIaIqIpohoxOeZSUzmjNiZd4nJTGIy7xI7M4kLRURTRDRFRCPeZyZxxkzijpnEZCaxM2fEGXNHXCgimiKiKSIa8X1mEpPZicl8lpjMJHZmJ+6YSVwoIpoioikimod7ZhKTmcRkduKOOGPOmJ3YmUnszCReVEQ0RURTRDTintmJydwRk5nEzuzEztwRk3mXuFBENEVEU0Q0D+8Tk5nEzkxiMpOYzCR2YjJnxM5MZhKT2YnJvKiIaIqIpohoxD0ziZ2ZxM5MYmd2Ymd2YjLvEpPZiRcVEU0R0RQRzcM9cUacETsziZ3ZiTvijPlBioimiGiKiObhnvku8S4xmZ04YyZxRuzMJC4UEU0R0RQRzcP7xLvMu8RkPkt8lnhREdEUEU0R0Tx8njkj3mUmcUZMZme+y0ziQhHRFBFNEdE8/D3mjDgjdmYn7pgPKiKaIqIpIpqH30/cMZPYmUlM4oz5QYqIpohoiojm4fPEf8tMYhKfZc6IyXxREdEUEU0R0Ty8z3yXmcQkduaMmMwkdmJnJrEzLyoimiKiKSIiIiIiIiIiIiIiIiIiIiIi/rB/AGrVdO7q9gWUAAAAAElFTkSuQmCC">
-				</div>
-				<div class="room-section-body">
-					<div class="config" id="config-area">
-						<div class="settings">
-							<div class="setting-row">
-								<div class="setting">
-									<select id="mature" name="mature">
-										<option value="regular" selected="selected">Regular</option>
-										<option value="mature">Mature</option>
-										<option value="mature-only">Mature only</option>
-									</select>
-								</div>
-							
-								<div class="setting-text">
-									<p>Question type</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											Changes the type of questions asked in the game.
-										</span>
-									</div>
-
-								</div>
-							</div>
-							
-							<div class="setting-row">
-								<div class="setting">
-									<select id="question-count" name="question-count">
-										<option value="1">1</option>
-										<option value="2" selected="selected">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
-										<option value="6">6</option>
-										<option value="7">7</option>
-										<option value="8">8</option>
-									</select>
-								</div>
-							
-								<div class="setting-text">
-									<p>Question amount</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											Changes the amount of questions asked in the game.
-										</span>
-									</div>
-
-								</div>
-							</div>
-							
-							<div class="setting-row">
-								<div class="setting">
-									<select id="extra-snippets" name="extra-snippets">
-										<option value="0">0</option>
-										<option value="1">1</option>
-										<option value="2">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-									</select>
-								</div>
-							
-								<div class="setting-text">
-									<p>Extra snippets</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											Enables players to add personal words during the game's runtime.
-										</span>
-									</div>
-
-								</div>
-							</div>
-							
-							<div class="setting-row">
-								<div class="setting">
-									<label class="switch">
-										<input type="checkbox" id="public">
-										<span class="slider"></span>
-									</label>
-								</div>
-							
-								<div class="setting-text">
-									<p>Public</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											Allows other players to join the game from the browse section.
-										</span>
-									</div>
-
-								</div>
-							</div>
-						</div>
-						<div class="settings">
-							<div class="setting-row">
-								<div class="setting">
-									<select id="story-writing-time" name="story-writing-time">
-										<option value="30">30s</option>
-										<option value="45">45s</option>
-										<option value="60">60s</option>
-										<option value="90" selected="selected">1m 30s</option>
-										<option value="120">2m</option>
-										<option value="300">5m</option>
-									</select>
-								</div>
-	
-								<div class="setting-text">
-									<p>Story writing time</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											How long the user has to write their words.
-										</span>
-									</div>
-
-								</div>
-							</div>
-	
-							<div class="setting-row">
-								<div class="setting">
-									<select id="answer-time" name="answer-time">
-										<option value="20">20s</option>
-										<option value="30" selected="selected">30s</option>
-										<option value="45">45s</option>
-										<option value="60">1m</option>
-										<option value="120">2m</option>
-									</select>
-								</div>
-	
-								<div class="setting-text">
-									<p>Answer time</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											How long the user has to answer the question.
-										</span>
-									</div>
-								</div>
-							</div>
-							<div class="setting-row">
-								<div class="setting">
-									<label class="switch">
-										<input type="checkbox" id="self-voting">
-										<span class="slider"></span>
-									</label>
-								</div>
-
-								<div class="setting-text">
-									<p>Self-voting</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											Enables you to vote on your own submitions.
-										</span>
-									</div>
-								</div>
-							</div>
-
-							<div class="setting-row">
-								<div class="setting">
-									<label class="switch">
-										<input type="checkbox" id="word-contribution" value="true">
-										<span class="slider"></span>
-									</label>
-									
-								</div>
-
-								<div class="setting-text">
-									<p>Word contribution</p>
-									<div class="setting-tooltip">&#x1F6C8;
-										<span class="setting-tooltip-container">
-											Enables players to gain extra points for their words being used by the winning card.  
-										</span>
-									</div>
-								</div>
-							</div>
-
-						</div>
-					</div>
-					<hr>
-					<div class="instructions">
-						<h1>How to play</h1>
-						<p>
-							The aim of the game is to form sentences and answers to questions using words that the
-							players in the game
-							have written before the game starts.
-						</p>
-						<p>
-							The game starts with everyone writing a short story - this is where all the words come
-							from when playing the
-							game. All the words are shuffled together and you have to answer the following questions
-							in the game with
-							the words. Voting takes place after everyone has answered their questions. Then you have
-							to vote for the
-							card with the funniest sentence, the one with the most votes at the end of the game
-							wins.
-						</p>
-					</div>
-				</div>
-
-				<div class="start-button">
-					<button id="start-button">Start game!</button>
-				</div>
+            <div id="cardboard-box" class="cardboard-box" style="z-index: 120;">
+                <img src="https://artur.red/images/cardboard-box.svg">
 			</div>
 
-			<div class="chat-container" id="chat-container">
-				<div class="top">
-					<div id="close-chat" class="blob" style="background: rgb(243, 106, 94); cursor: pointer;"></div>
-					<div class="blob" style="background: rgb(249, 189, 80);"></div>
-					<div class="blob" style="background: rgb(90, 195, 85);"></div>
+			<div class="mini-sunburst" id="mini-sunburst"></div>
 
-					<p>&lt;- LOBBY CHAT -&gt;</p>
-				</div>
-
-				<div id="chat-output" class="chat-output"></div>
-				<form id="chat-form" action="">
-					<input class="width" type="text" id="chat-input" placeholder="Chat...">
-				</form>
+			<div class="additional-snippet-container" id="additional-snippet-container">
+				<span class="snippet golden is_additional">shit</span>
+				<span class="snippet golden is_additional">shit</span>
+				<span class="snippet golden is_additional">shit</span>
+				<span class="snippet golden is_additional">shit</span>
+				<span class="snippet golden is_additional">shit</span>
+				<span class="snippet golden is_additional">shit</span>
 			</div>
-		</main>
+        </div>
 
-		<div class="modal" id="name-modal">
-			<div class="modal-content"
-				onclick="javascript:event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();">
-				<div class="modal-slide" style="display: flex;">
+		<script>
 
-					<div class="modal-header">
-						<h1>Name Change</h1>
-						<p>Your name was randomly chosen. Do you want to change it?</p>
-					</div>
-					<hr>
+			const animate_additional_snippets = () => {
+				const asc = document.getElementById("additional-snippet-container");
+				const cb = document.getElementById("cardboard-box");
+				const ms = document.getElementById("mini-sunburst");
+				cb.style.transform = "translate(-50%, 50%)";
+				asc.style.transform = "translate(-50%, 50%)";
 
-					<div class="modal-body">
-						<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
-						<input type="submit" value="Cancel" onclick="toggleModal('name-modal')">
-						<input type="submit" value="Select New" onclick="turnTrack(1)">
-					</div>
-				</div>
-				<div class="modal-slide" style="display: none;">
+				setTimeout(() => {ms.style.opacity = "1";}, 750);
 
-					<div class="modal-header">
-						<h1>Name Change</h1>
-						<p>Choose a public name that other players will see.</p>
-					</div>
-					<hr>
+				const all_additional_snippets = document.querySelectorAll(".is_additional");
 
-					<div class="modal-body">
-						<form action="" id="name-form">
-							<input id="name-input" type="text" value="" onfocus="this.select()" placeholder="Name">
-							<input type="submit" value="">
-						</form>
-
-
-						<div class="arrows">
-							<div class="arrow left" onclick="turnTrack(-1)"></div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-slide" style="display: none;">
-
-					<div class="modal-header">
-						<h1>Name Change</h1>
-						<p>Choose one of our faces for your profile</p>
-					</div>
-					<hr>
-
-					<div class="modal-body">
-						<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
-						<div class="profile-pictures">
-							<button onclick="select_profile(1)">
-								<img src="https://artur.red/faces/1.svg" alt="profile-image-1">
-							</button>
-							<button onclick="select_profile(2)">
-								<img src="https://artur.red/faces/2.svg" alt="profile-image-2">
-							</button>
-							<button onclick="select_profile(3)">
-								<img src="https://artur.red/faces/3.svg" alt="profile-image-3">
-							</button>
-							<button onclick="select_profile(4)">
-								<img src="https://artur.red/faces/4.svg" alt="profile-image-4">
-							</button>
-							<button onclick="select_profile(5)">
-								<img src="https://artur.red/faces/5.svg" alt="profile-image-5">
-							</button>
-							<button onclick="select_profile(6)">
-								<img src="https://artur.red/faces/6.svg" alt="profile-image-6">
-							</button>
-							<button onclick="select_profile(7)">
-								<img src="https://artur.red/faces/7.svg" alt="profile-image-7">
-							</button>
-							<button onclick="select_profile(8)">
-								<img src="https://artur.red/faces/8.svg" alt="profile-image-8">
-							</button>
-							<button onclick="select_profile(9)">
-								<img src="https://artur.red/faces/9.svg" alt="profile-image-9">
-							</button>
-							<button onclick="select_profile(10)">
-								<img src="https://artur.red/faces/10.svg" alt="profile-image-10">
-							</button>
-							<button onclick="select_profile(11)">
-								<img src="https://artur.red/faces/11.svg" alt="profile-image-11">
-							</button>
-							<button onclick="select_profile(12)">
-								<img src="https://artur.red/faces/12.svg" alt="profile-image-12">
-							</button>
-							<button onclick="select_profile(13)">
-								<img src="https://artur.red/faces/13.svg" alt="profile-image-13">
-							</button>
-							<button onclick="select_profile(14)">
-								<img src="https://artur.red/faces/14.svg" alt="profile-image-14">
-							</button>
-						</div>
-						<div class="arrows">
-							<div class="arrow left" onclick="turnTrack(-1)"></div>
-						</div>
-					</div>
-				</div>
-
-
-				<div class="modal-footer">
-					<div class="dots">
-						<span class="dot active"></span>
-						<span class="dot"></span>
-						<span class="dot"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal" id="qr-modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1>QR-Code</h1>
-					<p>Players can scan this code to enter the game.</p>
-				</div>
-
-				<div class="modal-body">
-					<div class="qr-code">
-						<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=Test"
-							alt="Something Went Wrong">
-					</div>
-					<div class="arrows">
-						<div class="arrow left" onclick="turnTrack(-1)"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<button class="open-chat" id="open-chat"></button>
-		<!-- <audio loop="" id="audio" volume="0" autoplay="">
-			<source src="https://artur.red/audio/song.mp3" type="audio/mp3" volume="0">
-		</audio> -->
+				const SNIPPET_DELAY = 0.3;
+				const SCREEN_WIDTH = window.innerWidth;
+				const START_DELAY = 1400;
+			
+				all_additional_snippets.forEach((child, index) => {
+					setTimeout(() => {
+						console.log(child);
+						child.style.transition = "transform 1s ease-in-out, opacity 1s ease-in-out";
+						child.style.transform = `translate(${100/2-(index*100/all_additional_snippets.length) - (100/all_additional_snippets.length)/2}vw, -25vh)`;
+						child.style.opacity = 1;
+					}, (SNIPPET_DELAY*1000)*index + START_DELAY);
+				});
+			}
+			setTimeout(animate_additional_snippets, 3000);
+		</script>
 	</body>
 </html>

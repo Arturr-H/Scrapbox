@@ -63,7 +63,7 @@ html {
 
 	height: 100%;
 	background-color: var(--main-color);
-	overflow-y: hidden;
+	/* overflow-y: hidden; */
 }
 
 div.floating {
@@ -511,7 +511,7 @@ hr {
 	margin: 0 0.4rem;
 }.setting-tooltip .setting-tooltip-container{
 	visibility: hidden;
-	width: 120px;
+	width: 220px;
 	background-color: rgba(0, 0, 0, 0.514);
 	
 	color: #fff;
@@ -649,6 +649,13 @@ button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+button.copy-button{
+	position: absolute;
+	transform: translateX(-50%);
+	left: 50%;
+
+	display: none;
 }
 
 .switch {
@@ -948,22 +955,22 @@ select {
 @keyframes screen-overlay {
 	0% {
 		transform:
-			translateX(120vw) skewX(-30deg);
+			translateY(100%) scale(0);
 	}
 
 	100% {
 		transform:
-			translateX(0) skewX(0);
+			translateY(0) scale(1);
 	}
 }@keyframes screen-overlay-end {
 	0% {
 		transform:
-			translateX(0) skewX(0);
+			translateY(0) scale(1);
 	}
 
 	100% {
 		transform:
-			translateX(-125vw) skewX(30deg);
+			translateY(-100%) scale(0);
 	}
 }
 @keyframes screen-overlay-text {
@@ -1236,10 +1243,6 @@ select {
 
 	border-radius: var(--border-radius);
 
-}.player-answer:not(.disabled):hover {
-	z-index: 20 !important;
-	width: 32rem;
-	height: 10rem;
 }.player-answer:not(.disabled):active::before {
 	filter: brightness(80%);
 }.player-answer.disabled::after {
@@ -1399,7 +1402,22 @@ span.player-result {
 	font-size: 1.2rem;
 	font-family: "Roboto", sans-serif !important;
 	font-weight: 300;
+}.question-voting{
+	display: flex;
+	justify-content: center;
+	
+	padding: 2.5rem;
+	width: 100%;
+	z-index: 0;
+	
+}.question-voting h1{
+	
+	font-size: 4vmin;
+	font-family: "Roboto", sans-serif !important;
+	font-weight: 300;
 
+	max-width: calc(80vw);
+	line-height: 3.5rem;
 }
 
 .snippet-input {
@@ -1481,43 +1499,6 @@ span.snippet {
 	color: black !important;
 }
 
-
-.winner-dash-container {
-	width: 100%;
-	height: 100vh;
-	position: absolute;
-
-	overflow-x: hidden;
-
-
-}.winner-dash {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-
-	left: 0;
-	top: 0;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	transform: scaleX(2);
-
-}.winner-dash>.dash {
-	stroke-dasharray: 25225;
-	animation: dash 6s ease-in-out forwards;
-
-	height: 100vh;
-	min-height: 100vh;
-
-}.front-dash {
-	animation: dash-2 3s ease-in-out forwards;
-	animation-delay: 5s;
-	stroke-dasharray: 5202;
-	stroke-dashoffset: 5202;
-}
-
 .announcement-text {
 	position: absolute;
 
@@ -1557,13 +1538,14 @@ span.snippet {
 	background: var(--next-question-color);
 
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 
 	animation: screen-overlay 1s ease-in-out forwards;
 	/* animation-delay: 1s; */
 	transform: translateX(120vw) skewX(-30deg);
-	overflow-x: hidden;
+	overflow: hidden;
 
 	z-index: 25;
 }.screen-overlay h1 {
@@ -1687,13 +1669,73 @@ span.snippet {
 .player-answer-container-TEST{
 	width: 100%;
 
+	height: min-content;
+
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
-	align-content: center;
+
+	gap: 2rem;
+
+	padding: 2rem 5rem;
+
+
 }.player-answer-container-TEST > .player-answer{
-	width: 30rem;
+	flex: 0 0 calc(100% / 2 - 2rem); /* Minus gap */
+
+	transition: transform 0.5s ease-in-out;
+	transform: scale(0);
+
+	position: relative;
+	z-index: 2;
+}.player-answer-container-TEST > .player-answer > .player{
 	position: absolute;
+	top: 0%;
+	left: 50%;
+	width: 60%;
+
+	transform: translate(-50%, -100%);
+
+	border-radius: var(--border-radius) var(--border-radius) 0 0;
+
+	border: 3px solid var(--vibrant-yellow);
+	border-bottom: none;
+	background: var(--main-color);
+
+	opacity: 0;
+
+	transition: opacity 0.5s ease-in-out;
+}.player-answer-container-TEST > .player-answer.player-visible > .player{
+	opacity: 1;
 }
+
+/* @media only screen and (max-width: 1600px) {
+	.player-answer-container-TEST > .player-answer{
+		flex: 0 0 calc(100% / 2 - 2rem); 
+	}
+} */
+@media only screen and (max-height: 600px) and (min-width: 1200px){
+	.player-answer-container-TEST > .player-answer{
+		flex: 0 0 calc(100% / 4 - 2rem); 
+	}
+}
+@media only screen and (max-height: 400px) and (max-width: 1200px) {
+	.player-answer-container-TEST > .player-answer{
+		flex: 0 0 calc(100% / 3 - 2rem); /* Minus gap */
+	}
+}
+@media only screen and (max-width: 800px) {
+	.player-answer-container-TEST > .player-answer{
+		flex: 0 0 calc(100% / 1 - 2rem); /* Minus gap */
+	}
+}
+
+
+/*@media only screen and (max-width: 600px) {
+	.player-answer-container-TEST > .player-answer{
+		flex: 0 0 calc(100% / 1 - 2rem); Minus gap
+	}
+}*/
 
 .sunburst-container{
 	position: absolute;
@@ -1744,38 +1786,53 @@ span.snippet {
 	z-index: 40;
 }
 
-.cardboard-box-container{
+.cardboard-box{
 	display: flex;
 	justify-content: center;
 	align-content: center;
 
 	width: 60vmin;
+	height: 60vmin;
 
 	position: absolute;
 	left: 50%;
-	top: 50%;
+	bottom: 0%;
+
+	transition: transform 1s ease-in-out;
+	transform: translate(-50%, 100%);
+}.additional-snippet-container{
+	width: min-content;
+	height: min-content;
+
+	position: absolute;
+	left: 50%;
+	bottom: 5vh;
 
 	transform: translate(-50%, -50%);
-}.mini-sunburst-container{
-	position: absolute;
-	width: 100%; height: 100%;
+	background: red;
 
 	display: flex;
 	justify-content: center;
 		align-items: center;
-	
-	overflow: hidden;
-}.mini-sunburst-container .mini-sunburst{
-	width: max(50vw, 50vh);
-	aspect-ratio: 1;
-	left: 0; top: 0;
 
-	background: url(https://artur.red/images/mini-sunburst.svg);
+	z-index: 130;
+}.additional-snippet-container > .snippet{
+	position: absolute;
+	opacity: 0;
+}.mini-sunburst{
+	width: 80vmin;
+	height: 80vmin;
 
-	z-index: 0;
+	position: absolute;
 
-	/* transform-origin: center 220px; */
-	animation: fade-in-view 2s ease-in-out forwards, rotate-loop-mini-sunburst 5s linear infinite;
+	margin: 0 auto;
+	bottom: -40vmin;
+
+	background: url(https://artur.red/images/mini-sunburst.svg) no-repeat;
+	animation: rotate-loop-mini-sunburst 50s linear infinite;
+
+	transition: opacity 1s ease-in-out;
+	opacity: 0;
 }
 
 .additional-words{
@@ -1807,24 +1864,35 @@ span.snippet {
 .tooltip{
 	position: relative;
 }
+.tooltiptext{
+	display: none;
+}
+
 .tooltip .tooltiptext {
-	width: 120px;
-	background-color: black;
+	display: none;
+	width: auto;
+	background-color: #000;
 	color: #fff;
 	text-align: center;
-	
-	padding: 5px 0;
 	border-radius: 6px;
-
-	top: 0;
-	left: 0;
-
+	padding: 5px;
 	position: absolute;
 	z-index: 1;
-
+	bottom: 120%;
+	left: 50%;
+	transform: translateX(-50%);
+	pointer-events: none;
+	user-select: none;
+}.tooltip .tooltiptext:after{
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	/* transform: translateX(-50%); */
+	border: 5px solid;
+	border-color: #000 transparent transparent transparent;
 	
-}.tooltiptext{
-	display: none;
 }
 .tooltip:hover .tooltiptext {
 	display: block;
@@ -1873,8 +1941,8 @@ span.snippet {
 }
 
 .rank-1, .rank-2, .rank-3{
-	width: 20rem;
-
+	width: max(20vw, 20vh);
+	filter: brightness(100%);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -1905,7 +1973,7 @@ span.snippet {
 }
 
 .rank-1{
-	height: 50vh;
+	height: 70vh;
 	background: #FFD700 !important;
 	color: var(--main-color) !important;
 
@@ -1928,11 +1996,11 @@ span.snippet {
 
 	transform: translateY(-100vh)
 }.rank-2{
-	height: 30vh;
+	height: 50vh;
 	background: rgb(148, 148, 148) !important;
 	color: black !important;
 }.rank-3{
-	height: 18vh;
+	height: 38vh;
 	background: #CD7F32;
 	color: black !important;
 }.rank .total-points{
@@ -1983,9 +2051,13 @@ span.snippet {
 }.rank-nr-2{
 	animation: rank-2-pop-up 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 	animation-delay: 5s;
+	z-index: 9;
 }.rank-nr-3{
-	animation: rank-3-pop-up 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-	animation-delay: 1.5s;
+	/* animation: rank-nr-3 2.5s cubic-bezier(0,1.13,1,.99) forwards; */
+	animation: rank-nr-3 2.5s ease-out forwards;
+	animation-delay: 1s;
+	z-index: 8;
+
 }
 
 .rank .player{
@@ -2006,7 +2078,7 @@ span.snippet {
 	animation-delay: 9s !important;
 }
 
-@keyframes player-pop-up {
+/* @keyframes player-pop-up {
 	from{ transform: scale(0)}
 	to{ transform: scale(1)}
 }
@@ -2029,9 +2101,14 @@ span.snippet {
 @keyframes crown-drop {
 	0%{ transform: translateY(-100vh)}
 	100%{ transform: translateY(0)}
+} */
+
+@keyframes rank-nr-3{
+	0%{ transform: translateY(100%)}
+	40%{ transform: translateY(0)}
+	60%{ transform: translateY(0) scaleX(1); filter: brightness(100%)}
+	100%{ transform: translateY(0) translateX(90%) scaleX(0.8); filter: brightness(70%)}
 }
-
-
 
 
 .winner-top-text{
@@ -2047,7 +2124,7 @@ span.snippet {
 	text-align: center;
 	width: 100%;
 	user-select: none;
-	z-index: 50;
+	z-index: 7;
 }
 
 
@@ -2306,4 +2383,30 @@ make a choice between our prefabricated artific(********i*********)ally construc
 	animation-duration: 8s;
 }.stopwatch-container > .watch-piece.minute{
 	animation: rotate-loop-mini-sunburst 2s linear infinite;
+}
+
+h3.room-not-found{
+	font-size: 4vmax;
+	font-weight: 900;
+
+	text-align: center;
+}.image-404{
+	width: 15vmax;
+	left: 50%;
+	position: relative;
+	transform: translateX(-50%);
+}
+
+.visibility-toggle{
+	height: 5rem;
+	position: absolute;
+	left: 4rem;
+
+	opacity: .4;
+	user-select: none;
+}
+
+.mini-pfp{
+	border-radius: 50%;
+	margin: .2rem;
 }

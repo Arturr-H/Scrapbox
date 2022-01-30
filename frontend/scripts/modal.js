@@ -1,9 +1,20 @@
 document.getElementById("name-input").value = getCookie("usnm");
+let qr_open = false;
 
 const toggleModal = (id) => {
     var modal = document.getElementById(id);
     modal.classList.toggle("open");
+
+    if(id == "qr-modal"){
+        setTimeout(() => qr_open = !qr_open, 50);
+    }
 }
+document.addEventListener("click", () => {
+    if(qr_open){
+        toggleModal("qr-modal");
+    }
+});
+
 
 var slideIndex = 1;
 
@@ -19,7 +30,6 @@ const showSlides = (n) => {
     }
 
     slides[slideIndex - 1].style.display = "flex";
-    console.log(n - 1, ", current slideindex")
 
 
     // dots

@@ -19,7 +19,7 @@ const extra_snippets = document.getElementById("extra-snippets");
 const story_writing_time = document.getElementById("story-writing-time");
 const answer_time = document.getElementById("answer-time");
 
-const room_qr = document.getElementById("room-qr");
+const copy_button = document.getElementById("copy-button");
 
 let is_leader = false;
 let room_short_id = "";
@@ -49,10 +49,14 @@ lobby_short_id.addEventListener("click", () => {
     navigator.clipboard.writeText("https://artur.red/" + room_short_id);
     notice("Copied to clipboard!");
 })
-
+copy_button.addEventListener("click", () => {
+    //copy the short id to the clipboard
+    navigator.clipboard.writeText("https://artur.red/" + room_short_id);
+    notice("Copied to clipboard!");
+})
 
 const question_type_change = () => {
-    setCookie("CONF_question_type", question_type.value);
+    setCookie("CONF_question_type", question_type.value, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -65,7 +69,7 @@ const question_type_change = () => {
     })
 }
 const toggle_public_change = () => {
-    setCookie("CONF_public", toggle_public.checked);
+    setCookie("CONF_public", toggle_public.checked, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -78,7 +82,7 @@ const toggle_public_change = () => {
     })
 }
 const question_count_change = () => {
-    setCookie("CONF_question_count", question_count.value);
+    setCookie("CONF_question_count", question_count.value, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -91,7 +95,7 @@ const question_count_change = () => {
     })
 }
 const self_voting_change = () => {
-    setCookie("CONF_self_voting", self_voting.checked);
+    setCookie("CONF_self_voting", self_voting.checked, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -104,7 +108,7 @@ const self_voting_change = () => {
     })
 }
 const word_contribution_change = () => {
-    setCookie("CONF_word_contribution", word_contribution.checked);
+    setCookie("CONF_word_contribution", word_contribution.checked, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -117,7 +121,7 @@ const word_contribution_change = () => {
     })
 }
 const extra_snippets_change = () => {
-    setCookie("CONF_extra_snippets", extra_snippets.value);
+    setCookie("CONF_extra_snippets", extra_snippets.value, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -130,7 +134,7 @@ const extra_snippets_change = () => {
     })
 }
 const story_writing_time_change = () => {
-    setCookie("CONF_story_writing_time", story_writing_time.value);
+    setCookie("CONF_story_writing_time", story_writing_time.value, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -143,7 +147,7 @@ const story_writing_time_change = () => {
     })
 }
 const answer_time_change = () => {
-    setCookie("CONF_answer_time", answer_time.value);
+    setCookie("CONF_answer_time", answer_time.value, 30);
 
     socket.emit(`config:settings-toggle`, {
         room: room_id,
@@ -221,7 +225,9 @@ socket.on(`player-join:${room_id}`, (data) => {
         word_contribution.checked = room_data_json.game.config.word_contribution;
 
         const qr = room_data_json.qr;
-        room_qr.src = qr;
+        document.querySelectorAll(".room-qr").forEach(e => {
+            e.src = qr;
+        });
 
         room_short_id = room_data_json.small_code;
 
@@ -409,3 +415,31 @@ socket.on(`name-change:${room_id}`, (data) => {
         `;
     }
 })
+
+
+//Hide and show lobby id & qr.
+let lobby_info_toggled = false;
+const toggle_info = (id) => {
+
+    const toggle_button = document.getElementById(id);
+    toggle_button.src = lobby_info_toggled
+        ? "https://artur.red/icons/eye.svg"
+        : "https://artur.red/icons/eye-slash.svg";
+    
+
+    if (lobby_info_toggled) {
+        copy_button.style.display = "none";
+        document.querySelectorAll(".visibility-toggleable").forEach(element => {
+            element.style.visibility = "visible";
+        });
+    }else {
+        copy_button.style.display = "block";
+        document.querySelectorAll(".visibility-toggleable").forEach(element => {
+            element.style.visibility = "hidden";
+        });
+    }
+    setCookie("lobby_info_toggled", lobby_info_toggled?"yes":"no", 30);
+
+    lobby_info_toggled = !lobby_info_toggled;
+}
+if(getCookie("lobby_info_toggled") == "no") toggle_info("lobby-info-visibility-toggle");

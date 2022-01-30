@@ -10,12 +10,11 @@
 		<script src="https://artur.red/script/cookies.js" defer></script>
 		<script src="https://artur.red/script/global.js" defer></script>
 		<script src="https://artur.red/script/game/browse-games.js" defer></script>
-
 	</head>
 
 	<body class="dark" data-new-gr-c-s-check-loaded="8.893.0" data-gr-ext-installed="" cz-shortcut-listen="true"
 		data-new-gr-c-s-loaded="8.893.0">
-		<h1 class="winner-top-text fade-in-view rank-nr-1">AARON IS THE WINNER</h1>
+		<h1 class="winner-top-text">Aaron is the Winner!</h1>
 	
 		<div class="blob-container">
 			<div class="blob-1"></div>
@@ -26,7 +25,7 @@
 			<div class="rank rank-nr-3">
 				<div class="player">
 					<div class="pfp">
-						<img style="background: #ffe119" src="https://artur.red/faces/10.svg" alt="Player profile image">
+						<img style="background: #ffe119" src="https://artur.red/faces/10.svg">
 					</div>
 					<p>Number</p>
 				</div>
@@ -35,16 +34,16 @@
 			<div class="rank rank-nr-2">
 				<div class="player ">
 					<div class="pfp">
-						<img style="background: #ffe119" src="https://artur.red/faces/10.svg" alt="Player profile image">
+						<img style="background: #ffe119" src="https://artur.red/faces/10.svg">
 					</div>
-					<p>CumDumpster</p>
+					<p>Artur</p>
 				</div>
 				<div class="rank-2 rank-display">2<span class="total-points">246 Points</span></div>
 			</div>
 			<div class="rank rank-nr-1">
 				<div class="player ">
 					<div class="pfp">
-						<img style="background: #f58231" src="https://artur.red/faces/5.svg" alt="Player profile image">
+						<img style="background: #949494" src="https://artur.red/faces/5.svg">
 					</div>
 					<p>Aaron</p>
 				</div>
@@ -54,16 +53,15 @@
 		<a href="https://artur.red"><button class="btl">Back to Lobby</button></a>
 		<canvas id="winner-confetti"></canvas>
 
-		<script src="https://artur.red/style/confetti.js">
-			
-		</script>
+		<script src="https://artur.red/style/confetti.js"></script>
 		<script>
 			var confettiSettings = { "target": "winner-confetti", "max": "150", "size": "1.5", "animate": true, "props": ["square"], "colors": [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]], "clock": "20", "rotate": true, "start_from_edge": true, "respawn": true };
 			var confetti = new ConfettiGenerator(confettiSettings);
-			setTimeout(() => {
-				confetti.render();
-			}, 9000);
 		</script>
+
+		<!-- Animations -->
+		<!-- <script src="https://artur.red/script/game/game.js"></script> -->
+
 
 	</body>
 </html>

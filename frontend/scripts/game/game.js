@@ -42,7 +42,7 @@ let current_voting_index = 0;
 const display_players = (players) => players.map(player_obj => `
     <li class="player ${player_obj.done?"active":""}" ${player_obj.suid == getCookie("suid")?"style='border: 2px solid var(--vibrant-green);'":""}>
         <div class="pfp">
-            <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg" alt="Player profile image">
+            <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg">
         </div>
         <div class="info">
             <p>${player_obj.name}</p>
@@ -158,6 +158,8 @@ socket.on(`game:text:${room_id}`, (data) => {
         player_list.innerHTML = display_players(players);
         
         text_input_area.innerHTML = display_question_view(current_snippets);
+
+        clear_clock();
     }
 });
 
@@ -179,11 +181,7 @@ const display_question_view = (current_snippets) => {
     }
 
     //transition with the text as the current question
-    transition(questions[current_question_index].question, false, () => {
-        if (questions[current_question_index].additional_snippets != null) {
-            additional_words(questions[current_question_index].additional_snippets);
-        }
-    });
+    transition(questions[current_question_index].question, false, () => {}, questions[current_question_index].additional_snippets);
 
     sentences.push({
         question_id: current_question_index,
@@ -228,97 +226,7 @@ const display_question_view = (current_snippets) => {
         <button onclick="submit_sentence()" class="submit">Submit</button>
     `;
 }
-const additional_words = (word_array) => {
 
-    document.getElementById("additional-word-container").innerHTML += `
-        <div id="full-container" style="position: absolute; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.923); left: 0; top: 0;">
-            <div class="top-text-notice">
-                <h1>Additional Snippets!</h1>
-            <p>This question gives you some extra-snippets to use in you sentences!</p>
-            </div>
-            <div class="mini-sunburst-container">
-
-                <div class="mini-sunburst"></div>
-            </div>
-            <div id="cardboard-box-container" class="cardboard-box" style="display: none;">
-                
-                <img src="https://artur.red/images/cardboard-box.svg" class="svg-container">
-                <div class="svg-container">
-                    <svg width="100%" height="100%" viewBox="0 0 2100 2100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2; z-index: 100;">
-                        <g class="flap-lower">
-                            <g transform="matrix(1,0,0,1,111.355,-78.7402)">
-                                <path d="M1211.39,620.36L1628.97,325.085L1837.36,472.441L1419.78,767.717L1211.39,620.36Z" style="fill:rgb(188,145,111);"/>
-                            </g>
-                            <path d="M1322.64,546.57L1322.74,541.62L1531.14,688.976L1531.03,693.926L1322.64,546.57Z" style="fill:rgb(172,129,91);"/>
-                            <path d="M1531.03,693.926L1531.14,688.976L1948.72,393.701L1948.61,398.65L1531.03,693.926Z" style="fill:rgb(181,134,94);"/>
-                        </g>
-                    </svg>
-                </div>
-                <div class="svg-container">
-                    <svg width="100%" height="100%" viewBox="0 0 2100 2100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2; z-index: 100;">
-                        <g class="flap-upper">
-                            <g transform="matrix(1,0,0,1,111.355,-78.7402)">
-                                <path d="M1210.99,620.079L1628.57,324.803L1836.9,472.111L1419.31,767.386L1210.99,620.079Z" style="fill:rgb(188,145,111);"/>
-                            </g>
-                            <path d="M1322.28,546.319L1322.35,541.339L1530.67,688.646L1530.61,693.627L1322.28,546.319Z" style="fill:rgb(172,129,92);"/>
-                            <g transform="matrix(1,0,0,1,-0.467035,-0.330244)">
-                                <path d="M1531.08,693.957L1531.14,688.976L1948.72,393.701L1948.66,398.681L1531.08,693.957Z" style="fill:rgb(155,109,71);"/>
-                            </g>
-                        </g>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="additional-words">
-                ${word_array.map(word => {
-                return `<span class="snippet" id="additional-snippet" style="opacity: 0;">${word}</span>`
-            }).join('')
-                }
-            </div>
-        </div>
-    `;
-
-    //open the box
-    document.getElementById("cardboard-box-container").classList.add("cardboard-box-container");
-    document.getElementById("cardboard-box-container").style.display = "flex";
-    const add_snippets = document.querySelectorAll("#additional-snippet")
-    const time_between = 800; //ms
-
-    setTimeout(() => {
-
-        if (document.getElementById("additional-words") != undefined) return;
-
-        for (let i = 0; i < add_snippets.length; i++) {
-            setTimeout(() => {
-
-                const percentage = i / add_snippets.length * (window.innerWidth)
-                const center = window.innerWidth / 2 - (percentage + (1 / add_snippets.length * (window.innerWidth)) / 2)
-
-                add_snippets[i].style.transform = `translate(calc(0px - 50%), calc(0px - 50%))`
-                add_snippets[i].style.opacity = 0;
-                setTimeout(() => {
-                    add_snippets[i].style.transform = `translate(calc(${center}px - 50%), -35vh)`
-                    add_snippets[i].style.opacity = 1;
-                }, 100);
-
-            }, i * time_between);
-        }
-
-        //on end
-        setTimeout(() => {
-
-            document.getElementById("cardboard-box-container").style.transformOrigin = "center center";
-            document.getElementById("cardboard-box-container").style.animation = "cardboard-box-roll-out 2s ease-in-out forwards";
-
-            setTimeout(() => {
-                state = 0;
-                toggle_keyboard(word_array.join(","));
-
-                document.getElementById("full-container").remove();
-            }, 1000);
-        }, add_snippets.length*time_between+500);
-    }, 2000);
-};
 // -------------------------------------------------- SNIPPET INPUT -------------------------------------------------- //
 
 const add_word = (word, owner, suid) => {
@@ -396,14 +304,6 @@ const next_voting = (current_player_answers) => {
 
     transition(questions[display_card_owner_percentage_index].question, true, () => {
 
-        try{
-            //remove the "main" html object, but keep its children
-            document.querySelector("nav").remove();
-        }catch{}
-        try{
-            document.getElementsByTagName("main")[0].style.all = "unset"
-        }catch{}
-
         text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
 
         //next voting index :O
@@ -411,14 +311,12 @@ const next_voting = (current_player_answers) => {
         
         //pull the voting card animation.
         show_voting_cards()
-    });
+    }, null);
 
     //The card percentage things is now moved to the other next_voting function...
 }
 
 const display_voting_view = (current_player_answers, index) => {
-
-    document.getElementById("sunburst").style.display = "flex";
 
     return `
         <div class="question">
@@ -449,6 +347,13 @@ const display_voting_view = (current_player_answers, index) => {
                         <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
                         <p class="score"></p>
 
+                        <div class="player">
+                            <div class="pfp">
+                                <img style="background: ${player_obj.player.player_color}" src="https://artur.red/faces/${player_obj.player.pfp}.svg" alt="Player profile image">
+                            </div>
+                            <p>${player_obj.player.name}</p>
+                        </div>
+
                         <img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
                     </div>
                 `).join("")
@@ -456,7 +361,6 @@ const display_voting_view = (current_player_answers, index) => {
         </div>
     `;
 }
-
 
 // -------------------------------------------------- HANDLE VOTING -------------------------------------------------- //
 
@@ -489,20 +393,22 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     const current_player_answers = data.current_player_answers;
     const word_contributors = data.word_contributors;
     const most_voted_for = data.most_voted_for;
+
     //update the player list
     player_list.innerHTML = display_players(players);
+
     current_total_votes = total_votes;
 
     if (all_done) {
 
         if(current_voting_index >= questions.length){
-            display_card_owner_percentage(current_player_answers, players, most_voted_for);
+            display_card_owner_percentage(players, most_voted_for);
             setTimeout(() => document.body.innerHTML = display_results(word_contributors), 4000);
 
             return;
         }else{
 
-            display_card_owner_percentage(current_player_answers, players, most_voted_for);
+            display_card_owner_percentage(players, most_voted_for);
             setTimeout(() => next_voting(current_player_answers), 4000);
         }
     }
@@ -511,15 +417,13 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
 //displays the percentage at the bottom of
 //cards + colors all the snippets in the card
 //based on the player's player_color
-const display_card_owner_percentage = (current_player_answers, players, most_voted_for) => {
-
-    const voting_index_answers = current_player_answers.map(player => player.sentences[display_card_owner_percentage_index].owners);
+const display_card_owner_percentage = (players, most_voted_for) => {
 
     most_voted_for.map(player_suid => {
         
         const player_card = document.getElementById(`card_${player_suid}`);
-        // const player_card_content = player_card.querySelector(".bottom");
         player_card.classList.add("winning-card");
+        player_card.classList.add("player-visible");
 
         const current_player_owned_snippets = document.querySelectorAll(`#card_${player_suid} .owner`);
 
@@ -535,16 +439,7 @@ const display_card_owner_percentage = (current_player_answers, players, most_vot
         });
 
 
-        // voting_index_answers_percentage.map((contributors, index) => {
-
-            // contributors.map(contributor => {
-            //     const percentage = Object.values(contributor)[0];
-            //     const name = Object.keys(contributor)[0];
-            //     const color = getColor();
-
-            //     // player_card_content.innerHTML += `<div class="percentage" style="width: ${percentage}%; background: ${color}">${name} - ${percentage}%</div>`;
-            // });
-        // });
+        const player_card_bottom = document.querySelector(`#card_${player_suid} .bottom`);
     });
 
     display_card_owner_percentage_index++;
@@ -590,7 +485,7 @@ const display_results = (word_contributors) => {
     }
 
     return `
-        <h1 class="winner-top-text fade-in-view rank-nr-1">${all_players.find(player_obj => player_obj.suid == winner).name.toUpperCase()} IS THE WINNER</h1>
+        <h1 class="winner-top-text">${all_players.find(player_obj => player_obj.suid == winner).name.toUpperCase()} IS THE WINNER</h1>
 
 		<div class="blob-container">
 			<div class="blob-1"></div>
@@ -615,7 +510,7 @@ const display_results = (word_contributors) => {
 			<div class="rank rank-nr-1">
 				<div class="player">
 					<div class="pfp">
-						<img style="background: ${winner_obj.color}" src="https://artur.red/faces/${winner_obj.pfp}.svg" alt="Player profile image">
+						<img style="background: ${winner_obj.color}" src="https://artur.red/faces/${winner_obj.pfp}.svg">
 					</div>
 					<p>${winner_obj.player}</p>
 				</div>
@@ -627,7 +522,7 @@ const display_results = (word_contributors) => {
                 : `<div class="rank rank-nr-3">
 				<div class="player">
 					<div class="pfp">
-						<img style="background: ${third_place_obj.color}" src="https://artur.red/faces/${third_place_obj.pfp}.svg" alt="Player profile image">
+						<img style="background: ${third_place_obj.color}" src="https://artur.red/faces/${third_place_obj.pfp}.svg">
 					</div>
 					<div class="info">
 						<p>${third_place_obj.player}</p>
@@ -636,6 +531,14 @@ const display_results = (word_contributors) => {
 				<div class="rank-3 rank-display">3<span class="total-points">${third_place_obj.score} Points</span></div>
 			</div>`}
 		</div>
+        <a href="https://artur.red"><button class="btl">Back to Lobby</button></a>
+		<canvas id="winner-confetti"></canvas>
+
+		<script src="https://artur.red/style/confetti.js"></script>
+		<script>
+			var confettiSettings = { "target": "winner-confetti", "max": "150", "size": "1.5", "animate": true, "props": ["square"], "colors": [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]], "clock": "20", "rotate": true, "start_from_edge": true, "respawn": true };
+			var confetti = new ConfettiGenerator(confettiSettings);
+		</script>
     `
 }
 
@@ -821,10 +724,16 @@ const toggle_keyboard = (additional_snippets) => {
             break;
              
         case 3:
-            set_keyboard_state("🔤");
-
             document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?", 0);
-            break;
+
+            if (extra_snippets <= 0){
+                set_keyboard_state("🔤");
+                state = 0;
+                break;
+            }else{
+                set_keyboard_state("🔣");
+                break;
+            }
 
         case 4:
             set_keyboard_state("🔙");
@@ -874,22 +783,27 @@ const add_extra_snippet = () => {
     });
 }
 socket.on(`game:extra-snippet:${room_id}`, (data) => {
-    current_extra_snippets.push({
-        word: data.word,
-        owner: getCookie("usnm")
-    });
 
-    extra_snippets--;
-    document.getElementById("extra-snippet-count").innerHTML = extra_snippets;
+    // if the user is not the owner of the snippet, then we don't want to add it to the list
+    //becauase extra snippets are private
+    if (data.owner == getCookie("suid")){
+        current_extra_snippets.push({
+            word: data.word,
+            owner: getCookie("usnm")
+        });
 
-    state = 0;
-    toggle_keyboard(questions[current_question_index].additional_snippets);
+        extra_snippets--;
+        document.getElementById("extra-snippet-count").innerHTML = extra_snippets;
+
+        state = 0;
+        toggle_keyboard(questions[current_question_index].additional_snippets);
+    }
 });
 
 /* -------------------------------------------------- ANIMATIONS -------------------------------------------------- */
 
 /* TRANSITION OVERLAY */
-const transition = (text, is_voting, function_callback) => {
+const transition = (text, is_voting, function_callback, additional) => {
 
     let has_skipped_transition = false;
 
@@ -900,8 +814,37 @@ const transition = (text, is_voting, function_callback) => {
         <div class="screen-overlay" id="screen-overlay">
             <p class="transition-title-text">${(is_voting)?"Voting":""}</p>
             <h1 id="screen-overlay-text">${text}</h1>
+
+
+            <div id="cardboard-box" class="cardboard-box" style="z-index: 120;">
+                <img src="https://artur.red/images/cardboard-box.svg">
+            </div>
+
+            ${
+                (additional != null) ? `
+                    <div class="mini-sunburst" id="mini-sunburst"></div>
+
+                    <div class="additional-snippet-container" id="additional-snippet-container">
+                        ${
+                            additional.map(snippet => `
+                                <span class="snippet golden is_additional">${snippet}</span>
+                            `).join(" ")
+                        }
+                    </div>
+                `:""
+            }
+
         </div>
     `
+
+    if(additional != null){
+        setTimeout(() => {
+            animate_additional_snippets();
+            state = 0;
+            toggle_keyboard(additional);
+        }, 3000);
+    }
+
     const screen_overlay = document.getElementById("screen-overlay");
     screen_overlay.onclick = () => {
         has_skipped_transition = true;
@@ -909,39 +852,73 @@ const transition = (text, is_voting, function_callback) => {
         screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
     }
 
+    const extra_time = (additional != null)?4000:0;
+
     setTimeout(() => {
         screen_overlay.style.animation = "screen-overlay-end 1s ease-in-out forwards";
 
         setTimeout(() => {
-            if(typeof function_callback === "function") function_callback();
+            if(typeof function_callback === "function" && !has_skipped_transition) function_callback();
             else return;
         }, 500);
         
-    }, 3000 + text.length*50);
+    }, 3000 + text.length*70 + extra_time);
 }
+const animate_additional_snippets = () => {
+    const asc = document.getElementById("additional-snippet-container");
+    const cb = document.getElementById("cardboard-box");
+    const ms = document.getElementById("mini-sunburst");
+    cb.style.transform = "translate(-50%, 50%)";
+    asc.style.transform = "translate(-50%, 50%)";
 
+    setTimeout(() => {ms.style.opacity = "1";}, 750);
+
+    const all_additional_snippets = document.querySelectorAll(".is_additional");
+
+    const SNIPPET_DELAY = 0.3;
+    const SCREEN_WIDTH = window.innerWidth;
+    const START_DELAY = 1400;
+
+    all_additional_snippets.forEach((child, index) => {
+        setTimeout(() => {
+            console.log(child);
+            child.style.transition = "transform 1s ease-in-out, opacity 1s ease-in-out";
+            child.style.transform = `translate(${100/2-(index*100/all_additional_snippets.length) - (100/all_additional_snippets.length)/2}vw, -25vh)`;
+            child.style.opacity = 1;
+        }, (SNIPPET_DELAY*1000)*index + START_DELAY);
+    });
+}
 /* Voting cards show animation */
 const show_voting_cards = () => {
     const cards = document.querySelectorAll(".voting-card-selector");
-    const card_amount = cards.length;
-    const next_card_delay = 100;
-    const card_animation_duration = "1s"
+    const next_card_delay = 200;
 
     cards.forEach((card, i) => {
-        const r_amount = (Math.random() * 10)-10/2;
-        card.style.transform = `rotate(${r_amount}deg)`
-        card.style.zIndex = card_amount+1-i;
-
         setTimeout(() => {
-            
-            const angle = (i / card_amount) * 2 * Math.PI;
-            const x = Math.cos(angle) * 600;
-            const y = Math.sin(angle) * 300;
-            card.style.transition = `transform ${card_animation_duration} cubic-bezier(.18,.97,.86,1.02) 1s, width .05s ease-in-out, height .05s ease-in-out`;
-            card.style.transform = `translate(${x}px, ${y}px) rotate(${r_amount}deg)`;
+            card.style.transform = `scale(1)`;
         }, next_card_delay*i);
     });
 };
+
+/* -------------------------------------------------- Sound Effects -------------------------------------------------- */
+
+const play_sound = (sound_url = "https://www.myinstants.com/media/sounds/vine-boom.mp3", volume = 1, fadeOutTime = null, loop = false, pitch = 1) => {
+    const sound = new Audio(sound_url);
+    sound.volume = volume;
+    sound.loop = loop;
+    sound.pitch = pitch;
+    
+    //fade out sound effect
+    if(fadeOutTime != null){
+        const soundFade = setInterval(() => {
+            if(sound.volume != 0) {
+                sound.volume -= 0.1;
+            } else{
+                clearInterval(soundFade);
+            }
+        }, fadeOutTime);
+    }
+}
 
 /* -------------------------------------------------- CLOCK -------------------------------------------------- */
 
@@ -953,15 +930,26 @@ const clock = (end_time, callback) => {
     clock_interval = setInterval(() => {
         const now = new Date().getTime();
         const distance = end_time - now;
+
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        //mm:ss
+        const time = `${(minutes < 10)?"0"+minutes:minutes}:${(seconds < 10)?"0"+seconds:seconds}`;
 
         if (distance < 0) {
             clearInterval(clock_interval);
             clock_interval = null;
             callback();
         }else{
-            clock_counter.innerHTML = `${minutes}:${seconds}`;
+            clock_counter.innerHTML = time;
         }
     }, 100);
+}
+const clear_clock = () => {
+    clearInterval(clock_interval);
+    clock_interval = null;
+
+    const clock_counter = document.getElementById("clock-counter");
+    clock_counter.innerHTML = "";
 }

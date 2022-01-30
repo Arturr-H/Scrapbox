@@ -336,7 +336,10 @@ module.exports = {
                 question:`${two_names[0]} and ${two_names[1]} don't get along. Why?`,
                 additional_snippets: two_names.concat(["because"])
             },
-            
+            {
+                question:`A ${Blank()} a day keeps the ${name} away.`,
+                additional_snippets: null
+            },            
         ]; 
 
         let matureQuestions = [
@@ -392,7 +395,10 @@ module.exports = {
                 question:`THE FUCKING WORLD IS ENDING! "Not now mom I'm ${Blank()}"`,
                 additional_snippets: ["playing", "trying", "to"]
             },
-
+            {
+                question:`What's the worst you could possibly to do when entering a church?`,
+                additional_snippets: ["god", "Jesus", "holy"]
+            },
         ]
 
         if (typeof questionType == "string" && questionType == "mature") {

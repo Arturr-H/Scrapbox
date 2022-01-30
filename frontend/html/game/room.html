@@ -71,9 +71,12 @@
 
 			<div class="main-room-section">
 				<div class="room-section-header">
-					<h1 id="lobby-short-id" class="lobby-short-id"></h1>
-					<img id="room-qr" class="qr-code"
-						src="">
+					<img class="visibility-toggle" id="lobby-info-visibility-toggle" onclick="toggle_info(this.id)" src="https://artur.red/icons/eye.svg" >
+					
+					<h1 id="lobby-short-id" class="lobby-short-id visibility-toggleable"></h1>
+					<img class="room-qr qr-code visibility-toggleable" onclick="toggleModal('qr-modal')" src="">
+
+					<button id="copy-button" class="copy-button">Click to copy game ID</button>
 				</div>
 				<div class="room-section-body">
 					<div class="config" id="config-area">
@@ -398,27 +401,14 @@
 			</div>
 		</div>
 		<div class="modal" id="qr-modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1>QR-Code</h1>
-					<p>Players can scan this code to enter the game.</p>
-				</div>
-
-				<div class="modal-body">
-					<div class="qr-code">
-						<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=Test"
-							alt="Something Went Wrong">
-					</div>
-					<div class="arrows">
-						<div class="arrow left" onclick="turnTrack(-1)"></div>
-					</div>
-				</div>
+			<div class="qr-code">
+				<img class="room-qr" src="" alt="QR" style="width: 100%; height: 100%;">
 			</div>
 		</div>
 
 		<button class="open-chat" id="open-chat"></button>
-		<!-- <audio loop="" id="audio" volume="0" autoplay="">
-			<source src="https://artur.red/audio/song.mp3" type="audio/mp3" volume="0">
-		</audio> -->
+		<audio loop="" id="audio" volume="0" autoplay="">
+			<!-- <source src="https://artur.red/audio/song.mp3" type="audio/mp3" volume="0"> -->
+		</audio>
 	</body>
 </html>

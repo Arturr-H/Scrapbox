@@ -12,13 +12,35 @@
 	</head>
 
 	<body class="dark">
-		<div class="stopwatch-position">
-			<div class="stopwatch-container">
-				<img src="https://artur.red/images/clock/clock_base.svg" alt="watch piece" class="watch-piece">
-				<img src="https://artur.red/images/clock/clock_hours.svg" alt="watch piece" class="watch-piece hour">
-				<img src="https://artur.red/images/clock/clock_minutes.svg" alt="watch piece" class="watch-piece minute">
+		<div id="card_${player_obj.player.suid}" class="player-answer voting-card-selector">
+			
+			<p>
+				<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner_name}</span></span>
+			</p>
+			<div class="bottom">
+				<img class="mini-pfp" style="background: #fafafa" src="https://artur.red/faces/2.svg" alt="Player profile image">
+				<img class="mini-pfp" style="background: #fafafa" src="https://artur.red/faces/2.svg" alt="Player profile image">
+				<img class="mini-pfp" style="background: #fafafa" src="https://artur.red/faces/2.svg" alt="Player profile image">
+				<img class="mini-pfp" style="background: #fafafa" src="https://artur.red/faces/2.svg" alt="Player profile image">
+				<img class="mini-pfp" style="background: #fafafa" src="https://artur.red/faces/2.svg" alt="Player profile image">
 			</div>
-			<p id="clock-counter">60s</p>
+			<img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
+			<p class="score"></p>
+
+			<div class="player">
+				<div class="pfp">
+					<img style="background: #fafafa" src="https://artur.red/faces/2.svg" alt="Player profile image">
+				</div>
+				<p>${player_obj.player.name}</p>
+			</div>
+
+			<img src="https://artur.red/icons/checkmark.svg" class="checkmark" alt="checkmark">
 		</div>
 	</body>
 </html>
+	<!-- <img src="https://artur.red/images/404.svg" alt="_404" class="image-404">
+	<h3 class="room-not-found">Room was not found!</h3>
+	<div style="display: flex; gap: 1rem; justify-content: center; margin-top: 5vmax;">
+		<a href="https://artur.red"><button>Home</button></a>
+		<a href="https://artur.red/browse"><button>Browse</button></a>
+	</div> -->
