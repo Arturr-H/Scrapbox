@@ -20,11 +20,6 @@ var slideIndex = 1;
 
 const showSlides = (n) => {
     var slides = document.getElementsByClassName("modal-slide");
-    
-    // if (n > slides.length) { slideIndex = 1 }
-    // if (n < 1) { slideIndex = slides.length }
-
-    //slides
     for (i = 0; i < slides.length; i++) {
         slides[i].style.display = "none";
     }
@@ -53,6 +48,7 @@ const turnTrack = (direction) => {
 showSlides(slideIndex)
 
 
+
 let new_name = "";
 let old_name = getCookie("usnm");
 let new_pfp = 0;
@@ -63,27 +59,26 @@ document.getElementById("name-form").addEventListener("submit", (e) => {
     turnTrack(1);
 });
 
+const random_string_id = () => {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
 const select_profile = (nr) => {
     new_pfp = nr;
     toggleModal("name-modal");
 
     setCookie("usnm", new_name, 30);
     setCookie("pfp", new_pfp, 30);
-    setCookie("selfselected", "yes", 30);
-
-    socket.emit("name-change", {
-        room_id: room_id,
-        old_name: old_name,
-        new_name: new_name,
-        new_pfp: new_pfp,
-        suid: getCookie("suid")
-    });
+    setCookie("suid", random_string_id(), 30);
 
     old_name = new_name;
     new_name = "";
     new_pfp = 0;
-}
 
-if (getCookie("selfselected") == "auto"){
-    toggleModal("name-modal");
+    //open link
+    if(game_queue.length > 0){
+        window.open(`https://artur.red/${game_queue}`, "_self");
+    }else{
+        window.open(`https://artur.red`, "_self");
+    }
 }

@@ -39,11 +39,6 @@
 		<meta property="twitter:description" content="ScrapBox, a word-scrambling multiplayer game. Create lobbies with up to eight players and create the best sentences to win the nr 1 spot!">
 		<meta property="twitter:image" content="https://artur.red/images/screenshot.png">
 
-		<!-- Scripts -->
-		<script src="https://artur.red/script/cookies.js" defer></script>
-        <script src="https://artur.red/script/name-select.js" defer></script>
-		<script src="https://artur.red/script/global.js" defer></script>
-
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/global.css" />
 
@@ -52,56 +47,126 @@
 	</head>
 
 	<body>
-		<main>
+		<div style="background: url(https://artur.red/images/background-thumbnail.png); background-size: cover; background-position: center center; filter: blur(25px); position: absolute; width: 100%; height: 100%;">
 
-			<nav>
-				
-			</nav>
-			
-			<div class="main-block-container">
-				<div class="main-block">
-					
-					<div class="box header join">
-						<h1>Select your name</h1>
+		</div>
+		<main>
+			<div class="modal" id="name-modal">
+				<div class="modal-content"
+					onclick="javascript:event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();">
+					<div class="modal-slide" style="display: flex;">
+	
+						<div class="modal-header">
+							<h1>Name Change</h1>
+							<p>Your name was randomly chosen. Do you want to change it?</p>
+						</div>
+						<hr>
+	
+						<div class="modal-body">
+							<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
+							<input type="submit" value="Cancel" onclick="toggleModal('name-modal')">
+							<input type="submit" value="Select New" onclick="turnTrack(1)">
+						</div>
 					</div>
-					<div class="box header create">
-						<h1>Select your profile image</h1>
+					<div class="modal-slide" style="display: none;">
+	
+						<div class="modal-header">
+							<h1>Name Change</h1>
+							<p>Choose a public name that other players will see.</p>
+						</div>
+						<hr>
+	
+						<div class="modal-body">
+							<form action="" id="name-form">
+								<input id="name-input" type="text" value="" onfocus="this.select()" placeholder="Name">
+								<input type="submit" value="">
+							</form>
+	
+	
+							<div class="arrows">
+								<div class="arrow left" onclick="turnTrack(-1)"></div>
+							</div>
+						</div>
 					</div>
-					
-					<div class="box body join name-select" style="flex-direction: column;">
-						<input type="text" id="name-input" placeholder="Enter your name here...">
-						<p style="color: rgba(255, 255, 255, 0.475);">
-							Your name may only contain characters 0-9 and a-z
-						</p>
+					<div class="modal-slide" style="display: none;">
+	
+						<div class="modal-header">
+							<h1>Name Change</h1>
+							<p>Choose one of our faces for your profile</p>
+						</div>
+						<hr>
+	
+						<div class="modal-body">
+							<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
+							<div class="profile-pictures">
+								<button onclick="select_profile(1)">
+									<img src="https://artur.red/faces/1.svg" alt="profile-image-1">
+								</button>
+								<button onclick="select_profile(2)">
+									<img src="https://artur.red/faces/2.svg" alt="profile-image-2">
+								</button>
+								<button onclick="select_profile(3)">
+									<img src="https://artur.red/faces/3.svg" alt="profile-image-3">
+								</button>
+								<button onclick="select_profile(4)">
+									<img src="https://artur.red/faces/4.svg" alt="profile-image-4">
+								</button>
+								<button onclick="select_profile(5)">
+									<img src="https://artur.red/faces/5.svg" alt="profile-image-5">
+								</button>
+								<button onclick="select_profile(6)">
+									<img src="https://artur.red/faces/6.svg" alt="profile-image-6">
+								</button>
+								<button onclick="select_profile(7)">
+									<img src="https://artur.red/faces/7.svg" alt="profile-image-7">
+								</button>
+								<button onclick="select_profile(8)">
+									<img src="https://artur.red/faces/8.svg" alt="profile-image-8">
+								</button>
+								<button onclick="select_profile(9)">
+									<img src="https://artur.red/faces/9.svg" alt="profile-image-9">
+								</button>
+								<button onclick="select_profile(10)">
+									<img src="https://artur.red/faces/10.svg" alt="profile-image-10">
+								</button>
+								<button onclick="select_profile(11)">
+									<img src="https://artur.red/faces/11.svg" alt="profile-image-11">
+								</button>
+								<button onclick="select_profile(12)">
+									<img src="https://artur.red/faces/12.svg" alt="profile-image-12">
+								</button>
+								<button onclick="select_profile(13)">
+									<img src="https://artur.red/faces/13.svg" alt="profile-image-13">
+								</button>
+								<button onclick="select_profile(14)">
+									<img src="https://artur.red/faces/14.svg" alt="profile-image-14">
+								</button>
+							</div>
+							<div class="arrows">
+								<div class="arrow left" onclick="turnTrack(-1)"></div>
+							</div>
+						</div>
 					</div>
-					
-					
-					<div class="box body create pfp-select">
-						<button class="pfp-select" onclick="select_image(this.id)" id="1"><img src="https://artur.red/faces/1.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="2"><img src="https://artur.red/faces/2.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="3"><img src="https://artur.red/faces/3.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="4"><img src="https://artur.red/faces/4.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="5"><img src="https://artur.red/faces/5.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="6"><img src="https://artur.red/faces/6.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="7"><img src="https://artur.red/faces/7.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="8"><img src="https://artur.red/faces/8.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="9"><img src="https://artur.red/faces/9.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="10"><img src="https://artur.red/faces/10.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="11"><img src="https://artur.red/faces/11.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="12"><img src="https://artur.red/faces/12.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="13"><img src="https://artur.red/faces/13.svg" width="50"></button>
-						<button class="pfp-select" onclick="select_image(this.id)" id="14"><img src="https://artur.red/faces/14.svg" width="50"></button>
-					</div>
-					
-					<div class="box Footer">
-						<button id="submit-name">Submit!</button>
+	
+	
+					<div class="modal-footer">
+						<div class="dots">
+							<span class="dot active"></span>
+							<span class="dot"></span>
+							<span class="dot"></span>
+						</div>
 					</div>
 				</div>
 			</div>
-			
-			<script>
-				const queued_room = "<%- room %>";
-			</script>
 		</main>
+
+		<script>
+			const game_queue = window.location.pathname.split('/')[2];
+		</script>
+		<script src="https://artur.red/script/cookies.js"></script>
+        <script src="https://artur.red/script/name-select.js"></script>
+		<script src="https://artur.red/script/global.js"></script>
+		<script src="https://artur.red/script/modal.js"></script>
+		<script>toggleModal("name-modal");</script>
 	</body>
 </html>

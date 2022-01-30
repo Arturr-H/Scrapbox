@@ -79,325 +79,349 @@ module.exports = {
 
         let defaultQuestions = [
             {
-                question:`What did you do after the ${r(places)} last night?`,
+                question: `What did you do after the ${r(places)} last night?`,
                 additional_snippets: ["i", "went", "to"]
             },
             {
-                question:`What did you do to ${r(pronouns.second)}?`,
+                question: `What did you do to ${r(pronouns.second)}?`,
                 additional_snippets: null
             },
             {
-                question:`${rC(pronouns.third)} ${r(people)} went missing last night, and many people suspect it's you. What do you have to say?`,
+                question: `${rC(pronouns.third)} ${r(people)} went missing last night, and many people suspect it's you. What do you have to say?`,
                 additional_snippets: ["it's", "not", "me", "because"]
             },
             {
-                question:`I think I have a plan to solve world hunger. It'll begin with ${Blank()}`,
+                question: `I think I have a plan to solve world hunger. It'll begin with ${Blank()}`,
                 additional_snippets: ["feeding", "food"]
             },
             {
-                question:`Buisness 101: Step one: ${Blank()}, Step two: Profit.`,
+                question: `Buisness 101: Step one: ${Blank()}, Step two: Profit.`,
                 additional_snippets: ["sell", "buy"]
             },
             {
-                question:`Why were you fired from you last job?`,
+                question: `Why were you fired from you last job?`,
                 additional_snippets: ["boss", "office"]
             },
             {
-                question:`White people be like: ${Blank()}.`,
+                question: `What ended my last relationship?`,
                 additional_snippets: null
             },
             {
-                question:`What ended my last relationship?`,
-                additional_snippets: null
-            },
-            {
-                question:`Trending on Twitter: #${Blank()}`,
+                question: `Trending on Twitter: #${Blank()}`,
                 additional_snippets: ["stop", "cancel"]
             },
             {
-                question:`Hi, Welcome to McDonalds. what can I get for you?`,
+                question: `Hi, Welcome to McDonalds. what can I get for you?`,
                 additional_snippets: ["McDonalds", "burger", "fries", "soda"]
             },
             {
-                question:`Top ten reasons to keep going. Nr 10: ${Blank()}.`,
+                question: `Top ten reasons to keep going. Nr 10: ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`${Blank()} is what makes life worth living.`,
+                question: `${Blank()} is what makes life worth living.`,
                 additional_snippets: null
             },
-
             {
-                question:`How would you hide a dead body?`,
+                question: `How would you hide a dead body?`,
                 additional_snippets: ["in", "under", "inside"]
             },
             {
-                question:`Tonight, gentlemen, I will for the first time ${Blank()}.`,
+                question: `Tonight, gentlemen, I will for the first time ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`Help!! My son is ${Blank()}!`,
+                question: `Help!! My son is ${Blank()}!`,
                 additional_snippets: null
             },
             {
-                question:`Girl, I wanna invite you back to my place and show you ${Blank()}.`,
+                question: `Girl, I wanna invite you back to my place and show you ${Blank()}.`,
                 additional_snippets: ["my", "collection", "of", "huge", "secret"]
             },
             {
-                question:`Soo... What's the matter with all the screams coming from the basement?`,
+                question: `Soo... What's the matter with all the screams coming from the basement?`,
                 additional_snippets: null
             },
             {
-                question:`I have a dream that one day this nation will rise up and live out the true meaning of its creed: ${Blank()}.`,
+                question: `I have a dream that one day this nation will rise up and live out the true meaning of its creed: ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`I thought I'd never ${Blank()} again, yet here we are.`,
+                question: `I thought I'd never ${Blank()} again, yet here we are.`,
                 additional_snippets: ["see", "find", "do"]
             },
             {
-                question:`How would you spend a Saturday night with ${name}?`,
+                question: `How would you spend a Saturday night with ${name}?`,
                 additional_snippets: ["watch", "play"]
             },
             {
-                question:`${name} is a ${Blank()}.`,
+                question: `${name} is a ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`In one sentence, describe ${name}'s whole life.`,
+                question: `In one sentence, describe ${name}'s whole life.`,
                 additional_snippets: null
             },
             {
-                question:`If you could invent a new dish, what ingredients would it have?`,
+                question: `If you could invent a new dish, what ingredients would it have?`,
                 additional_snippets: null
             },
             {
-                question:`If you could change one thing about ${name}, what would it be?`,
+                question: `If you could change one thing about ${name}, what would it be?`,
                 additional_snippets: ["his", "her"]
             },
             {
-                question:`The cops are on to me, luckily I brought with me ${Blank()}.`,
+                question: `The cops are on to me, luckily I brought with me ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`Ugh, I hate ${name}'s ${Blank()}.`,
+                question: `Ugh, I hate ${name}'s ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`When I die, bury me in ${Blank()}.`,
+                question: `When I die, bury me in ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`Every time I see ${name} I ${Blank()}.`,
+                question: `Every time I see ${name} I ${Blank()}.`,
                 additional_snippets: ["feel", "good", "horrible", "like"]
             },
             {
-                question: `I've watched ${name} ${Blank()} several times. It's unbelievable.`,
+                question:  `I've watched ${name} ${Blank()} several times. It's unbelievable.`,
                 additional_snippets: null
             },
             {
-                question:`I am clearly suffering from ${Blank()}.`,
+                question: `I am clearly suffering from ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`I just realized that I'll never be able to ${Blank()} again.`,
+                question: `I just realized that I'll never be able to ${Blank()} again.`,
                 additional_snippets: null
             },
             {
-                question:`I just bought a new router! Could you get me a solid Wi-Fi name?`,
+                question: `I just bought a new router! Could you get me a solid Wi-Fi name?`,
                 additional_snippets: null
             },
             {
-                question:`Insult ${name}`,
+                question: `Insult ${name}`,
                 additional_snippets: ["He", "She", "They", "is"]
             },
             {
-                question:`If you were to be arrested but innocent, what would your friends think that you've done?`,
-                additional_snippets: null
-            },
-
-            {
-                question:`If you got to live as a five year old for a day, what would you do first?`,
+                question: `If you were to be arrested but innocent, what would your friends think that you've done?`,
                 additional_snippets: null
             },
             {
-                question:`What would you engrave on your tombstone?`,
+                question: `If you got to live as a five year old for a day, what would you do first?`,
+                additional_snippets: null
+            },
+            {
+                question: `What would you engrave on your tombstone?`,
                 additional_snippets: ["text", "saying", "image", "of"]
             },
             {
-                question:`${Blank()}, underrated and should be celebrated.`,
+                question: `${Blank()}, underrated and should be celebrated.`,
                 additional_snippets: null
             },
             {
-                question:`Why are you ${Blank()} right now? - "Uhh it's for scientifical purposes"`,
+                question: `Why are you ${Blank()} right now? - "Uhh it's for scientifical purposes"`,
                 additional_snippets: ["doing", "making", "trying"]
             },
             {
-                question:`${Blank()} is the best thing since sliced bread.`,
+                question: `${Blank()} is the best thing since sliced bread.`,
                 additional_snippets: null
             },
             {
-                question:`${name}, our hero. Please ${Blank()} immediately.`,
+                question: `${name}, our hero. Please ${Blank()} immediately.`,
                 additional_snippets: ["stop", "save"]
             },
             {
-                question:`If you were to host an e-sport competition, what would the prize be?`,
+                question: `If you were to host an e-sport competition, what would the prize be?`,
                 additional_snippets: ["bunch", "of", "some"]
             },
-            // {
-            //     question:`What continues to make me constipated?`,
-            //     additional_snippets: ["food", "culture"]
-            // },
             {
-                question:`${name} consists of pure ${Blank()}.`,
+                question: `${name} consists of pure ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`Breaking news! ${name} has been arrested for ${Blank()}.`,
+                question: `Breaking news! ${name} has been arrested for ${Blank()}.`,
                 additional_snippets: ["being", "doing", "trying", "to"]
             },
             {
-                question:`Oh my god! Toys R Us has started selling ${Blank()} to children!`,
+                question: `Oh my god! Toys R Us has started selling ${Blank()} to children!`,
                 additional_snippets: ["a", "bunch", "some", "of", "toys"]
             },
             {
-                question:`McDonalds X ${Blank()}, the crossover we didn't know we needed`,
+                question: `McDonalds X ${Blank()}, the crossover we didn't know we needed`,
                 additional_snippets: null
             },
             {
-                question:`Write a story.`,
+                question: `Write a story.`,
                 additional_snippets: Names.concat(["once", "upon", "a", "time"])
             },
             {
-                question:`I checked your computer last night ${name}, and it was packed with ${Blank()}`,
+                question: `I checked your computer last night ${name}, and it was packed with ${Blank()}`,
                 additional_snippets: null
             },
             {
-                question:`Mix ${Blank()} together to make the worlds best smoothie.`,
+                question: `Mix ${Blank()} together to make the worlds best smoothie.`,
                 additional_snippets: ["and", "a", "bunch", "some", "with"]
             },
             {
-                question:`Someone accuses you of eating all the food left in the fridge. How do you respond?`,
+                question: `Someone accuses you of eating all the food left in the fridge. How do you respond?`,
                 additional_snippets: ["eating", "ate"]
             },
             {
-                question:`Now that I'm older, I'm finally going to ${Blank()}.`,
+                question: `Now that I'm older, I'm finally going to ${Blank()}.`,
                 additional_snippets: ["get", "have", "do"]
             },
             {
-                question:`We are the prime age for ${Blank()}.`,
+                question: `We are the prime age for ${Blank()}.`,
                 additional_snippets: ["get", "have", "do"]
             },
             {
-                question:`Yeah, I'm kind of a big deal. I'm ${Blank()}`,
+                question: `Yeah, I'm kind of a big deal. I'm ${Blank()}`,
                 additional_snippets: ["CEO", "prime minister", "king", "president"]
             },
             {
-                question:`When I grow up, I want to be the CEO of ${Blank()}.`,
+                question: `When I grow up, I want to be the CEO of ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`"I'm going to ${Blank()} the next time I see you."`,
+                question: `"I'm going to ${Blank()} the next time I see you."`,
                 additional_snippets: null
             },
             {
-                question:`"Would you like some BBQ sauce with your ${Blank()}?"`,
+                question: `"Would you like some BBQ sauce with your ${Blank()}?"`,
                 additional_snippets: null
             },
             {
-                question:`Free ${Blank()} for everyone! Except for ${name}.`,
+                question: `Free ${Blank()} for everyone! Except for ${name}.`,
                 additional_snippets: null
             },
             {
-                question:`Oh no! ${name} has been kidnapped! Execute plan B: ${Blank()}.`,
+                question: `Oh no! ${name} has been kidnapped! Execute plan B: ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question:`Roses are red, violets are blue, ${Blank()}`,
+                question: `Roses are red, violets are blue, ${Blank()}`,
                 additional_snippets: Names.concat(["too", "sue", "do", "you", "zoo"])
             },
             {
-                question:`What is the reason why you're single?`,
+                question: `What is the reason why you're single?`,
                 additional_snippets: null
             },
             {
-                question:`Breaking news! ${name} just got arrested for ${Blank()}.`,
+                question: `Breaking news! ${name} just got arrested for ${Blank()}.`,
                 additional_snippets: ["being", "doing", "having", "trying", "to"]
             },
             {
-                question:`"Cut the ${Blank()} in half and put it in the freezer."`,
+                question: `"Cut the ${Blank()} in half and put it in the freezer."`,
                 additional_snippets: null
             },
             {
-                question:`If ${two_names[0]} and ${two_names[1]} were to fight, who'd win and why?`,
+                question: `If ${two_names[0]} and ${two_names[1]} were to fight, who'd win and why?`,
                 additional_snippets: two_names.concat(["because"])
             },
             {
-                question:`${two_names[0]} and ${two_names[1]} don't get along. Why?`,
+                question: `${two_names[0]} and ${two_names[1]} don't get along. Why?`,
                 additional_snippets: two_names.concat(["because"])
             },
             {
-                question:`A ${Blank()} a day keeps the ${name} away.`,
+                question: `A ${Blank()} a day keeps the doctor away.`,
                 additional_snippets: null
-            },            
+            },
+            {
+                question: `Hey, I was sick last night. Did I miss anything in school?`,
+                additional_snippets: ["school", "class", "teacher", "student", "parents"]
+            },
+            {
+                question: `There is no way, ${name} just rejected his crush for ${Blank()}.`,
+                additional_snippets: null
+            },
+            {
+                question: `Dad! I think my ${Blank()} is broken.`,
+                additional_snippets: null
+            },
+            {
+                question: `Coming up on stage, ${name} is going to ${Blank()} for y'all.`,
+                additional_snippets: null
+            },
+
         ]; 
 
         let matureQuestions = [
+            //QUESTIONS can not be repeated. only one of each question
             {
-                question: `During sex, I like to think about ${Blank()}.`,
+                question:  `During sex, I like to think about ${Blank()}.`,
                 additional_snippets: ["when", "was", "that", "time"]
             },
             {
-                question: `What will always get you laid?`,
+                question:  `What will always get you laid?`,
                 additional_snippets: ["using"]
             },
             {
-                question: `Well, I was drunk last night, can you tell me how I lost my virginity?`,
+                question:  `Well, I was drunk last night, can you tell me how I lost my virginity?`,
                 additional_snippets: null
             },
             {
-                question: `I don't need drugs to get stoned, I'll just use ${Blank()}.`,
+                question:  `I don't need drugs to get stoned, I'll just use ${Blank()}.`,
                 additional_snippets: ["some", `${random_int(0,4)}-${random_int(5,10)}`, "pieces", "of"]
             },
             {
-                question: `Spice up your sex life by bringing ${Blank()} into the bedroom.`,
+                question:  `Spice up your sex life by bringing ${Blank()} into the bedroom.`,
                 additional_snippets: null
             },
             {
-                question: `What the fuck is ${name} doing out here with all these ${Blank()}?`,
+                question:  `What the fuck is ${name} doing out here with all these ${Blank()}?`,
                 additional_snippets: null
             },
             {
-                question: `Shit, I forgot that we have to pay for the ${Blank()}.`,
+                question:  `Shit, I forgot that we have to pay for the ${Blank()}.`,
                 additional_snippets: ["bill", "subscription"]
             },
             {
-                question: `If I ever see ${name} again, I'm going brutally murder them with ${Blank()}.`,
+                question:  `If I ever see ${name} again, I'm going brutally murder them with ${Blank()}.`,
                 additional_snippets: ["army", "containing"]
             },
             {
-                question: `I just had a massive ${Blank()}.`,
+                question:  `I just had a massive ${Blank()}.`,
                 additional_snippets: null
             },
             {
-                question: `If you ever want your cock to grow back, you'll have to eat ${Blank()}.`,
+                question:  `If you ever want your cock to grow back, you'll have to eat ${Blank()}.`,
                 additional_snippets: ["a", "lot", "of"]
             },
             {
-                question: `What's one thing that keeps getting me horny?`,
+                question:  `What's one thing that keeps getting me horny?`,
                 additional_snippets: null
             },
             {
-                question: `Oh you don't know what sex is? I can sum it up for you: ${Blank()}`,
+                question:  `Oh you don't know what sex is? I can sum it up for you: ${Blank()}`,
                 additional_snippets: null
             },
             {
-                question:`THE FUCKING WORLD IS ENDING! "Not now mom I'm ${Blank()}"`,
+                question: `THE FUCKING WORLD IS ENDING! "Not now mom I'm ${Blank()}"`,
                 additional_snippets: ["playing", "trying", "to"]
             },
             {
-                question:`What's the worst you could possibly to do when entering a church?`,
+                question: `What's the worst you could possibly to do when entering a church?`,
                 additional_snippets: ["god", "Jesus", "holy"]
+            },
+            {
+                question: `My ${Blank()} is so big, I can't even see the top of it.`,
+                additional_snippets: ["pile", "of"]
+            },
+            {
+                question: `I'm not a surgeon, but I can fix your ${Blank()}.`,
+                additional_snippets: ["by", "using"]
+            },
+            {
+                question: `Fuck off, ${name}. I'm not going to ${Blank()} for you.`,
+                additional_snippets: null
+            },
+            {
+                question: `When I was a kid, I used to ${Blank()} all the time.`,
+                additional_snippets: ["play", "collect", "watch"]
             },
         ]
 

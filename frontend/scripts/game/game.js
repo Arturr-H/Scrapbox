@@ -25,6 +25,7 @@ let display_card_owner_percentage_index = 0;
 let all_players = [];
 let extra_snippets = 0;
 let current_extra_snippets = [];
+let current_player_answers;
 
 let has_submitted_story = false;
 
@@ -88,21 +89,39 @@ const multiply_values_in_object = (obj, factor) => {
 
         player_list.innerHTML = display_players(players);
 
+        const this_player = room_data_json.game.players.find(player => player.suid === getCookie("suid"));
+
         //Get the questions
         questions = room_data_json.game.current_questions;
-
         is_leader = room_data_json.game.leader.suid === getCookie("suid");
         self_voting = room_data_json.game.config.self_voting;
         extra_snippets = room_data_json.game.config.extra_snippets;
+        current_snippets = room_data_json.game.current_snippets;
 
+        sentences = this_player.sentences;
         all_players = players;
 
         const story_writing_time = room_data_json.game.config.story_writing_time * 1000;
         const game_start_time = room_data_json.game.start_time;
+        const game_state = room_data_json.game_state;
 
-        clock(game_start_time + story_writing_time, () => {
-            if (!has_submitted_story) text_submit.click();
-        });
+        if (game_state === "STORY") {
+            clock(game_start_time + story_writing_time, () => {
+                if (!has_submitted_story) text_submit.click();
+            });
+        }
+        else if (game_state == "ANSWER"){
+            has_submitted_story = true;
+            current_question_index = this_player.questions_answered-1;
+
+            text_input_area.innerHTML = display_question_view(current_snippets);
+        }
+        else if (game_state = "VOTE"){
+            const game_voting_index = room_data_json.game.voting_index;
+            current_voting_index = game_voting_index;
+
+
+        }
 
 
     }catch(err){
@@ -269,6 +288,11 @@ const shuffle_snippets = (additional) => {
 
 const submit_sentence = () => {
 
+    socket.emit("game:question-answered", {
+        room_id: room_id,
+        suid: getCookie("suid"),
+        sentences: sentences,
+    });
     text_input_area.innerHTML = display_question_view(current_snippets);
 
 }
@@ -286,25 +310,25 @@ const send_sentences = () => {
 
 socket.on(`game:submit-sentences:${room_id}`, (data) => {
     const players = data.players;
-    const current_player_answers = data.current_player_answers;
+    current_player_answers = data.current_player_answers;
 
     //update the player list
     player_list.innerHTML = display_players(players);
 
     //render the voting view if all players have submitted their sentences
     if(data.all_done) {
-        next_voting(current_player_answers);
+        next_voting();
     }
 })
 
 
 // -------------------------------------------------- DISPLAY VOTING -------------------------------------------------- //
 
-const next_voting = (current_player_answers) => {
+const next_voting = () => {
 
     transition(questions[display_card_owner_percentage_index].question, true, () => {
 
-        text_input_area.innerHTML = display_voting_view(current_player_answers, current_voting_index);
+        text_input_area.innerHTML = display_voting_view(current_voting_index);
 
         //next voting index :O
         current_voting_index++;
@@ -312,11 +336,9 @@ const next_voting = (current_player_answers) => {
         //pull the voting card animation.
         show_voting_cards()
     }, null);
-
-    //The card percentage things is now moved to the other next_voting function...
 }
 
-const display_voting_view = (current_player_answers, index) => {
+const display_voting_view = (index) => {
 
     return `
         <div class="question">
@@ -390,7 +412,7 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     const total_votes = data.total_votes;
     const players = data.players;
     const all_done = data.all_done;
-    const current_player_answers = data.current_player_answers;
+    current_player_answers = data.current_player_answers;
     const word_contributors = data.word_contributors;
     const most_voted_for = data.most_voted_for;
 
@@ -402,14 +424,14 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     if (all_done) {
 
         if(current_voting_index >= questions.length){
-            display_card_owner_percentage(players, most_voted_for);
+            display_card_owner_percentage(players, most_voted_for, total_votes);
             setTimeout(() => document.body.innerHTML = display_results(word_contributors), 4000);
 
             return;
         }else{
 
-            display_card_owner_percentage(players, most_voted_for);
-            setTimeout(() => next_voting(current_player_answers), 4000);
+            display_card_owner_percentage(players, most_voted_for, total_votes);
+            setTimeout(() => next_voting(), 4000);
         }
     }
 });
@@ -417,15 +439,29 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
 //displays the percentage at the bottom of
 //cards + colors all the snippets in the card
 //based on the player's player_color
-const display_card_owner_percentage = (players, most_voted_for) => {
+const display_card_owner_percentage = (players, most_voted_for, all_cards) => {
 
-    most_voted_for.map(player_suid => {
+    all_cards.map(card => {
+
+        const user = card.user;
+        const voters = card.votes;
+
+        const player_card_bottom = document.querySelector(`#card_${user} .bottom`);
+        player_card_bottom.innerHTML = voters.map((voter, index) => `
+            <img class="mini-pfp" style="animation-delay: ${index*0.25+1}s; background: ${voter.player_color}" src="https://artur.red/faces/${voter.pfp}.svg" alt="Player profile image">
+        `).join("");
+    });
+
+    most_voted_for.map(mvf_object => {
+
+        const user = mvf_object.user;
+        const voters = mvf_object.voters;
         
-        const player_card = document.getElementById(`card_${player_suid}`);
+        const player_card = document.getElementById(`card_${user}`);
         player_card.classList.add("winning-card");
         player_card.classList.add("player-visible");
 
-        const current_player_owned_snippets = document.querySelectorAll(`#card_${player_suid} .owner`);
+        const current_player_owned_snippets = document.querySelectorAll(`#card_${user} .owner`);
 
         //all players have a player_color, so color all the current_player's snippets with their color
         current_player_owned_snippets.forEach(snippet => {
@@ -437,16 +473,22 @@ const display_card_owner_percentage = (players, most_voted_for) => {
                 tooltip.innerHTML = players.find(this_player => this_player.suid == snippet.classList[1].split("-")[2]).name;
             }catch{}
         });
-
-
-        const player_card_bottom = document.querySelector(`#card_${player_suid} .bottom`);
     });
 
     display_card_owner_percentage_index++;
 }
 const display_results = (word_contributors) => {
 
-    let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes, 100), multiply_values_in_object(word_contributors, 0.35));
+    let current_total_votes_OBJ = {};
+    current_total_votes.forEach(el => {
+        current_total_votes_OBJ[el.user] = el.votes.length;
+    })
+
+    //because we want to merge current_total_votes and word_contributions
+    //we need to convert current_total_votes to an object because it is 
+    //originally an array and word_contributors is an object. 😎😎😎😎😎😎
+
+    let summed_results = sumObjectsByKey(multiply_values_in_object(current_total_votes_OBJ, 100), multiply_values_in_object(word_contributors, 0.35));
     const sorted_results = Object.keys(summed_results).sort((a, b) => summed_results[b] - summed_results[a]);
 
     let winner = sorted_results[0];
@@ -456,14 +498,14 @@ const display_results = (word_contributors) => {
     let winner_obj, second_place_obj, third_place_obj;
 
     winner_obj = {
-        score: summed_results[winner],
+        score: parseInt(summed_results[winner]),
         color: all_players.find(player => player.suid == winner).player_color,
         pfp: all_players.find(player => player.suid == winner).pfp,
         player: all_players.find(player => player.suid == winner).name,
     }
     try{
         second_place_obj = {
-            score: summed_results[second_place],
+            score: parseInt(summed_results[second_place]),
             color: all_players.find(player => player.suid == second_place).player_color,
             pfp: all_players.find(player => player.suid == second_place).pfp,
             player: all_players.find(player => player.suid == second_place).name,
@@ -474,7 +516,7 @@ const display_results = (word_contributors) => {
     }
     try{
         third_place_obj = {
-            score: summed_results[third_place],
+            score: parseInt(summed_results[third_place]),
             color: all_players.find(player => player.suid == third_place).player_color,
             pfp: all_players.find(player => player.suid == third_place).pfp,
             player: all_players.find(player => player.suid == third_place).name,

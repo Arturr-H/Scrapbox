@@ -5,6 +5,8 @@ const room_list = document.getElementById("room-list");
     const rooms = await request.json();
     const room_array = Object.values(rooms);
 
+    console.log(room_array);
+
     room_array.forEach(room => {
         const room_element = document.createElement("a");
         room_element.style.textDecoration = "none";

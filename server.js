@@ -141,10 +141,25 @@ const map_obj_to_percentage = (obj) => {
     return obj;
 }
 const get_most_voted = object => {
-    return Object.keys(object).filter(x => {
-         return object[x] == Math.max.apply(null, 
-         Object.values(object));
-   });
+
+    let most_voted = [];
+    let most_votes = 0;
+    for (let key in object) {
+        if (object[key].length > most_votes) {
+            most_voted = [{
+                user: key,
+                voters: object[key]
+            }]
+            most_votes = object[key].length;
+        }else if (object[key].length === most_votes) {
+            most_voted.push({
+                user: key,
+                voters: object[key]
+            });
+        }
+    }
+    return most_voted;
+
 };
 
 //Express static folders
@@ -215,6 +230,8 @@ app.get("/api/create-room", async (req, res) => {
         online: true,
         player_color: room_colors[0],
         extra_snippets_used: 0,
+        questions_answered: 0,
+        sentences: [],
     }
 
     const leader_configuration_cache = {
@@ -228,7 +245,6 @@ app.get("/api/create-room", async (req, res) => {
         answer_time:        req.cookies["CONF_answer_time"]        || 30,
     }
 
-
     //Create the room
     rooms[roomcode] = {
         roomcode: roomcode,
@@ -239,6 +255,7 @@ app.get("/api/create-room", async (req, res) => {
         room_colors: room_colors,
 
         game_dictionary: [],
+        game_state: "STORY",
 
         game: {
             players: [leader_obj],
@@ -251,8 +268,9 @@ app.get("/api/create-room", async (req, res) => {
             current_snippets: [],
             current_questions: [],
             current_player_answers: [],
+            voting_index: 0,
             word_contributors: {},
-            current_player_votes: {[leader]: 0},
+            current_player_votes: [{user: suid, votes: []}],
         }
     };
 
@@ -303,13 +321,6 @@ app.get("/room/:roomID", (req, res) => {
             extra_snippets_used: 0,
         }
 
-        //make the player online: true
-        // rooms[roomID].game.players.find(x => x.uid === uid).online = true;
-
-        //add the player to the voting list. if they are already in the list,
-        //nothing happens because you override the value of the key. 
-        rooms[roomID].game.current_player_votes[player_obj.suid] = 0;
-
         //Check if room exists
         if(!rooms[roomID]){
             return res.sendFile(default_paths.illegal_game);
@@ -346,14 +357,6 @@ app.get("/room/:roomID", (req, res) => {
 app.get("/game/:gameID?", (req, res) => {
 
     const game_id = req.params.gameID;
-
-    //Check if user has a name, a user should not be
-    //able to join a already started game, if they
-    //don't have a name, so we redirect them to home.
-    if( !req.cookies.usnm
-        || req.cookies.usnm == null
-        || req.cookies.usnm.length <= 2
-    ) return res.redirect("/");
 
     try{
         //Check if room exists
@@ -421,10 +424,8 @@ app.get("/api/get-room-data", (req, res) => {
     }
 });
 //where users can change their names
-app.get("/name", (req, res) => {
-    res.render(default_paths.name_select, {
-        room: "none"
-    });
+app.get("/name/:queue?", (req, res) => {
+    res.sendFile(default_paths.name_select);
 });
 //Shhhhhhhhhhhhh
 app.get("/balls", (req, res) => {res.send("<img src='https://c.tenor.com/S48-9VW_zekAAAAd/cat.gif' />")});
@@ -538,9 +539,7 @@ io.on("connection", (socket) => {
                         rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.suid !== user_suid);
                         rooms[room_id].game.current_player_answers = rooms[room_id].game.current_player_answers.filter(x => x.suid != user_suid);
 
-                        // current player votes looks something like this:
-                        // { 'shit man': 1, Aaron: 1 }
-                        delete rooms[room_id].game.current_player_votes[user_suid]
+                        rooms[room_id].game.current_player_votes = rooms[room_id].game.current_player_votes.filter(x => x.user != user_suid);
 
                         //Make the next player the leader, if there
                         //are no more players, delete the room. 
@@ -650,7 +649,7 @@ io.on("connection", (socket) => {
                 );
 
                 rooms[room_id].game.current_player_answers = rooms[room_id].game.current_player_answers.filter(x => x.suid != kick_request_suid);
-                delete rooms[room_id].game.current_player_votes[kick_request_suid];
+                rooms[room_id].game.current_player_votes = rooms[room_id].game.current_player_votes.filter(x => x.user != kick_request_suid);
 
                 //add the kicked player to the kicked list
                 rooms[room_id].game.kicked_players.push(kick_request_suid);
@@ -706,6 +705,8 @@ io.on("connection", (socket) => {
                 if(all_done){
                     //make all players not done
                     rooms[room_id].game.players.forEach(x => x.done = false);
+
+                    rooms[room_id].game_state = "ANSWER";
                 }
 
                 //send the text to the players
@@ -720,6 +721,19 @@ io.on("connection", (socket) => {
             return false;
         }
     });
+
+    socket.on("game:question-answered", (data) => {
+        const suid = data.suid;
+        const room_id = data.room_id;
+        const sentences = data.sentences;
+
+        if (rooms[room_id].game.players.find(x => x.suid === suid)){
+
+            //increment the number of questions answered for the player
+            rooms[room_id].game.players.find(x => x.suid === suid).questions_answered++;
+            rooms[room_id].game.players.find(x => x.suid === suid).sentences = sentences;
+        }
+    })
 
     socket.on("game:submit-sentences", (data) => {
 
@@ -805,6 +819,8 @@ io.on("connection", (socket) => {
                 //if all players are done, make all players not done
                 if(all_done){
                     rooms[room_id].game.players.forEach(x => x.done = false);
+                    
+                    rooms[room_id].game_state = "VOTE";
                 }
 
                 //send the data back to the players
@@ -862,6 +878,14 @@ io.on("connection", (socket) => {
             const voter = data.voter;
             const voted_for_suid = data.voted_for_suid;
 
+            const room_players = rooms[room_id].game.players;
+            const voter_obj = {
+                suid: voter.suid,
+                name: voter.name,
+                player_color: room_players.find(x => x.suid === voter.suid).player_color,
+                pfp: room_players.find(x => x.suid === voter.suid).pfp
+            }
+
             //check if player is in room
             if (rooms[room_id].game.players.find(x => x.suid === voter.suid)){
 
@@ -870,10 +894,10 @@ io.on("connection", (socket) => {
                 //only if the room has self_voting disabled.
                 if (!rooms[room_id].game.config.self_voting){//if self voting is disabled
                     if (voter.suid != voted_for_suid){//if the voter is not voting for themselves
-                        rooms[room_id].game.current_player_votes[voted_for_suid] += 1;
+                        rooms[room_id].game.current_player_votes.find(x => x.user === voter.suid).votes.push(voter_obj);
                     }else return;
                 }else if (rooms[room_id].game.config.self_voting){//if self voting is enabled
-                    rooms[room_id].game.current_player_votes[voted_for_suid] += 1;
+                    rooms[room_id].game.current_player_votes.find(x => x.user === voter.suid).votes.push(voter_obj);
                 }
 
 
@@ -884,6 +908,11 @@ io.on("connection", (socket) => {
                 const all_done = rooms[room_id].game.players.every(x => x.done);
                 if(all_done){
                     rooms[room_id].game.players.forEach(x => x.done = false);
+                    rooms[room_id].game.voting_index++;
+
+                    if (rooms[room_id].game.voting_index >= rooms[room_id].game.current_questions.length){
+                        rooms[room_id].game_state = "RESULTS";
+                    }
                 }
 
                 //send the data back to the players
@@ -894,13 +923,12 @@ io.on("connection", (socket) => {
                     current_player_answers: rooms[room_id].game.current_player_answers,
                     word_contributors: rooms[room_id].game.word_contributors,
 
-                    //get the people who have the most votes ALL DONE REMOVED NOW
                     most_voted_for: get_most_voted(rooms[room_id].game.current_player_votes)
                 });
 
                 if(all_done){
-                    const cpv = rooms[room_id].game.current_player_votes
-                    Object.keys(cpv).map(el => cpv[el] = 0);
+                    const cpv = rooms[room_id].game.current_player_votes;
+                    Object.keys(cpv).map(el => cpv[el] = []);
                 }
 
             }
@@ -992,32 +1020,17 @@ app.get("/:small_code?", (req, res) => {
         let pfp = req.cookies.pfp;
         let suid = req.cookies.suid;
 
+        if(!name){
+            res.redirect(`/name/${small_code}`);
+        }else if(!pfp){
+            res.redirect(`/name/${small_code}`);
+        }else if(!suid){
+            res.redirect(`/name/${small_code}`);
+        }
 
         //if the user is already in the room
         if (rooms[room_id].game.players.find(x => x.suid === suid)){
             return res.send(custom_message("You are already in the room"));
-        }
-
-
-        if(!suid){
-            const new_suid = generate_uid();
-            res.cookie("suid", new_suid, {maxAge: 1000*60*60*24*30});
-            suid = new_suid;
-        }
-        if(!name){
-            const new_name = names.generate_name();
-            const new_pfp = names.generate_pfp(PROFILE_PICTURE_COUNT);
-
-            res.cookie("usnm", new_name, {maxAge: 1000*60*60*24*30});
-            res.cookie("pfp", new_pfp, {maxAge: 1000*60*60*24*30});
-            res.cookie("selfselected", "auto", {maxAge: 1000*60*60*24*30});
-
-            name = new_name;
-            pfp = new_pfp;
-
-            const new_suid = generate_uid();
-            res.cookie("suid", new_suid, {maxAge: 1000*60*60*24*30});
-            suid = new_suid;
         }
         
         const player_obj = {
@@ -1030,6 +1043,8 @@ app.get("/:small_code?", (req, res) => {
             leader: (rooms[room_id].game.leader.suid == suid),
             player_color: rooms[room_id].room_colors[rooms[room_id].game.players.length],
             extra_snippets_used: 0,
+            questions_answered: 0,
+            sentences: [],
         }
         
         let found_room = false;
@@ -1050,6 +1065,7 @@ app.get("/:small_code?", (req, res) => {
                     return res.send(custom_message("You have been kicked from this room."));
                 }
                 
+                console.log(player_obj.name, "Player joined room: " + room_id);
                 //add the player to the room player list if player is not undefined
                 if (suid && name && !room.game.players.find(x => x.uid === player_obj.uid)){
                     rooms[room_id].game.players = [
