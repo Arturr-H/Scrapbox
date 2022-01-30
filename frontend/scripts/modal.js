@@ -75,8 +75,9 @@ const select_profile = (nr) => {
     new_name = "";
     new_pfp = 0;
 
-    //open link
-    if(game_queue.length > 0){
+    if(game_queue == "CREATE_ROOM_QUEUE"){
+        window.open(`https://artur.red/api/create-room`, "_self");
+    }else if(game_queue.length > 0){
         window.open(`https://artur.red/${game_queue}`, "_self");
     }else{
         window.open(`https://artur.red`, "_self");

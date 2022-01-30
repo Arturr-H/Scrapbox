@@ -302,10 +302,9 @@ input[type=number] {
 
 }
 
-/* .flex-row{
-	display: flex;
-	flex-direction: row;
-} */
+[data-margin] {
+	margin: attr(data-margin rem, 0);
+}
 
 .bottom {
 	position: absolute;
@@ -2399,15 +2398,18 @@ make a choice between our prefabricated artific(********i*********)ally construc
 }
 
 h3.room-not-found{
-	font-size: 4vmax;
+	font-size: 2vmax;
 	font-weight: 900;
 
 	text-align: center;
 }.image-404{
-	width: 15vmax;
+	width: 20vmax;
 	left: 50%;
 	position: relative;
 	transform: translateX(-50%);
+}.buttons-404{
+	margin-top: 4rem;
+	gap: 2rem;
 }
 
 .visibility-toggle{

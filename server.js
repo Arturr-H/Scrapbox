@@ -202,21 +202,7 @@ app.get("/api/create-room", async (req, res) => {
 
     //if the user got no name
     if(!leader){
-        const new_name = names.generate_name();
-        const new_pfp = names.generate_pfp(PROFILE_PICTURE_COUNT);
-        const new_suid = names.generate_suid();
-
-        res.cookie("usnm", new_name, {maxAge: 1000*60*60*24*30});
-        res.cookie("pfp", new_pfp, {maxAge: 1000*60*60*24*30});
-        res.cookie("suid", new_suid, {maxAge: 1000*60*60*24*30});
-        res.cookie("selfselected", "auto", {maxAge: 1000*60*60*24*30});
-        //self selected means if the user made their name themselves
-        //or if it was my backend fucntions. So frontend checks if self selected is
-        //auto, if it is, display a modal that the user can change name / pfp.
-
-        leader = new_name;
-        pfp = new_pfp;
-        suid = new_suid;
+        res.redirect("/name/CREATE_ROOM_QUEUE");
     }
 
     //all the data for the leader of the room
@@ -533,8 +519,10 @@ io.on("connection", (socket) => {
 
                 try{
                     //if the user is still not online after 5 seconds, remove them from the room
-                    if(!rooms[room_id] || !rooms[room_id].game.players.find(x => x.suid === user_suid).online){
+                    if(!rooms[room_id].game.players.find(x => x.suid === user_suid).online){
                         
+                        if(!rooms[room_id]) return;
+
                         //remove the player from the room and from current player votes and current player answers
                         rooms[room_id].game.players = rooms[room_id].game.players.filter(x => x.suid !== user_suid);
                         rooms[room_id].game.current_player_answers = rooms[room_id].game.current_player_answers.filter(x => x.suid != user_suid);
