@@ -1573,6 +1573,17 @@ span.snippet {
 	animation: screen-overlay-text-second .8s ease-in-out forwards;
 	animation-delay: 1s;
 	transform-origin: bottom;
+}p.bottom-notice{
+	position: absolute;
+	bottom: 0;
+
+	text-align: center;
+	font-size: 1.5rem;
+	font-weight: 100;
+	font-family: "Lato", sans-serif;
+	color: rgba(0, 0, 0, 0.262);
+	user-select: none;
+	padding: 1rem;
 }
 
 .fade-in-view {
@@ -1848,7 +1859,7 @@ span.snippet {
 	border-radius: 6px;
 	padding: 5px;
 	position: absolute;
-	z-index: 1;
+	z-index: 10;
 	bottom: 120%;
 	left: 50%;
 	transform: translateX(-50%);
@@ -2434,3 +2445,4 @@ h3.room-not-found{
 		transform: scale(1);
 	}
 }
+

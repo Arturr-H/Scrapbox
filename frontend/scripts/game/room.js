@@ -395,28 +395,6 @@ volume_slider.addEventListener("mousemove", on_volume_change);
 volume_slider.addEventListener("click", on_volume_change);
 on_volume_change();
 
-
-
-socket.on(`name-change:${room_id}`, (data) => {
-    const new_player_list = data.new_player_list;
-    const new_name = data.new_name;
-    const old_name = data.old_name;
-    const leader_name = data.leader_name;
-
-    player_list.innerHTML = display_players(new_player_list);
-    display_player_count(new_player_list);
-
-    // if (new_player != getCookie("usnm")) {
-        notice(`${old_name} has changed their name to ${new_name}`);
-    // }
-    if(!is_leader){
-        config_area.innerHTML = `
-           <p>Waiting for <b>${leader_name}</b> to start the game</p>
-        `;
-    }
-})
-
-
 //Hide and show lobby id & qr.
 let lobby_info_toggled = false;
 const toggle_info = (id) => {

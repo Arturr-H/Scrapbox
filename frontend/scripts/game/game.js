@@ -134,7 +134,6 @@ const multiply_values_in_object = (obj, factor) => {
         }
 
     }catch(err){
-        console.log(err)
         console.log("error");
     }
 })();
@@ -452,17 +451,15 @@ const display_card_owner_percentage = (players, most_voted_for, all_cards) => {
         const user = card.user;
         const voters = card.votes;
 
-        console.log(user, voters);
-
         const player_card_bottom = document.querySelector(`#card_${user} .snippet-bottom`);
         player_card_bottom.innerHTML = voters.map((voter, index) => `
             <img class="mini-pfp" style="animation-delay: ${index*0.25+1}s; background: ${voter.player_color}" src="https://artur.red/faces/${voter.pfp}.svg" alt="Player profile image">
         `).join("");
     });
 
-    most_voted_for.map(mvf_object => {
+    most_voted_for.map(mvf_suid => {
 
-        const user = mvf_object.user;
+        const user = mvf_suid;
         
         const player_card = document.getElementById(`card_${user}`);
         player_card.classList.add("winning-card");
@@ -884,6 +881,8 @@ const transition = (text, is_voting, function_callback, additional) => {
                 `:""
             }
 
+            <p class="bottom-notice">Click to skip</p>
+
         </div>
     `
 
@@ -931,7 +930,6 @@ const animate_additional_snippets = () => {
 
     all_additional_snippets.forEach((child, index) => {
         setTimeout(() => {
-            console.log(child);
             child.style.transition = "transform 1s ease-in-out, opacity 1s ease-in-out";
             child.style.transform = `translate(${100/2-(index*100/all_additional_snippets.length) - (100/all_additional_snippets.length)/2}vw, -25vh)`;
             child.style.opacity = 1;

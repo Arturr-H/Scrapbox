@@ -142,24 +142,19 @@ const map_obj_to_percentage = (obj) => {
 }
 const get_most_voted = object => {
 
+    //object looks like this: [ { user: 'fj0vzjoyq2tdf22zvzho', votes: [ {}, {} ] } ]
+    //now get the user(s) with the most votes and return them as an array
     let most_voted = [];
     let most_votes = 0;
-    for (let key in object) {
-        if (object[key].length > most_votes) {
-            most_voted = [{
-                user: key,
-                voters: object[key]
-            }]
-            most_votes = object[key].length;
-        }else if (object[key].length === most_votes) {
-            most_voted.push({
-                user: key,
-                voters: object[key]
-            });
+    for (let i = 0; i < object.length; i++) {
+        if (object[i].votes.length > most_votes) {
+            most_voted = [object[i].user];
+            most_votes = object[i].votes.length;
+        }else if (object[i].votes.length === most_votes) {
+            most_voted.push(object[i].user);
         }
     }
     return most_voted;
-
 };
 
 //Express static folders
@@ -494,7 +489,7 @@ io.on("connection", (socket) => {
             });
 
         }catch(err){
-            console.log(err);
+            if(DEBUG) console.log(err);
             return false;
         }
     })
@@ -559,39 +554,6 @@ io.on("connection", (socket) => {
             return false;
         }
     });
-
-    socket.on("name-change", (data) => {
-        const room_id = data.room_id;
-        const old_name = data.old_name;
-        const new_name = data.new_name;
-        const new_pfp = data.new_pfp;
-        const suid = data.suid;
-
-        try{
-            //get the player's object
-            const player_obj = rooms[room_id].game.players.find(x => x.suid === suid);
-
-            //change the player's name
-            player_obj.name = new_name;
-            player_obj.pfp = new_pfp;
-
-            if(rooms[room_id].game.leader.uid == player_obj.uid){
-                rooms[room_id].game.leader.name = new_name;
-            }
-
-            //emit the new player list to the room
-            io.emit(`name-change:${room_id}`, {
-                new_player_list: rooms[room_id].game.players,
-                new_name: new_name,
-                old_name: old_name,
-                leader_name: rooms[room_id].game.leader.name
-            });
-        }catch(err){
-            console.log(err);   
-            return false;
-        }
-    });
-
 
     //GAME CONFIGURATION -------------------
     socket.on("config:settings-toggle", (data) => {
@@ -843,8 +805,6 @@ io.on("connection", (socket) => {
                 const room_extra_snippets = rooms[room_id].game.config.extra_snippets;
                 const player_used_extra_snippets = rooms[room_id].game.players.find(x => x.suid === owner).extra_snippets_used;
 
-                console.log(rooms[room_id].game.players);
-
                 if (player_used_extra_snippets < room_extra_snippets){
                 
                     //add the word to the game_dictionary
@@ -926,7 +886,7 @@ io.on("connection", (socket) => {
 
             }
         }catch(err){
-            console.log(err)
+            if (DEBUG) console.log(err)
             return false;
         }
     });
@@ -960,7 +920,7 @@ io.on("connection", (socket) => {
 
             }
         }catch(err){
-            console.log(err)
+            if (DEBUG) console.log(err)
             return false;
         }
     });
@@ -1058,7 +1018,6 @@ app.get("/:small_code?", (req, res) => {
                     return res.send(custom_message("You have been kicked from this room."));
                 }
                 
-                console.log(player_obj.name, "Player joined room: " + room_id);
                 //add the player to the room player list if player is not undefined
                 if (suid && name && !room.game.players.find(x => x.uid === player_obj.uid)){
                     rooms[room_id].game.players = [
