@@ -240,7 +240,7 @@ app.get("/api/create-room", async (req, res) => {
         cleanup: new Date().getTime() + ROOM_CLEANUP_TIME,
         room_colors: room_colors,
 
-        game_dictionary: [],
+        game_dictionary: DEFAULT_SNIPPETS,
         game_state: "STORY",
 
         game: {
@@ -327,6 +327,11 @@ app.get("/room/:roomID", (req, res) => {
         //Else if the user is in the room (added in smallcode route)
         //then join the room, or if you are the leader of the room
         else if(rooms[roomID].game.players.find(x => x.suid === player_obj.suid) != undefined){
+
+            //id not the leader
+            if(!is_leader){
+                rooms[roomID].game.current_player_votes.push({user: player_obj.suid, votes: []});
+            }
             res.sendFile(default_paths.room);
         }
 
@@ -882,10 +887,10 @@ io.on("connection", (socket) => {
                 //only if the room has self_voting disabled.
                 if (!rooms[room_id].game.config.self_voting){//if self voting is disabled
                     if (voter.suid != voted_for_suid){//if the voter is not voting for themselves
-                        rooms[room_id].game.current_player_votes.find(x => x.user === voter.suid).votes.push(voter_obj);
+                        rooms[room_id].game.current_player_votes.find(x => x.user === voted_for_suid).votes.push(voter_obj);
                     }else return;
                 }else if (rooms[room_id].game.config.self_voting){//if self voting is enabled
-                    rooms[room_id].game.current_player_votes.find(x => x.user === voter.suid).votes.push(voter_obj);
+                    rooms[room_id].game.current_player_votes.find(x => x.user === voted_for_suid).votes.push(voter_obj);
                 }
 
 
@@ -899,7 +904,7 @@ io.on("connection", (socket) => {
                     rooms[room_id].game.voting_index++;
 
                     if (rooms[room_id].game.voting_index >= rooms[room_id].game.current_questions.length){
-                        rooms[room_id].game_state = "RESULTS";
+                        rooms[room_id].game_state = "RESULT";
                     }
                 }
 
@@ -916,7 +921,7 @@ io.on("connection", (socket) => {
 
                 if(all_done){
                     const cpv = rooms[room_id].game.current_player_votes;
-                    Object.keys(cpv).map(el => cpv[el] = []);
+                    Object.keys(cpv).map(el => cpv[el] = {user: voter.suid, votes: []});
                 }
 
             }

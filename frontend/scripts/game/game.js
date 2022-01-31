@@ -28,16 +28,13 @@ let current_extra_snippets = [];
 let current_player_answers;
 
 let has_submitted_story = false;
+let current_voting_index = 0;
 
 const VOTING_TIME_IN_MS = 20000;
 
 const get_unique_id = () => {
     return Math.random().toString(36);
 }
-
-//it cycles through all the questions and
-//all the player items using this variable
-let current_voting_index = 0;
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
@@ -104,6 +101,12 @@ const multiply_values_in_object = (obj, factor) => {
         const story_writing_time = room_data_json.game.config.story_writing_time * 1000;
         const game_start_time = room_data_json.game.start_time;
         const game_state = room_data_json.game_state;
+        const game_voting_index = room_data_json.game.voting_index;
+
+        const player_answers = room_data_json.game.current_player_answers;
+        const word_contributors = room_data_json.game.word_contributors;
+
+        voting_index = room_data_json.game.voting_index;
 
         if (game_state === "STORY") {
             clock(game_start_time + story_writing_time, () => {
@@ -116,15 +119,22 @@ const multiply_values_in_object = (obj, factor) => {
 
             text_input_area.innerHTML = display_question_view(current_snippets);
         }
-        else if (game_state = "VOTE"){
-            const game_voting_index = room_data_json.game.voting_index;
+        else if (game_state == "VOTE"){
+            has_submitted_story = true;
+
             current_voting_index = game_voting_index;
+            current_player_answers = player_answers;
+            next_voting();
+        }
+        else if (game_state == "RESULT"){
+            has_submitted_story = true;
+            current_total_votes = room_data_json.game.current_player_votes;
 
-
+            document.body.innerHTML = display_results(word_contributors);
         }
 
-
     }catch(err){
+        console.log(err)
         console.log("error");
     }
 })();
@@ -321,7 +331,6 @@ socket.on(`game:submit-sentences:${room_id}`, (data) => {
     }
 })
 
-
 // -------------------------------------------------- DISPLAY VOTING -------------------------------------------------- //
 
 const next_voting = () => {
@@ -361,12 +370,12 @@ const display_voting_view = (index) => {
                         : player_obj.player.suid == getCookie("suid")?'':`vote_for('${player_obj.player.suid}')`
 
                     }">
-                        
-                        <p>${
-                            player_obj.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner_name}</span></span>`).join(" ")
-                        }</p>
-                        <div class="bottom"></div>
-                        <img src="https://artur.red/images/cross-numbers/${player_idx+1}.svg" class="card-number" alt="card-number">
+                        <div class="snippet-overflow">
+                            <p>${
+                                player_obj.sentences[index].sentence.map(word => `<span class="owner snippet-owner-${word.owner}">${word.word}<span class="tooltiptext">${word.owner_name}</span></span>`).join(" ")
+                            }</p>
+                        </div>
+                        <div class="snippet-bottom"></div>
                         <p class="score"></p>
 
                         <div class="player">
@@ -436,9 +445,6 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     }
 });
 
-//displays the percentage at the bottom of
-//cards + colors all the snippets in the card
-//based on the player's player_color
 const display_card_owner_percentage = (players, most_voted_for, all_cards) => {
 
     all_cards.map(card => {
@@ -446,7 +452,9 @@ const display_card_owner_percentage = (players, most_voted_for, all_cards) => {
         const user = card.user;
         const voters = card.votes;
 
-        const player_card_bottom = document.querySelector(`#card_${user} .bottom`);
+        console.log(user, voters);
+
+        const player_card_bottom = document.querySelector(`#card_${user} .snippet-bottom`);
         player_card_bottom.innerHTML = voters.map((voter, index) => `
             <img class="mini-pfp" style="animation-delay: ${index*0.25+1}s; background: ${voter.player_color}" src="https://artur.red/faces/${voter.pfp}.svg" alt="Player profile image">
         `).join("");
@@ -455,7 +463,6 @@ const display_card_owner_percentage = (players, most_voted_for, all_cards) => {
     most_voted_for.map(mvf_object => {
 
         const user = mvf_object.user;
-        const voters = mvf_object.voters;
         
         const player_card = document.getElementById(`card_${user}`);
         player_card.classList.add("winning-card");
@@ -477,6 +484,7 @@ const display_card_owner_percentage = (players, most_voted_for, all_cards) => {
 
     display_card_owner_percentage_index++;
 }
+
 const display_results = (word_contributors) => {
 
     let current_total_votes_OBJ = {};
