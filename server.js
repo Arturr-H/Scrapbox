@@ -74,8 +74,8 @@ const get_questions = (questionCount, players, type) => {
 
 //default file paths
 const default_paths = {
-    illegal_game: path.resolve("frontend/html/error-pages/roomError.html"),
-    home: path.resolve("frontend/html/index.html"),
+    illegal_game: path.resolve("frontend/html/error-pages/404.html"),
+    home: path.resolve("frontend/html/game/game-join.html"),
     room: path.resolve("frontend/html/game/room.html"),
     game_room: path.resolve("frontend/html/game/game.html"),
     name_select: path.resolve("frontend/html/name.html"),
@@ -112,7 +112,7 @@ const filter_bad_words = (text) => {
 let rooms = {};
 
 //Constant variables
-const DEBUG = true;
+const DEBUG = false;
 
 const MAX_PLAYERS_PER_ROOM = 8;
 const MIN_PLAYERS_PER_ROOM = DEBUG ? 1 : 1;
@@ -221,9 +221,10 @@ app.get("/api/create-room", async (req, res) => {
         extra_snippets:     req.cookies["CONF_extra_snippets"]     || 1,
         public:             req.cookies["CONF_public"]             || false,
         self_voting:        req.cookies["CONF_self_voting"]        || false,
-        word_contribution:  req.cookies["CONF_word_contribution"]  || false,
+        word_contribution:  req.cookies["CONF_word_contribution"]  || true,
         story_writing_time: req.cookies["CONF_story_writing_time"] || 90,
         answer_time:        req.cookies["CONF_answer_time"]        || 30,
+        language:           req.cookies["CONF_language"]           || "English",
     }
 
     //Create the room
@@ -234,7 +235,6 @@ app.get("/api/create-room", async (req, res) => {
 
         cleanup: new Date().getTime() + ROOM_CLEANUP_TIME,
         room_colors: room_colors,
-
         game_dictionary: DEFAULT_SNIPPETS,
         game_state: "STORY",
 
@@ -252,6 +252,17 @@ app.get("/api/create-room", async (req, res) => {
             voting_index: 0,
             word_contributors: {},
             current_player_votes: [{user: suid, votes: []}],
+
+            honorable_mentions: {
+                fastest_answerer: null,
+                most_boring: null,
+                longest_story: {
+                    amount_of_words: 0,
+                    player: null,
+                },
+
+                total_votes: [{user: suid, votes: 0}],//used to calculate most_boring aka the least voted.
+            },
         }
     };
 
@@ -326,6 +337,7 @@ app.get("/room/:roomID", (req, res) => {
             //id not the leader
             if(!is_leader){
                 rooms[roomID].game.current_player_votes.push({user: player_obj.suid, votes: []});
+                rooms[roomID].game.honorable_mentions.total_votes.push({user: player_obj.suid, votes: 0});
             }
             res.sendFile(default_paths.room);
         }
@@ -336,7 +348,9 @@ app.get("/room/:roomID", (req, res) => {
         
     }catch(err){
         if (DEBUG) console.log(err);
-        res.sendStatus(404);
+        return res
+            .status(404)
+            .sendFile(default_paths.illegal_game);
     }
 });
 //game joining
@@ -406,7 +420,9 @@ app.get("/api/get-room-data", (req, res) => {
     if (rooms[room_id]){
         return res.json(rooms[room_id]);
     }else{
-        return res.sendStatus(404);
+        return res
+            .status(404)
+            .sendFile(default_paths.illegal_game);
     }
 });
 //where users can change their names
@@ -633,10 +649,19 @@ io.on("connection", (socket) => {
             if (rooms[room_id].game.players.find(x => x.suid === player.suid)){
 
                 //add the words to the game_dictionary
+                const words = text.map(x => x.word.toLowerCase());
                 rooms[room_id].game_dictionary = [
                     ...rooms[room_id].game_dictionary,
-                    ...text.map(x => x.word.toLowerCase())
+                    ...words
                 ];
+
+                //if the player has more words than previous, add them to the list of honorable mentions
+                if(words.length > rooms[room_id].game.honorable_mentions.longest_story.amount_of_words){
+                    rooms[room_id].game.honorable_mentions.longest_story = {
+                        amount_of_words: words.length,
+                        player: player
+                    };
+                }
 
                 //split the text into an array of words, and randomize it using Math.random
                 const random_words = text.sort(() => Math.random() - 0.5);
@@ -715,7 +740,6 @@ io.on("connection", (socket) => {
                 //should look something like this: {player1: 2, player2: 1, player3: 5, player4: 6}
                 //the key is the player, and the value is the number of words they submitted
                 //and the [Object]s look something like this:
-                // {word: "word1", owner: "player1"}
                 let owners = {};
                 valid_sentences.forEach(x => {
 
@@ -765,13 +789,16 @@ io.on("connection", (socket) => {
                     sentences: valid_sentences,
                 });
 
+                //HONORABLE MENTIONS.
+                if(rooms[room_id].game.honorable_mentions.fastest_answerer == null){
+                    rooms[room_id].game.honorable_mentions.fastest_answerer = this_player.name;
+                }
+
                 //set the player to done
                 rooms[room_id].game.players.find(x => x.suid === player.suid).done = true;
 
                 //check if all players have submitted
                 const all_done = rooms[room_id].game.players.every(x => x.done);
-
-                //if all players are done, make all players not done
                 if(all_done){
                     rooms[room_id].game.players.forEach(x => x.done = false);
                     
@@ -848,10 +875,13 @@ io.on("connection", (socket) => {
                 if (!rooms[room_id].game.config.self_voting){//if self voting is disabled
                     if (voter.suid != voted_for_suid){//if the voter is not voting for themselves
                         rooms[room_id].game.current_player_votes.find(x => x.user === voted_for_suid).votes.push(voter_obj);
+                        rooms[room_id].game.honorable_mentions.total_votes.find(x => x.user === voted_for_suid).votes += 1;//HONORABLE MENTIONS
                     }else return;
                 }else if (rooms[room_id].game.config.self_voting){//if self voting is enabled
                     rooms[room_id].game.current_player_votes.find(x => x.user === voted_for_suid).votes.push(voter_obj);
+                    rooms[room_id].game.honorable_mentions.total_votes.find(x => x.user === voted_for_suid).votes += 1;//HONORABLE MENTIONS
                 }
+
 
 
                 //set the player to done
@@ -865,6 +895,19 @@ io.on("connection", (socket) => {
 
                     if (rooms[room_id].game.voting_index >= rooms[room_id].game.current_questions.length){
                         rooms[room_id].game_state = "RESULT";
+
+                        const total_votes = rooms[room_id].game.honorable_mentions.total_votes;
+                        let current_lowest;
+
+                        //get the player with the least amount of votes.
+                        total_votes.forEach(user_vote_obj => {
+                            if(!current_lowest || user_vote_obj.votes < current_lowest.votes){
+                                current_lowest = user_vote_obj;
+                            }else return;
+                        });
+
+                        current_lowest.user = rooms[room_id].game.players.find(x => x.suid == current_lowest.user).name;
+                        rooms[room_id].game.honorable_mentions.most_boring = current_lowest;
                     }
                 }
 
@@ -876,7 +919,8 @@ io.on("connection", (socket) => {
                     current_player_answers: rooms[room_id].game.current_player_answers,
                     word_contributors: rooms[room_id].game.word_contributors,
 
-                    most_voted_for: get_most_voted(rooms[room_id].game.current_player_votes)
+                    most_voted_for: get_most_voted(rooms[room_id].game.current_player_votes),
+                    honorable_mentions: rooms[room_id].game.honorable_mentions,
                 });
 
                 if(all_done){
@@ -1031,12 +1075,16 @@ app.get("/:small_code?", (req, res) => {
         })
         
         if (!found_room){
-            return res.sendStatus(404);
+            return res
+                .status(404)
+                .sendFile(default_paths.illegal_game);
         }
     }
     catch(err){
         if (DEBUG) console.log(err);
-        return res.sendStatus(404);
+        return res
+            .status(404)
+            .sendFile(default_paths.illegal_game);
     }
 })
 

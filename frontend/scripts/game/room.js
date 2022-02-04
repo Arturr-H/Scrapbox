@@ -18,8 +18,28 @@ const word_contribution = document.getElementById("word-contribution");
 const extra_snippets = document.getElementById("extra-snippets");
 const story_writing_time = document.getElementById("story-writing-time");
 const answer_time = document.getElementById("answer-time");
+const language = document.getElementById("language");
 
 const copy_button = document.getElementById("copy-button");
+
+const languages = [
+    "Abkhazian", "Afar", "Afrikaans", "Albanian", "Amharic", "Arabic", "Aragonese", "Armenian", "Assamese", "Aymara", "Azerbaijani", 
+    "Bashkir", "Basque", "Bengali (Bangla)", "Bhutani", "Bihari", "Bislama", "Breton", "Bulgarian", "Burmese", "Belarussian (Byelorussian)", "Cambodian", 
+    "Catalan", "Cherokee", "Chewa", "Chinese", "Chinese (Simplified)", "Chinese (Traditional)", "Corsican", "Croatian", "Czech", "Danish", "Divehi", "Dutch", 
+    "Edo", "Esperanto", "Estonian", "Faeroese", "Farsi", "Fiji", "Finnish", "Flemish", "French", "Frisian", "Fulfulde", "Galician", "Gaelic (Scottish)", 
+    "Gaelic (Manx)", "Georgian", "German", "Greek", "Greenlandic", "Guarani", "Gujarati", "Haitian Creole", "Hausa", "Hawaiian", "Hebrew", "Hindi", "Hungarian", 
+    "Ibibio", "Icelandic", "Ido", "Igbo", "Indonesian", "Interlingua", "Interlingue", "Inuktitut", "Inupiak", "Irish", "Italian", "Japanese", "Javanese", 
+    "Kannada", "Kanuri", "Kashmiri", "Kazakh", "Kinyarwanda (Rwanda)", "Kirghiz", "Kirundi (Rundi)", "Konkani", "Korean", "Kurdish", "Laothian", "Latin", 
+    "Latvian (Lettish)", "Limburgish (Limburger)", "Lingala", "Lithuanian", "Macedonian", "Malagasy", "Malay", "Malayalam", "Maltese", "Maori", "Marathi", 
+    "Mongolian", "Nauru", "Nepali", "Norwegian", "Occitan", "Oriya", "Oromo (Afaan Oromo)", "Papiamentu", "Pashto (Pushto)", "Polish", "Portuguese", "Punjabi", 
+    "Quechua", "Rhaeto-Romance", "Romanian", "Russian", "Sami (Lappish)", "Samoan", "Sangro", "Sanskrit", "Serbian", "Serbo-Croatian", "Sesotho", "Setswana", 
+    "Shona", "Sichuan Yi", "Sindhi", "Sinhalese", "Siswati", "Slovak", "Slovenian", "Somali", "Spanish", "Sundanese", "Swahili (Kiswahili)", "Swedish", "Syriac", 
+    "Tagalog", "Tajik", "Tamazight", "Tamil", "Tatar", "Telugu", "Thai", "Tibetan", "Tigrinya", "Tonga", "Tsonga", "Turkish", "Turkmen", "Twi", "Uighur", "Ukrainian", 
+    "Urdu", "Uzbek", "Venda", "Vietnamese", "Volapük", "Wallon", "Welsh", "Wolof", "Xhosa", "Yi", "Yiddish", "Yoruba", "Zulu"
+];
+
+document.getElementById("language").innerHTML += languages.map(language => `<option value="${language}">${language}</option>`).join("");
+
 
 let is_leader = false;
 let room_short_id = "";
@@ -43,7 +63,7 @@ const display_players = (players) => players.map(player_obj => `
         </div>
     </li>
 `).join("");
-const display_player_count = (players) => player_count.innerHTML = `${players.length}/16`;
+const display_player_count = (players) => player_count.innerHTML = `${players.length}/8`;
 lobby_short_id.addEventListener("click", () => {
     //copy the short id to the clipboard
     navigator.clipboard.writeText("https://artur.red/" + room_short_id);
@@ -159,6 +179,19 @@ const answer_time_change = () => {
         setting: "answer_time"
     })
 }
+const language_change = () => {
+    setCookie("CONF_language", language.value, 30);
+
+    socket.emit(`config:settings-toggle`, {
+        room: room_id,
+        player: {
+            name: getCookie("usnm"),
+            suid: getCookie("suid")
+        },
+        new_value: language.value,
+        setting: "language"
+    })
+}
 
 
 // > > JOIN HANDLER  &  PLAYER COUNTER > >
@@ -219,6 +252,7 @@ socket.on(`player-join:${room_id}`, (data) => {
         extra_snippets.value = room_data_json.game.config.extra_snippets;
         story_writing_time.value = room_data_json.game.config.story_writing_time;
         answer_time.value = room_data_json.game.config.answer_time;
+        language.value = room_data_json.game.config.language;
 
         toggle_public.checked = room_data_json.game.config.public;
         self_voting.checked = room_data_json.game.config.self_voting;
@@ -238,7 +272,8 @@ socket.on(`player-join:${room_id}`, (data) => {
                 <p>Waiting for <b>${room_data_json.game.leader.name}</b> to start the game</p>
             `;
         }
-    }catch {
+    }catch(err) {
+        console.log(err);
         console.log("error");
     }
 })();
@@ -288,6 +323,7 @@ word_contribution.addEventListener( "click",  word_contribution_change  );
 extra_snippets.addEventListener(    "change", extra_snippets_change     );
 story_writing_time.addEventListener("change", story_writing_time_change );
 answer_time.addEventListener(       "change", answer_time_change        );
+language.addEventListener(          "change", language_change           );
 
 
 socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
@@ -317,6 +353,9 @@ socket.on(`config:settings-toggle:${room_id}`, (new_data) => {
     }
     if (new_data.setting == "answer_time") {
         answer_time.value = new_data.new_value;
+    }
+    if (new_data.setting == "language") {
+        language.value = new_data.new_value;
     }
 });
 

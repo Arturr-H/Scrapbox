@@ -9,7 +9,6 @@
 		<link rel="stylesheet" href="https://artur.red/style/global.css">
 		<script src="https://artur.red/script/cookies.js" defer></script>
 		<script src="https://artur.red/script/global.js" defer></script>
-		<script src="https://artur.red/script/game/browse-games.js" defer></script>
 	</head>
 
 	<body class="dark" data-new-gr-c-s-check-loaded="8.893.0" data-gr-ext-installed="" cz-shortcut-listen="true"
@@ -29,7 +28,7 @@
 					</div>
 					<p>Number</p>
 				</div>
-				<div class="rank-3 rank-display">3<span class="total-points">122 Points</span></div>
+				<div class="rank-3 rank-display"><img src="https://artur.red/images/medals/3.svg" alt="1"><span class="total-points"><span class="points-big">122</span><br><span class="">Points<span></span></div>
 			</div>
 			<div class="rank rank-nr-2">
 				<div class="player ">
@@ -38,29 +37,85 @@
 					</div>
 					<p>Artur</p>
 				</div>
-				<div class="rank-2 rank-display">2<span class="total-points">246 Points</span></div>
+				<div class="rank-2 rank-display"><img src="https://artur.red/images/medals/2.svg" alt="1"><span class="total-points"><span class="points-big">246</span><br>Points</span></div>
 			</div>
 			<div class="rank rank-nr-1">
-				<div class="effects">
-					<div class="mini-sunburst"></div>
-					<div class="crown"></div>
-				</div>
 				<div class="player ">
 					<div class="pfp">
 						<img style="background: #949494" src="https://artur.red/faces/5.svg">
 					</div>
 					<p>Aaron</p>
 				</div>
-				<div class="rank-1 rank-display">1<span class="total-points">545 Points</span></div>
+				<div class="rank-1 rank-display">
+					<div class="mini-sunburst-win">
+
+					</div>
+					<img src="https://artur.red/images/medals/1.svg" alt="1">
+					<span class="total-points"><span class="points-big">545</span><br> Points</span>
+				</div>
 			</div>
 		</div>
 		<a href="https://artur.red"><button class="btl">Back to Lobby</button></a>
 		<canvas id="winner-confetti"></canvas>
 
-		<script src="https://artur.red/style/confetti.js"></script>
+		<script src="https://artur.red/style/particle_system.js"></script>
 		<script>
-			var confettiSettings = { "target": "winner-confetti", "max": "150", "size": "1.5", "animate": true, "props": ["square"], "colors": [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]], "clock": "20", "rotate": true, "start_from_edge": true, "respawn": true };
-			var confetti = new ConfettiGenerator(confettiSettings);
+			const play_sound = (sound_url = "https://www.myinstants.com/media/sounds/vine-boom.mp3", volume = 1, fadeOutDelay = null, fadeOutTime = null, loop = false, pitch = 1) => {
+				const sound = new Audio(sound_url);
+				sound.volume = volume;
+				sound.loop = loop;
+				sound.pitch = pitch;
+				sound.play();
+
+				let current_index = 0;
+				const starter_volume = sound.volume;
+
+				// setTimeout(() => {
+					
+
+
+				// 	const fadeInterval = setInterval(() => {
+				// 		current_index += 1;
+
+				// 		sound.volume -= starter_volume/100;
+				// 		console.log(sound.volume)
+						
+				// 		if(sound.volume <= 0){
+				// 			clearInterval(fadeInterval);
+				// 			console.log("CLEARING")
+				// 		}
+
+				// 	}, current_index);
+
+				// }, fadeOutDelay);
+			}
+
+
+			const canvas = document.getElementById('winner-confetti');
+						
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			const particle_system = new ParticleSystem({
+				canvas: canvas,
+				particle_amount: 200,
+				colors: ["#e6194B", "#f58231", "#ffe119", "#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4"],
+				size: {
+					x: 16,
+					y: 20
+				},
+				rotation_speed: 0.4,
+				gravity: 0.007,
+				spread: 0.2,
+				cluster_length: 6000,
+				speed: 1,
+			});
+
+			
+			setTimeout(() => {
+				play_sound("https://www.myinstants.com/media/sounds/cheering-woohoo.mp3", 1, 1, 2);
+				particle_system.render();	
+			}, 8000);
+			
 		</script>
 
 		<!-- Animations -->

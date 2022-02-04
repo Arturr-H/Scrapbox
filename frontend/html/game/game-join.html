@@ -21,6 +21,7 @@
 		<meta name="audience" content="Everyone">
 		<meta name="robots" content= "index, follow">
 		<link rel="icon" type="image/x-icon" href="https://artur.red/images/logo.svg">
+		<meta name="viewport" content="width=device-width, user-scalable=no" />
 
 		
 		<meta name="title" content="ScrapBox | Play ScrapBox">
@@ -56,6 +57,7 @@
 	</head>
 
 	<body class="dark">
+
 		<div class="blob-container">
 			<div class="blob-1"></div>
 			<div class="blob-2"></div>
@@ -68,29 +70,27 @@
 			<div class="floating">
 				<div class="grid-2x2-2" style="z-index: 1; position: relative;">
 
-					<div class="border-bottom border-right header" style="grid-area: Header-1;">
-						<h1>Join Room</h1>
-					</div>
-					<div class="border-bottom header" style="grid-area: Header-2;">
-						<h1>Create Room</h1>
-					</div>
+					<img src="https://artur.red/images/logo-text-color.svg" class="logo-header" style="grid-area: Header-2;">
+
 					
 					<div class="border-bottom border-right" style="grid-area: Content-1;">
+						<h1>Join a room!</h1>
 						<form action="" id="room-code-form">
 							<input type="text"  maxlength="7" placeholder="Enter room code" id="code-input">
 							<button id="join-button">Join</button>
 							<input type="submit" style="display: none;">
 						</form>
 						<p>
-							Join a lobby using a room code containing 7 characters. You'll need to be nice to everyone or else you might get kicked by the game moderator. Good luck winning!
+							Did your friend send you a code, or did the presenter force you to go in and play a game during a terribly serious business conference that will only go south from here on out? Enter the code in the box above. (contains 7 digits)
 						</p>
 					</div>
 					
 					
 					<div class="border-bottom" style="grid-area: Content-2;">
+						<h1>Create a room!</h1>
 						<a href="https://artur.red/api/create-room"><button>Create room</button></a>
 						<p>
-							A lobby with maximum 16 players, You'll be the leader of this lobby, which means you'll be able to kick players from the lobby, moderate, and change game settings.
+							Run a lobby with 8 other pals. You will be in charge, so change the game settings to your liking and kick the uninvited ones.Feel the power flowing through your veins, you bloody megalomaniac.
 						</p>
 					</div>
 					

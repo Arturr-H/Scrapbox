@@ -20,6 +20,7 @@
 		<meta name="page-type" content="Games">
 		<meta name="audience" content="Everyone">
 		<link rel="icon" type="image/x-icon" href="https://artur.red/images/logo.svg">
+		<meta name="viewport" content="width=device-width, user-scalable=no" />
 
 		
 		<meta name="title" content="ScrapBox | Room">
@@ -58,14 +59,24 @@
 	<body class="dark" cz-shortcut-listen="true" data-new-gr-c-s-check-loaded="8.893.0" data-gr-ext-installed="">
 		<main id="main">
 			<nav>
-				<p id="player-count" class="player-count">1/16</p>
+				<div class="logo">
+					<img src="https://artur.red/images/logo-text-color.svg" alt="scrapbox">
+				</div>
 				<ul id="player-list">
 					
 				</ul>
 				<hr>
-				<div class="volume">
-					<img id="volume-image" src="https://artur.red/images/audio-levels/1.svg" alt="">
-					<input type="range" id="volume-slider" min="0" max="100" value="50">
+				<p id="player-count" class="player-count">1/8</p>
+				<div class="nav-bottom">
+					<div class="volume">
+						<img id="volume-image" src="https://artur.red/images/audio-levels/1.svg" alt="">
+						<input type="range" id="volume-slider" min="0" max="100" value="50">
+					</div>
+					<a href="https://artur.red" class="leave-button">
+						<button class="removable leave">
+							Leave Lobby
+						</button>
+					</a>
 				</div>
 			</nav>
 
@@ -92,7 +103,7 @@
 							
 								<div class="setting-text">
 									<p>Question type</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip right">&#9432;
 										<span class="setting-tooltip-container">
 											Changes the type of questions asked in the game.
 										</span>
@@ -117,7 +128,7 @@
 							
 								<div class="setting-text">
 									<p>Question amount</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip right">&#9432;
 										<span class="setting-tooltip-container">
 											Changes the amount of questions asked in the game.
 										</span>
@@ -139,7 +150,7 @@
 							
 								<div class="setting-text">
 									<p>Extra snippets</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip right">&#9432;
 										<span class="setting-tooltip-container">
 											Enables players to add personal words during the game's runtime.
 										</span>
@@ -155,17 +166,36 @@
 										<span class="slider"></span>
 									</label>
 								</div>
-							
+								
 								<div class="setting-text">
 									<p>Public</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip right">&#9432;
 										<span class="setting-tooltip-container">
 											Allows other players to join the game from the browse section.
 										</span>
 									</div>
-
+									
 								</div>
 							</div>
+
+							<div class="setting-row">
+								<div class="setting">
+									<select id="language" name="language">
+										<option value="English" selected="selected">English</option>
+									</select>
+								</div>
+							
+								<div class="setting-text">
+									<p>Language</p>
+									<div class="setting-tooltip right">&#9432;
+										<span class="setting-tooltip-container">
+											The language that players should be using in game. Questions are still in English.
+										</span>
+									</div>
+	
+								</div>
+							</div>
+
 						</div>
 						<div class="settings">
 							<div class="setting-row">
@@ -182,7 +212,7 @@
 	
 								<div class="setting-text">
 									<p>Story writing time</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip left">&#9432;
 										<span class="setting-tooltip-container">
 											How long the user has to write their words.
 										</span>
@@ -204,7 +234,7 @@
 	
 								<div class="setting-text">
 									<p>Answer time</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip left">&#9432;
 										<span class="setting-tooltip-container">
 											How long the user has to answer the question.
 										</span>
@@ -222,7 +252,7 @@
 
 								<div class="setting-text">
 									<p>Self-voting</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip left">&#9432;
 										<span class="setting-tooltip-container">
 											Enables you to vote on your own submitions.
 										</span>
@@ -241,7 +271,7 @@
 
 								<div class="setting-text">
 									<p>Word contribution</p>
-									<div class="setting-tooltip">&#9432;
+									<div class="setting-tooltip left">&#9432;
 										<span class="setting-tooltip-container">
 											Enables players to gain extra points for their words being used by the winning card.  
 										</span>

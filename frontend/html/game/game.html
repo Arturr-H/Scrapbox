@@ -19,7 +19,7 @@
 		<meta name="page-type" content="Games">
 		<meta name="audience" content="Everyone">
 		<link rel="icon" type="image/x-icon" href="https://artur.red/images/logo.svg">
-
+		<meta name="viewport" content="width=device-width, user-scalable=no" />
 		
 		<meta name="title" content="ScrapBox | Play ScrapBox">
 		<meta name="description" content="ScrapBox, a word-scrambling multiplayer game. Create lobbies with up to eight players and create the best sentences to win the nr 1 spot!">
@@ -44,6 +44,8 @@
 		<script src="https://artur.red/script/global.js" defer></script>
 		<script src="https://artur.red/script/notice.js" defer></script>
 		<script src="https://artur.red/script/game/game.js" defer></script>
+		<script src="https://artur.red/style/particle_system.js" defer></script>
+		<script src="https://artur.red/script/game/winner.js" defer></script>
 
 		<!-- Styles -->
 		<link rel="stylesheet" href="https://artur.red/style/global.css" />
@@ -61,32 +63,32 @@
 		<main>
 			<nav id="nav">
 				<div class="logo">
-					<a href="index.html">
-						<h1>Scrapb<span></span>x</h1>
-					</a>
+					<img src="https://artur.red/images/logo-text-color.svg" alt="scrapbox logo">
 				</div>
 				<ul id="player-list">
 
 				</ul>
-				<a href="https://artur.red" class="leave-button">
-					<button class="removable leave">
-						Leave Game
-					</button>
-				</a>
+				<div class="nav-bottom">
+					<div class="volume">
+						<img id="volume-image" src="https://artur.red/images/audio-levels/1.svg" alt="">
+						<input type="range" id="volume-slider" min="0" max="100" value="50">
+					</div>
+					<a href="https://artur.red" class="leave-button">
+						<button class="removable leave">
+							Leave Game
+						</button>
+					</a>
+				</div>
 			</nav>
 			
 			<div class="main-room-section" id="text-input-area">
-
-				<div class="center">
-					<h1>Write a funny story</h1>
-				</div>
-				
-				<div class="center margin">
-					<div class="column">
-						<h1>Use atleast 15 words.</h1>
-						<textarea id="text-input" placeholder="Use atleast 15 words.."></textarea>
-						<button id="text-submit" class="btn">Submit</button>
+				<div class="write-story">
+					<div class="write-title">
+						<img src="https://artur.red/images/paper-roll.svg" alt="">
+						<h1>Write a story about how you lost in among us!</h1>
 					</div>
+					<textarea id="text-input" placeholder="Once I accidentally..." autocomplete="false" spellcheck="false"></textarea>
+					<button id="text-submit" class="btn">Submit</button>
 				</div>
 			</div>
 		</main>
@@ -101,5 +103,8 @@
 			</div>
 			<p id="clock-counter">60s</p>
 		</div>
+		<audio loop="" id="audio" volume="0" autoplay="">
+			<!-- <source src="https://artur.red/audio/song.mp3" type="audio/mp3" volume="0"> -->
+		</audio>
 	</body>
 </html>

@@ -14,279 +14,34 @@
 	</head>
 
 	<body class="dark">
-		<main id="main">
-			<nav>
-				<p id="player-count" class="player-count">1/16</p>
-				<ul id="player-list">
-					<li class="player leader">
-						<div class="pfp">
-							<img src="https://artur.red/faces/8.svg" alt="Profile Picture">
-						</div>
-						<div class="info">
-							<p>TINY COCK</p>
-	
-						</div>
-					</li>
-				</ul>
-				<hr>
-				<div class="volume">
-					<img id="volume-image" src="https://artur.red/images/audio-levels/1.svg" alt="">
-					<input type="range" id="volume-slider" min="0" max="100" value="50">
-				</div>
-			</nav>
-	
-			<div class="main-room-section">
-				<div class="room-section-header">
-					<h1 id="lobby-short-id" class="lobby-short-id">4696 &nbsp; 469</h1>
-					<img id="room-qr" class="qr-code"
-						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACECAYAAABRRIOnAAAAAklEQVR4AewaftIAAAK7SURBVO3BQW4sSQxDwUeh7n9lzlbaCEhkdY/tzwgiIiIiIiIiIiIiIiIiIiIi/hhxz3yXmMxO3DE7sTPfJS4UEU0R0RQRzcP7xLvMTpwxk9iJd4l3mRcVEU0R0RQRzcPnmTPijpnEJCYzicnsxB1zRnxQEdEUEU0R0Tz8fmZnJjGJnZjMZCbxixURTRHRFBHNw7/HnBH/kCKiKSKaIqJ5+DzxXWIyOzGZyUxiMnfED1JENEVEU0Q0D+8zP5uYzCQm8y7zgxURTRHRFBGN+P3Mu8TOTOIPKSKaIqIpIhpxz0zijJnEZM6IO2YnduZdYmcmcaGIaIqIpohoxPvMJCazEzszicnsxGQmsTNnxM7sxGQm8aIioikimiKieXifmMwkdmYnJjOJydwx7zKTmMxkJvFBRURTRDRFRCPumXeJO+aMmMxOTOaMOGN24kVFRFNENEVEI+6ZndiZO2Iy7xI7c0dM5o64UEQ0RURTRDQP7xOT2YkzZjKTmMwkdmZnzoidmcTOTOJFRURTRDRFRCN+HrMTk5nEZCZxxpwRO3NHfFAR0RQRTRHRiM8zd8RkzoidOSN2ZhKT2YnJ7MSLioimiGiKiEbcM3fEzkxiMpPYmUnszM8iPqiIaIqIpohoxO9nJjGZSUzmjJjMJM6YSfyPioimiGiKiObhnvkucUZMZifeZSbxgxURTRHRFBHNw/vEu8xOTGYSOzGZd4kz5o64UEQ0RURTRDQPn2fOiDPmjJjMJCYziclM5rPEZF5URDRFRFNENA+/n9iZSUxiMt8ldmYyH1RENEVEU0Q0D3+fOCMmM5mdmMwkdmYSk5nEi4qIpohoiojm4fPEd5lJ7MwkJnFHTOaM+aIioikimiKiEffMd4nJ7MRk3iUmsxNnzBlxoYhoioimiIiIiIiIiIiIiIiIiIiIiIj4w/4DwHJ43M0usC8AAAAASUVORK5CYII=">
-				</div>
-				<div>
-					<div class="container">
-						<div class="config" id="config-area">
-							<div class="setting-row">
-								<div class="setting">
-									<select id="mature" name="mature">
-										<option value="regular" selected="selected">Regular</option>
-										<option value="mature">Mature</option>
-										<option value="mature-only">Mature only</option>
-									</select>
-								</div>
-	
-								<div class="setting-text">
-									<p>Question type</p>
-								</div>
-							</div>
-	
-							<div class="setting-row">
-								<div class="setting">
-									<select id="question-count" name="question-count">
-										<option value="1">1</option>
-										<option value="2" selected="selected">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
-										<option value="6">6</option>
-										<option value="7">7</option>
-										<option value="8">8</option>
-									</select>
-								</div>
-	
-								<div class="setting-text">
-									<p>Question Amount</p>
-								</div>
-							</div>
-	
-							<div class="setting-row">
-								<div class="setting">
-									<label class="switch">
-										<input type="checkbox" id="public">
-										<span class="slider"></span>
-									</label>
-								</div>
-	
-								<div class="setting-text">
-									<p>Public</p>
-								</div>
-							</div>
-	
-							<div class="setting-row">
-								<div class="setting">
-									<label class="switch">
-										<input type="checkbox" id="self-voting">
-										<span class="slider"></span>
-									</label>
-								</div>
-	
-								<div class="setting-text">
-									<p>Self-voting</p>
-								</div>
-							</div>
-	
-							<hr>
-	
-							<div class="instructions">
-								<h1>How to play</h1>
-								<p>
-									The aim of the game is to form sentences and answers to questions using words that the
-									players in the game
-									have written before the game starts.
-								</p>
-								<p>
-									The game starts with everyone writing a short story - this is where all the words come
-									from when playing the
-									game. All the words are shuffled together and you have to answer the following questions
-									in the game with
-									the words. Voting takes place after everyone has answered their questions. Then you have
-									to vote for the
-									card with the funniest sentence, the one with the most votes at the end of the game
-									wins.
-								</p>
-							</div>
-						</div>
-					</div>
-	
-					<button id="start-button" class="bottom" style="display: block;">Start game!</button>
-				</div>
-	
-			</div>
-	
-			<div class="chat-container" id="chat-container">
-				<div class="top">
-					<div id="close-chat" class="blob" style="background: rgb(243, 106, 94); cursor: pointer;"></div>
-					<div class="blob" style="background: rgb(249, 189, 80);"></div>
-					<div class="blob" style="background: rgb(90, 195, 85);"></div>
-	
-					<p>&lt;- LOBBY CHAT -&gt;</p>
-				</div>
-	
-				<div id="chat-output" class="chat-output"></div>
-				<form id="chat-form" action="">
-					<input class="width" type="text" id="chat-input" placeholder="Chat...">
-				</form>
-			</div>
-		</main>
-	
-		<button class="open-chat" id="open-chat" onclick="toggleModal('name-modal')"></button>
-	
-		 <div class="modal open" id="name-modal">
-			<div class="modal-content"  onclick="javascript:event.cancelBubble = true; if (event.stopPropagation) event.stopPropagation();">
-				<div class="modal-slide">
 
-					<div class="modal-header">
-						<h1>Name Change</h1>
-						<p>Your name was randomly chosen. Do you want to change it?</p>
-					</div>
-					<hr>
-		
-					<div class="modal-body">
-						<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
-						<input type="submit" value="Cancel" onclick="toggleModal('name-modal')">
-						<input type="submit" value="Select New" onclick="turnTrack(1)">
-					</div>
-				</div>
-				<div class="modal-slide">
+		<canvas id="winner-confetti-canvas"></canvas>
 
-					<div class="modal-header">
-						<h1>Name Change</h1>
-						<p>Choose a public name that other players will see.</p>
-					</div>
-					<hr>
-		
-					<div class="modal-body">
-						<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
-						<input type="text" value="tinyBird" onfocus="this.select()" placeholder="Name">
-						<div class="arrows">
-							<div class="arrow left" onclick="turnTrack(-1)"></div>
-							<div class="arrow right" onclick="turnTrack(1)"></div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-slide">
-
-					<div class="modal-header">
-						<h1>Name Change</h1>
-						<p>Choose one of our faces for your profile</p>
-					</div>
-					<hr>
-		
-					<div class="modal-body">
-						<!-- <input class="width" type="text" id="name-input" placeholder="Name"> -->
-						<div class="profile-pictures">
-							<button onclick="select_profile(1)">
-								<img src="https://artur.red/faces/1.svg" alt="">
-							</button>
-							<button onclick="select_profile(2)">
-								<img src="https://artur.red/faces/2.svg" alt="">
-							</button>
-							<button onclick="select_profile(3)">
-								<img src="https://artur.red/faces/3.svg" alt="">
-							</button>
-							<button onclick="select_profile(4)">
-								<img src="https://artur.red/faces/4.svg" alt="">
-							</button>
-							<button onclick="select_profile(5)">
-								<img src="https://artur.red/faces/5.svg" alt="">
-							</button>
-							<button onclick="select_profile(6)">
-								<img src="https://artur.red/faces/6.svg" alt="">
-							</button>
-							<button onclick="select_profile(7)">
-								<img src="https://artur.red/faces/7.svg" alt="">
-							</button>
-							<button onclick="select_profile(8)">
-								<img src="https://artur.red/faces/8.svg" alt="">
-							</button>
-							<button onclick="select_profile(9)">
-								<img src="https://artur.red/faces/9.svg" alt="">
-							</button>
-							<button onclick="select_profile(10)">
-								<img src="https://artur.red/faces/10.svg" alt="">
-							</button>
-							<button onclick="select_profile(11)">
-								<img src="https://artur.red/faces/11.svg" alt="">
-							</button>
-						</div>
-						<div class="arrows">
-							<div class="arrow left" onclick="turnTrack(-1)"></div>
-						</div>
-					</div>
-				</div>
-
-	
-				<div class="modal-footer">
-					<div class="dots">
-						<span class="dot active"></span>
-						<span class="dot"></span>
-						<span class="dot"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- onfocus="this.select()" -->
-	
+		<script src="https://artur.red/style/particle_system.js"></script>
 		<script>
-			const toggleModal = (id) => {
-				var modal = document.getElementById(id);
-				modal.classList.toggle("open");
-			}
 
-			var slideIndex = 1;
+			const canvas = document.getElementById('winner-confetti-canvas');
+			
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
 
-			const showSlides = (n) => {
-				var slides = document.getElementsByClassName("modal-slide");
-				
-				// if (n > slides.length) { slideIndex = 1 }
-				// if (n < 1) { slideIndex = slides.length }
+			const particle_system = new ParticleSystem({
+				canvas: canvas,
+				particle_amount: 100,
+				colors: ["#e6194B", "#f58231", "#ffe119", "#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4"],
+				size: {
+					x: 16,
+					y: 20
+				},
+				rotation_speed: 0.4,
+				gravity: 0.007,
+				spread: 0.2,
+				cluster_length: 3000,
+				speed: 1,
+			});
 
-				//slides
-				for (i = 0; i < slides.length; i++) {
-					slides[i].style.display = "none";
-				}
-
-				slides[slideIndex - 1].style.display = "flex";
-				console.log(n - 1, ", current slideindex")
-
-
-				// dots
-				var dots = document.getElementsByClassName("dot");
-				for (i = 0; i < dots.length; i++) {
-					dots[i].classList.remove("active");
-				}
-				dots[slideIndex - 1].classList.add("active");
-			}
-
-			const turnTrack = (direction) => {
-				if (direction == null) { return; }
-				else if (direction == "next") {
-					showSlides(slideIndex += 1);
-				}
-				else if (direction == "previous") {
-					showSlides(slideIndex -= 1);
-				}
-				showSlides(slideIndex += direction);
-			}
-			showSlides(slideIndex)
+			particle_system.create_particles();
+			particle_system.draw();
 
 		</script>
 	</body>

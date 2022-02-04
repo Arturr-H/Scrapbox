@@ -38,7 +38,7 @@ const get_unique_id = () => {
 
 //mini functions
 const display_players = (players) => players.map(player_obj => `
-    <li class="player ${player_obj.done?"active":""}" ${player_obj.suid == getCookie("suid")?"style='border: 2px solid var(--vibrant-green);'":""}>
+    <li class="player ${player_obj.done?"active":""} ${player_obj.leader?"leader":""}" ${player_obj.suid == getCookie("suid")?"style='border: 2px solid var(--vibrant-green);'":""}>
         <div class="pfp">
             <img style="background: ${player_obj.player_color}" src="https://artur.red/faces/${player_obj.pfp}.svg">
         </div>
@@ -131,6 +131,7 @@ const multiply_values_in_object = (obj, factor) => {
             current_total_votes = room_data_json.game.current_player_votes;
 
             document.body.innerHTML = display_results(word_contributors);
+            winner_party();
         }
 
     }catch(err){
@@ -152,10 +153,11 @@ text_submit.addEventListener("click", async () => {
     });
 
 
-    //send the text to the server if it's not empty
-    if(mapped_text.length > 0){
-        has_submitted_story = true;
 
+    if(!has_submitted_story){
+
+        has_submitted_story = true;
+        
         socket.emit("game:text", {
             room_id: room_id,
             text: mapped_text,
@@ -164,14 +166,15 @@ text_submit.addEventListener("click", async () => {
                 suid: getCookie("suid"),
             }
         });
-
+        
         //clear the game area's children
         text_input_area.innerHTML = `
-            <div class="center">
-                <h1>Waiting for other players...</h1>
-            </div>
+        <div class="center">
+           <h1>Waiting for other players...</h1>
+        </div>
         `;
     }
+
 });
 //Text server in
 socket.on(`game:text:${room_id}`, (data) => {
@@ -246,7 +249,7 @@ const display_question_view = (current_snippets) => {
 
                 <div draggable="false" class="shuffle" onclick="shuffle_snippets('${questions[current_question_index].additional_snippets}')"><img draggable="false" src="https://artur.red/icons/shuffle.svg" alt="Shuffle" ></div>
                 <div draggable="false" id="mini-keyboard-toggle" onclick="toggle_keyboard('${questions[current_question_index].additional_snippets}')">
-                    😂
+                    <img src="https://artur.red/images/keyboards/emoji-keyboard.svg">
                 </div>
             </div>
         </div>
@@ -423,6 +426,7 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
     current_player_answers = data.current_player_answers;
     const word_contributors = data.word_contributors;
     const most_voted_for = data.most_voted_for;
+    const honorable_mentions = data.honorable_mentions;
 
     //update the player list
     player_list.innerHTML = display_players(players);
@@ -433,7 +437,10 @@ socket.on(`game:vote-for:${room_id}`, (data) => {
 
         if(current_voting_index >= questions.length){
             display_card_owner_percentage(players, most_voted_for, total_votes);
-            setTimeout(() => document.body.innerHTML = display_results(word_contributors), 4000);
+            setTimeout(() => {
+                document.body.innerHTML = display_results(word_contributors, honorable_mentions);
+                winner_party();
+            }, 4000);
 
             return;
         }else{
@@ -482,7 +489,7 @@ const display_card_owner_percentage = (players, most_voted_for, all_cards) => {
     display_card_owner_percentage_index++;
 }
 
-const display_results = (word_contributors) => {
+const display_results = (word_contributors, honorable_mentions) => {
 
     let current_total_votes_OBJ = {};
     current_total_votes.forEach(el => {
@@ -501,6 +508,8 @@ const display_results = (word_contributors) => {
     let third_place = sorted_results[2]??null;
 
     let winner_obj, second_place_obj, third_place_obj;
+
+    console.log(honorable_mentions)
 
     winner_obj = {
         score: parseInt(summed_results[winner]),
@@ -534,6 +543,28 @@ const display_results = (word_contributors) => {
     return `
         <h1 class="winner-top-text">${all_players.find(player_obj => player_obj.suid == winner).name.toUpperCase()} IS THE WINNER</h1>
 
+
+		<div class="honorable-mentions-rope" onclick="toggle_honorable_mentions()"></div>
+		<div class="honorable-mentions-container" id="honorable-mentions-box">
+			<h1>Honorable Mentions</h1>
+
+			<div class="honorables-container">
+				<div class="honorable">
+					<h3>Fastest answerer</h3>
+					<h3>${honorable_mentions.fastest_answerer}</h3>
+				</div>
+				<div class="honorable">
+					<h3>Longest story</h3>
+					<h3>${honorable_mentions.longest_story.amount_of_words}: ${honorable_mentions.longest_story.player.name}</h3>
+				</div>
+				<div class="honorable">
+					<h3>Most boring player</h3>
+					<h3>${honorable_mentions.most_boring.user}</h3>
+				</div>
+			</div>
+		</div>
+
+
 		<div class="blob-container">
 			<div class="blob-1"></div>
 			<div class="blob-2"></div>
@@ -552,7 +583,9 @@ const display_results = (word_contributors) => {
 						<p>${second_place_obj.player}</p>
 					</div>
 				</div>
-				<div class="rank-2 rank-display">2<span class="total-points">${second_place_obj.score} Points</span></div>
+				<div class="rank-2 rank-display"><img src="https://artur.red/images/medals/2.svg" alt="2"><span class="total-points"><span class="points-big">${second_place_obj.score}</span><br>Points</span></div>
+
+
 			</div>`}
 			<div class="rank rank-nr-1">
 				<div class="player">
@@ -561,7 +594,8 @@ const display_results = (word_contributors) => {
 					</div>
 					<p>${winner_obj.player}</p>
 				</div>
-				<div class="rank-1 rank-display">1<span class="total-points">${winner_obj.score} Points</span></div>
+				<div class="rank-1 rank-display"><img src="https://artur.red/images/medals/1.svg" alt="1"><span class="total-points"><span class="points-big">${winner_obj.score}</span><br>Points</span></div>
+
 			</div>
 			${
                 third_place == null
@@ -575,17 +609,11 @@ const display_results = (word_contributors) => {
 						<p>${third_place_obj.player}</p>
 					</div>
 				</div>
-				<div class="rank-3 rank-display">3<span class="total-points">${third_place_obj.score} Points</span></div>
+				<div class="rank-3 rank-display"><img src="https://artur.red/images/medals/3.svg" alt="3"><span class="total-points"><span class="points-big">${third_place_obj.score}</span><br>Points</span></div>
+
 			</div>`}
 		</div>
         <a href="https://artur.red"><button class="btl">Back to Lobby</button></a>
-		<canvas id="winner-confetti"></canvas>
-
-		<script src="https://artur.red/style/confetti.js"></script>
-		<script>
-			var confettiSettings = { "target": "winner-confetti", "max": "150", "size": "1.5", "animate": true, "props": ["square"], "colors": [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]], "clock": "20", "rotate": true, "start_from_edge": true, "respawn": true };
-			var confetti = new ConfettiGenerator(confettiSettings);
-		</script>
     `
 }
 
@@ -746,7 +774,7 @@ const new_snippets_set = (input_str, additional_snippets) => {
     }
 }
 const set_keyboard_state = (state) => {
-    document.getElementById("mini-keyboard-toggle").innerHTML = `<span style='color: white'>${state}</span>`;
+    document.getElementById("mini-keyboard-toggle").innerHTML = `<img src="https://artur.red/images/keyboards/${state}">`;
 }
 const toggle_keyboard = (additional_snippets) => {
     total_states++;
@@ -759,13 +787,13 @@ const toggle_keyboard = (additional_snippets) => {
 
     switch (state) {
         case 1:
-            set_keyboard_state("😂");
+            set_keyboard_state("emoji-keyboard.svg");
             
             document.getElementById("snippet-input").innerHTML = new_snippets_set(current_snippets, additional_snippets);
             break;
 
         case 2:
-            set_keyboard_state("&");
+            set_keyboard_state("special-keyboard.svg");
 
             document.getElementById("snippet-input").innerHTML = new_snippets_set("🤩👍😎😂👎👀🔥🥳🤡", 0);
             break;
@@ -774,16 +802,16 @@ const toggle_keyboard = (additional_snippets) => {
             document.getElementById("snippet-input").innerHTML = new_snippets_set(".,()+=!?", 0);
 
             if (extra_snippets <= 0){
-                set_keyboard_state("🔤");
+                set_keyboard_state("snippet-keyboard.svg");
                 state = 0;
                 break;
             }else{
-                set_keyboard_state("🔣");
+                set_keyboard_state("extra-keyboard.svg");
                 break;
             }
 
         case 4:
-            set_keyboard_state("🔙");
+            set_keyboard_state("snippet-keyboard.svg");
 
             document.getElementById("snippet-input").innerHTML = `
                 <h2 class="center" style="height: min-content !important;">
@@ -950,23 +978,17 @@ const show_voting_cards = () => {
 
 /* -------------------------------------------------- Sound Effects -------------------------------------------------- */
 
-const play_sound = (sound_url = "https://www.myinstants.com/media/sounds/vine-boom.mp3", volume = 1, fadeOutTime = null, loop = false, pitch = 1) => {
+const play_sound = (sound_url = "https://www.myinstants.com/media/sounds/vine-boom.mp3", volume = 1, fadeOutDelay = null, fadeOutTime = null, loop = false, pitch = 1) => {
     const sound = new Audio(sound_url);
     sound.volume = volume;
     sound.loop = loop;
     sound.pitch = pitch;
-    
-    //fade out sound effect
-    if(fadeOutTime != null){
-        const soundFade = setInterval(() => {
-            if(sound.volume != 0) {
-                sound.volume -= 0.1;
-            } else{
-                clearInterval(soundFade);
-            }
-        }, fadeOutTime);
-    }
+    sound.play();
+
+    let current_index = 0;
+    const starter_volume = sound.volume;
 }
+
 
 /* -------------------------------------------------- CLOCK -------------------------------------------------- */
 
@@ -1000,4 +1022,55 @@ const clear_clock = () => {
 
     const clock_counter = document.getElementById("clock-counter");
     clock_counter.innerHTML = "";
+}
+
+/* -------------------------------------------------- MUSIC -------------------------------------------------- */
+
+
+const volume_slider = document.getElementById("volume-slider");
+const volume_image = document.getElementById("volume-image");
+const audio = document.getElementById("audio");
+
+const source_element = document.createElement("source");
+source_element.setAttribute("src", "https://artur.red/audio/song.mp3");
+source_element.setAttribute("type", "audio/mp3");
+source_element.setAttribute("volume", 0);
+audio.appendChild(source_element);
+
+let audio_volume = 0;
+audio.volume = getCookie("audio_percentage")*0.5;
+volume_slider.value = getCookie("audio_percentage")*100*5*2;
+
+const set_audio_image = (value) => volume_image.src = `https://artur.red/images/audio-levels/${value}.svg`;
+
+const on_volume_change = () => {
+    if (audio_volume == volume_slider.value) return;
+    
+    audio_volume = volume_slider.value*0.5;
+    let audio_volume_percentage = audio_volume / 500;
+
+    audio.volume = audio_volume_percentage;
+    setCookie("audio_percentage", audio_volume_percentage, 30);
+
+    if(audio_volume_percentage == 0) set_audio_image(1);
+    if(audio_volume_percentage > 0) set_audio_image(2);
+    if(audio_volume_percentage > 0.05) set_audio_image(3);
+    if(audio_volume_percentage > 0.07) set_audio_image(4);
+}
+
+volume_slider.addEventListener("mousemove", on_volume_change);
+volume_slider.addEventListener("click", on_volume_change);
+on_volume_change();
+
+/* -------------------------------------------------- HONORABLE MENTIONS -------------------------------------------------- */
+
+let honorables_is_open = false;
+const toggle_honorable_mentions = () => {
+
+    honorables_is_open = !honorables_is_open;
+    if(honorables_is_open) {
+        document.getElementById("honorable-mentions-box").style.transform = "translate(-50%, -50%) translateY(0)";
+    }else {
+        document.getElementById("honorable-mentions-box").style.transform = "translate(-50%, -50%) translateY(-100vh)";
+    }
 }
